@@ -46,13 +46,13 @@ Dejar el proyecto técnico listo para desarrollo continuo.
 - [x] Confirmar instalación como app de escritorio en Windows.
 - [x] Confirmar instalación como app en iPhone.
 - [x] Crear guía práctica para GitHub, npm y VS Code.
-- [X] Revisar estructura final de carpetas.
-- [X] Crear README técnico actualizado.
-- [X] Crear CONTRIBUTING.md o guía interna de flujo de trabajo.
-- [X] Definir estrategia de ramas.
-- [X] Configurar reglas básicas de formato.
-- [X] Confirmar despliegue estable en Cloudflare Pages.
-- [X] Confirmar dominio https://games.luzaron.uk.
+- [x] Revisar estructura final de carpetas.
+- [x] Crear README técnico actualizado.
+- [x] Crear CONTRIBUTING.md o guía interna de flujo de trabajo.
+- [x] Definir estrategia de ramas.
+- [x] Configurar reglas básicas de formato.
+- [x] Confirmar despliegue estable en Cloudflare Pages.
+- [x] Confirmar dominio https://games.luzaron.uk.
 
 ---
 
@@ -64,18 +64,18 @@ Crear la carcasa principal de navegación y pantallas base.
 
 ## Tareas
 
-- [ ] Crear sistema base de navegación.
-- [ ] Crear layout responsivo principal.
-- [ ] Crear pantalla Home.
-- [ ] Crear pantalla Usuarios.
-- [ ] Crear pantalla Biblioteca.
-- [ ] Crear pantalla Records.
-- [ ] Crear pantalla Ajustes.
-- [ ] Crear placeholder de Queens.
-- [ ] Crear placeholder de Sudoku.
-- [ ] Crear placeholder de Wordle.
-- [ ] Crear navegación entre pantallas.
-- [ ] Crear estado global mínimo de app.
+- [x] Crear sistema base de navegación.
+- [x] Crear layout responsivo principal.
+- [x] Crear pantalla Home.
+- [x] Crear pantalla Usuarios.
+- [x] Crear pantalla Biblioteca.
+- [x] Crear pantalla Records.
+- [x] Crear pantalla Ajustes.
+- [x] Crear placeholder de Queens.
+- [x] Crear placeholder de Sudoku.
+- [x] Crear placeholder de Wordle.
+- [x] Crear navegación entre pantallas.
+- [x] Crear estado global mínimo de app.
 
 ---
 
