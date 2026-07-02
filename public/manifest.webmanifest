@@ -30,19 +30,19 @@
     }
   ],
   "screenshots": [
-  {
-    "src": "/screenshots/desktop-home.png",
-    "sizes": "1280x720",
-    "type": "image/png",
-    "form_factor": "wide",
-    "label": "Pantalla principal de Luzaron Games"
-  },
-  {
-    "src": "/screenshots/mobile-home.png",
-    "sizes": "390x844",
-    "type": "image/png",
-    "form_factor": "narrow",
-    "label": "Luzaron Games en móvil"
-  }
-]
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Pantalla principal de Luzaron Games"
+    },
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Luzaron Games en móvil"
+    }
+  ]
 }

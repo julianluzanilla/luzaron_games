@@ -46,13 +46,13 @@ Dejar el proyecto técnico listo para desarrollo continuo.
 - [x] Confirmar instalación como app de escritorio en Windows.
 - [x] Confirmar instalación como app en iPhone.
 - [x] Crear guía práctica para GitHub, npm y VS Code.
-- [ ] Revisar estructura final de carpetas.
-- [ ] Crear README técnico actualizado.
-- [ ] Crear CONTRIBUTING.md o guía interna de flujo de trabajo.
-- [ ] Definir estrategia de ramas.
-- [ ] Configurar reglas básicas de formato.
-- [ ] Confirmar despliegue estable en Cloudflare Pages.
-- [ ] Confirmar dominio https://games.luzaron.uk.
+- [X] Revisar estructura final de carpetas.
+- [X] Crear README técnico actualizado.
+- [X] Crear CONTRIBUTING.md o guía interna de flujo de trabajo.
+- [X] Definir estrategia de ramas.
+- [X] Configurar reglas básicas de formato.
+- [X] Confirmar despliegue estable en Cloudflare Pages.
+- [X] Confirmar dominio https://games.luzaron.uk.
 
 ---
 
