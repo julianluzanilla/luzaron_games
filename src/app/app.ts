@@ -1,4 +1,4 @@
-import { getState, setRoute } from './state'
+import { getState, setCurrentUser, setRoute, updateSettings } from './state'
 import type { AppState, Route } from './types'
 import { navigateTo, startRouter } from './router'
 import { renderHomeScreen } from '../ui/screens/home'
@@ -7,6 +7,8 @@ import { renderLibraryScreen } from '../ui/screens/library'
 import { renderRecordsScreen } from '../ui/screens/records'
 import { renderSettingsScreen } from '../ui/screens/settings'
 import { renderGamePlaceholder } from '../ui/screens/game-placeholder'
+import { localUsers } from './users'
+import type { ThemeMode } from './settings'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -18,6 +20,7 @@ const appRoot: HTMLDivElement = appRootElement
 
 export function mountApp(): void {
   appRoot.addEventListener('click', handleAppClick)
+  appRoot.addEventListener('change', handleAppChange)
 
   startRouter((route) => {
     setRoute(route)
@@ -27,15 +30,64 @@ export function mountApp(): void {
 
 function handleAppClick(event: MouseEvent): void {
   const target = event.target as HTMLElement
+
   const routeButton = target.closest<HTMLElement>('[data-route]')
 
-  if (!routeButton) return
+  if (routeButton) {
+    const route = routeButton.dataset.route as Route | undefined
 
-  const route = routeButton.dataset.route as Route | undefined
+    if (route) {
+      navigateTo(route)
+      return
+    }
+  }
 
-  if (!route) return
+  const userButton = target.closest<HTMLElement>('[data-user-id]')
 
-  navigateTo(route)
+  if (userButton) {
+    const userId = userButton.dataset.userId
+    const user = localUsers.find((candidate) => candidate.id === userId)
+
+    if (user) {
+      setCurrentUser(user)
+    }
+  }
+}
+
+function handleAppChange(event: Event): void {
+  const target = event.target as HTMLInputElement
+
+  if (!target.name) return
+
+  if (target.name === 'themeMode') {
+    updateSettings({
+      themeMode: target.value as ThemeMode,
+    })
+
+    return
+  }
+
+  if (target.name === 'soundEnabled') {
+    updateSettings({
+      soundEnabled: target.checked,
+    })
+
+    return
+  }
+
+  if (target.name === 'vibrationEnabled') {
+    updateSettings({
+      vibrationEnabled: target.checked,
+    })
+
+    return
+  }
+
+  if (target.name === 'reducedMotion') {
+    updateSettings({
+      reducedMotion: target.checked,
+    })
+  }
 }
 
 function renderApp(state: AppState): void {
@@ -57,12 +109,12 @@ function renderTopBar(state: AppState): string {
         <span class="brand-mark">👑</span>
         <span>
           <strong>Luzaron Games</strong>
-          <small>${state.currentUserName}</small>
+          <small>${state.currentUser.name}</small>
         </span>
       </button>
 
       <div class="status-pill">
-        ${state.isGuest ? 'Invitado' : 'Usuario'}
+        ${state.currentUser.isGuest ? 'Invitado' : 'Usuario'}
       </div>
     </header>
   `
@@ -74,7 +126,7 @@ function renderScreen(route: Route): string {
       return renderHomeScreen()
 
     case 'users':
-      return renderUsersScreen()
+      return renderUsersScreen(getState())
 
     case 'library':
       return renderLibraryScreen()
@@ -83,7 +135,7 @@ function renderScreen(route: Route): string {
       return renderRecordsScreen()
 
     case 'settings':
-      return renderSettingsScreen()
+      return renderSettingsScreen(getState())
 
     case 'queens':
       return renderGamePlaceholder('queens')

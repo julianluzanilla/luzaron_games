@@ -358,3 +358,116 @@ h2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+[data-theme='light'] {
+  color: #0f172a;
+  background: #eef4ff;
+
+  --bg: #eef4ff;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-solid: #ffffff;
+  --panel-light: #f8fafc;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: rgba(15, 23, 42, 0.14);
+  --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme='light'] body {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.12), transparent 28rem), var(--bg);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-card {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  text-align: center;
+}
+
+.profile-card.active {
+  border-color: rgba(34, 197, 94, 0.7);
+  background: rgba(34, 197, 94, 0.16);
+}
+
+.profile-avatar {
+  font-size: 2.5rem;
+}
+
+.profile-name {
+  font-weight: 800;
+}
+
+.profile-status {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 18px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.settings-group {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.settings-group legend {
+  padding: 0 8px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.option-row input {
+  width: 18px;
+  height: 18px;
+}
+
+[data-reduced-motion='true'] *,
+[data-reduced-motion='true'] *::before,
+[data-reduced-motion='true'] *::after {
+  scroll-behavior: auto !important;
+  transition-duration: 0.001ms !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+@media (max-width: 860px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 460px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

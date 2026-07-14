@@ -1,10 +1,23 @@
-import type { AppState, Route } from './types'
+import { applyTheme, loadSettings, saveSettings } from './settings'
+import type { AppState, AppUser, Route } from './types'
+import type { UserSettings } from './settings'
+
+export const guestUser: AppUser = {
+  id: 'guest',
+  name: 'Invitado',
+  avatar: '👤',
+  isGuest: true,
+}
+
+const initialSettings = loadSettings()
 
 let state: AppState = {
   route: 'home',
-  currentUserName: 'Invitado',
-  isGuest: true,
+  currentUser: guestUser,
+  settings: initialSettings,
 }
+
+applyTheme(initialSettings)
 
 type Listener = (state: AppState) => void
 
@@ -18,6 +31,32 @@ export function setRoute(route: Route): void {
   state = {
     ...state,
     route,
+  }
+
+  notify()
+}
+
+export function setCurrentUser(user: AppUser): void {
+  state = {
+    ...state,
+    currentUser: user,
+  }
+
+  notify()
+}
+
+export function updateSettings(nextSettings: Partial<UserSettings>): void {
+  const settings: UserSettings = {
+    ...state.settings,
+    ...nextSettings,
+  }
+
+  saveSettings(settings)
+  applyTheme(settings)
+
+  state = {
+    ...state,
+    settings,
   }
 
   notify()
