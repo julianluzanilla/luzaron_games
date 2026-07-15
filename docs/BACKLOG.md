@@ -135,17 +135,17 @@ Crear sistema de packs descargables y seleccionables.
 
 ## Tareas
 
-- [ ] Definir formato final de level manifest.
-- [ ] Definir formato final de pack JSON.
-- [ ] Crear manifest inicial de niveles.
-- [ ] Crear pantalla Biblioteca.
-- [ ] Mostrar packs por juego.
+- [x] Definir formato final de level manifest.
+- [x] Definir formato final de pack JSON.
+- [x] Crear manifest inicial de niveles.
+- [x] Crear pantalla Biblioteca.
+- [x] Mostrar packs por juego.
 - [ ] Mostrar packs por categoría/dificultad.
-- [ ] Mostrar estado de pack.
+- [x] Mostrar estado de pack.
 - [ ] Descargar pack.
 - [ ] Actualizar pack.
-- [ ] Guardar pack en IndexedDB.
-- [ ] Leer pack desde IndexedDB.
+- [x] Guardar pack en IndexedDB.
+- [x] Leer pack desde IndexedDB.
 - [ ] Crear selector de puzzle/nivel.
 
 ---

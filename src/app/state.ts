@@ -3,6 +3,7 @@ import type { AppState, AppUser, ConnectionMode, Route } from './types'
 import type { UserSettings } from './settings'
 import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
 import type { LevelUpdateProgress } from '../core/level-catalog-types'
+import type { DownloadedPack } from '../core/db-types'
 
 const initialSettings = loadSettings()
 const initialUser = getUserById(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
@@ -18,6 +19,7 @@ let state: AppState = {
     completedPacks: 0,
     totalPacks: 0,
   },
+  packs: [],
 }
 
 applyTheme(initialSettings)
@@ -95,4 +97,13 @@ export function setLevelUpdate(levelUpdate: LevelUpdateProgress): void {
 
 function notify(): void {
   listeners.forEach((listener) => listener(state))
+}
+
+export function setPacks(packs: DownloadedPack[]): void {
+  state = {
+    ...state,
+    packs,
+  }
+
+  notify()
 }

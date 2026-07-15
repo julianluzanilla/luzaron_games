@@ -150,7 +150,7 @@ function renderScreen(route: Route): string {
       return renderUsersScreen(getState())
 
     case 'library':
-      return renderLibraryScreen()
+      return renderLibraryScreen(getState())
 
     case 'records':
       return renderRecordsScreen()

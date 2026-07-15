@@ -1,5 +1,6 @@
 import type { UserSettings } from './settings'
 import type { LevelUpdateProgress } from '../core/level-catalog-types'
+import type { DownloadedPack } from '../core/db-types'
 
 export type Route =
   'home' | 'users' | 'library' | 'records' | 'settings' | 'queens' | 'sudoku' | 'wordle'
@@ -21,4 +22,5 @@ export interface AppState {
   settings: UserSettings
   connectionMode: ConnectionMode
   levelUpdate: LevelUpdateProgress
+  packs: DownloadedPack[]
 }
