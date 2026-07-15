@@ -1,4 +1,4 @@
-import type { AppUser } from '../app/types'
+import type { AppUser, GameId, Route } from '../app/types'
 
 export interface LocalProfile extends AppUser {
   createdAt: string
@@ -8,12 +8,13 @@ export interface LocalProfile extends AppUser {
 export interface LocalSession {
   id: string
   currentUserId: string
+  route: Route
   updatedAt: string
 }
 
 export interface DownloadedPack {
   id: string
-  gameId: 'queens' | 'sudoku' | 'wordle'
+  gameId: GameId
   title: string
   version: number
   status: 'available' | 'downloading' | 'downloaded' | 'update-available' | 'error'
@@ -27,7 +28,7 @@ export interface DownloadedPack {
 export interface LocalLevel {
   id: string
   packId: string
-  gameId: 'queens' | 'sudoku' | 'wordle'
+  gameId: GameId
   data: unknown
   createdAt: string
 }
@@ -35,7 +36,7 @@ export interface LocalLevel {
 export interface GameProgress {
   id: string
   userId: string
-  gameId: 'queens' | 'sudoku' | 'wordle'
+  gameId: GameId
   packId: string
   levelId: string
   status: 'not-started' | 'in-progress' | 'completed'
@@ -47,7 +48,7 @@ export interface GameProgress {
 export interface LocalRecord {
   id: string
   userId: string
-  gameId: 'queens' | 'sudoku' | 'wordle'
+  gameId: GameId
   packId: string
   levelId: string
   rawTimeMs: number

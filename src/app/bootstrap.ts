@@ -1,10 +1,13 @@
-import { setConnectionMode, setLevelUpdate } from './state'
+import { setConnectionMode, setCurrentUser, setLevelUpdate } from './state'
 import { checkConnection } from '../core/connection'
 import { seedDefaultProfiles } from '../core/profiles-repository'
 import { updateLevelCatalog } from '../core/level-updater'
+import { getCurrentSession } from '../core/session-repository'
+import { getUserById } from './users'
 
 export async function bootstrapApp(): Promise<void> {
   await seedDefaultProfiles()
+  await restoreLocalSession()
 
   const connectionStatus = await checkConnection()
 
@@ -36,4 +39,12 @@ export async function bootstrapApp(): Promise<void> {
       totalPacks: 0,
     })
   }
+}
+
+async function restoreLocalSession(): Promise<void> {
+  const session = await getCurrentSession()
+
+  if (!session) return
+
+  setCurrentUser(getUserById(session.currentUserId))
 }

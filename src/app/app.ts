@@ -1,5 +1,6 @@
 import { getState, setCurrentUser, setRoute, subscribe, updateSettings } from './state'
 import type { AppState, Route } from './types'
+import type { ThemeMode } from './settings'
 import { navigateTo, startRouter } from './router'
 import { renderHomeScreen } from '../ui/screens/home'
 import { renderUsersScreen } from '../ui/screens/users'
@@ -8,7 +9,7 @@ import { renderRecordsScreen } from '../ui/screens/records'
 import { renderSettingsScreen } from '../ui/screens/settings'
 import { renderGamePlaceholder } from '../ui/screens/game-placeholder'
 import { localUsers } from './users'
-import type { ThemeMode } from './settings'
+import { saveCurrentSessionFromState } from '../core/session-repository'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -22,7 +23,10 @@ export function mountApp(): void {
   appRoot.addEventListener('click', handleAppClick)
   appRoot.addEventListener('change', handleAppChange)
 
-  subscribe(renderApp)
+  subscribe((state) => {
+    renderApp(state)
+    void saveCurrentSessionFromState(state)
+  })
 
   startRouter((route) => {
     setRoute(route)
