@@ -1,4 +1,4 @@
-import type { DownloadedPack } from './db-types'
+import type { DownloadedPack, PackDifficulty } from './db-types'
 
 export function getPackStatusLabel(status: DownloadedPack['status']): string {
   switch (status) {
@@ -24,4 +24,23 @@ export function getPackStatusLabel(status: DownloadedPack['status']): string {
 
 export function getPackStatusClass(status: DownloadedPack['status']): string {
   return `pack-status-${status}`
+}
+
+export function getPackDifficultyLabel(difficulty: PackDifficulty): string {
+  switch (difficulty) {
+    case 'easy':
+      return 'Fácil'
+
+    case 'medium':
+      return 'Medio'
+
+    case 'hard':
+      return 'Difícil'
+
+    case 'mixed':
+      return 'Mixto'
+
+    default:
+      return 'Mixto'
+  }
 }

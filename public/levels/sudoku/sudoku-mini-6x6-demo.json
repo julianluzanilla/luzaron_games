@@ -1,0 +1,15 @@
+{
+  "packId": "sudoku-mini-6x6-demo",
+  "gameId": "sudoku",
+  "version": 1,
+  "levels": [
+    {
+      "id": "sudoku-mini-6x6-demo-0001",
+      "number": 1,
+      "size": "6x6",
+      "title": "Sudoku Mini 6x6 Demo 1",
+      "givens": [],
+      "solution": []
+    }
+  ]
+}

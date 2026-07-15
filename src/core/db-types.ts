@@ -1,5 +1,7 @@
 import type { AppUser, GameId, Route } from '../app/types'
 
+export type PackDifficulty = 'easy' | 'medium' | 'hard' | 'mixed'
+
 export interface LocalProfile extends AppUser {
   createdAt: string
   updatedAt: string
@@ -16,6 +18,9 @@ export interface DownloadedPack {
   id: string
   gameId: GameId
   title: string
+  category: string
+  difficulty: PackDifficulty
+  sortOrder: number
   version: number
   status: 'available' | 'downloading' | 'downloaded' | 'update-available' | 'error'
   levelCount: number

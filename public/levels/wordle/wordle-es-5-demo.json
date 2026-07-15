@@ -1,0 +1,15 @@
+{
+  "packId": "wordle-es-5-demo",
+  "gameId": "wordle",
+  "version": 1,
+  "levels": [
+    {
+      "id": "wordle-es-5-demo-0001",
+      "number": 1,
+      "language": "es",
+      "letters": 5,
+      "answer": "CASAS",
+      "validWords": ["CASAS"]
+    }
+  ]
+}

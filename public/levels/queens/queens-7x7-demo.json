@@ -1,0 +1,15 @@
+{
+  "packId": "queens-7x7-demo",
+  "gameId": "queens",
+  "version": 1,
+  "levels": [
+    {
+      "id": "queens-7x7-demo-0001",
+      "number": 1,
+      "size": 7,
+      "title": "Queens 7x7 Demo 1",
+      "regions": [],
+      "solution": []
+    }
+  ]
+}

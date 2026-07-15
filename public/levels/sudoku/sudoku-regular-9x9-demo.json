@@ -1,0 +1,15 @@
+{
+  "packId": "sudoku-regular-9x9-demo",
+  "gameId": "sudoku",
+  "version": 1,
+  "levels": [
+    {
+      "id": "sudoku-regular-9x9-demo-0001",
+      "number": 1,
+      "size": "9x9",
+      "title": "Sudoku Regular 9x9 Demo 1",
+      "givens": [],
+      "solution": []
+    }
+  ]
+}

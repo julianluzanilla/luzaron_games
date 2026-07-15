@@ -142,8 +142,8 @@ Crear sistema de packs descargables y seleccionables.
 - [x] Mostrar packs por juego.
 - [ ] Mostrar packs por categoría/dificultad.
 - [x] Mostrar estado de pack.
-- [ ] Descargar pack.
-- [ ] Actualizar pack.
+- [x] Descargar pack.
+- [x] Actualizar pack.
 - [x] Guardar pack en IndexedDB.
 - [x] Leer pack desde IndexedDB.
 - [ ] Crear selector de puzzle/nivel.

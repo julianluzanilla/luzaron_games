@@ -1,4 +1,5 @@
 import type { GameId } from '../app/types'
+import type { PackDifficulty } from './db-types'
 
 export interface LevelCatalogManifest {
   version: number
@@ -10,6 +11,9 @@ export interface LevelCatalogPack {
   id: string
   gameId: GameId
   title: string
+  category?: string
+  difficulty?: PackDifficulty
+  sortOrder?: number
   version: number
   levelCount: number
   fileUrl: string

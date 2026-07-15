@@ -1,0 +1,15 @@
+{
+  "packId": "queens-8x8-demo",
+  "gameId": "queens",
+  "version": 1,
+  "levels": [
+    {
+      "id": "queens-8x8-demo-0001",
+      "number": 1,
+      "size": 8,
+      "title": "Queens 8x8 Demo 1",
+      "regions": [],
+      "solution": []
+    }
+  ]
+}

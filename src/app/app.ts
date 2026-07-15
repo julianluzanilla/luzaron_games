@@ -1,4 +1,12 @@
-import { getState, setCurrentUser, setRoute, subscribe, updateSettings } from './state'
+import {
+  getState,
+  setCurrentUser,
+  setRoute,
+  subscribe,
+  updateSettings,
+  setLevelUpdate,
+  setPacks,
+} from './state'
 import type { AppState, Route } from './types'
 import type { ThemeMode } from './settings'
 import { navigateTo, startRouter } from './router'
@@ -10,6 +18,8 @@ import { renderSettingsScreen } from '../ui/screens/settings'
 import { renderGamePlaceholder } from '../ui/screens/game-placeholder'
 import { localUsers } from './users'
 import { saveCurrentSessionFromState } from '../core/session-repository'
+import { getAllPacks } from '../core/packs-repository'
+import { downloadPackById } from '../core/pack-downloader'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -35,6 +45,12 @@ export function mountApp(): void {
 
 function handleAppClick(event: MouseEvent): void {
   const target = event.target as HTMLElement
+  const packButton = target.closest<HTMLButtonElement>('[data-action="download-pack"]')
+
+  if (packButton) {
+    void handleDownloadPackClick(packButton)
+    return
+  }
 
   const routeButton = target.closest<HTMLElement>('[data-route]')
 
@@ -56,6 +72,45 @@ function handleAppClick(event: MouseEvent): void {
     if (user) {
       setCurrentUser(user)
     }
+  }
+}
+
+async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void> {
+  const packId = button.dataset.packId
+
+  if (!packId) return
+
+  button.disabled = true
+
+  setLevelUpdate({
+    mode: 'updating',
+    message: 'Descargando pack...',
+    completedPacks: 0,
+    totalPacks: 1,
+  })
+
+  try {
+    await downloadPackById(packId)
+
+    setPacks(await getAllPacks())
+
+    setLevelUpdate({
+      mode: 'complete',
+      message: 'Pack descargado correctamente.',
+      completedPacks: 1,
+      totalPacks: 1,
+    })
+  } catch (error) {
+    console.error('Pack download failed:', error)
+
+    setPacks(await getAllPacks())
+
+    setLevelUpdate({
+      mode: 'error',
+      message: 'No se pudo descargar el pack.',
+      completedPacks: 0,
+      totalPacks: 1,
+    })
   }
 }
 

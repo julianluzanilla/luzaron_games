@@ -1,6 +1,10 @@
 import type { AppState, GameId } from '../../app/types'
 import type { DownloadedPack } from '../../core/db-types'
-import { getPackStatusClass, getPackStatusLabel } from '../../core/pack-labels'
+import {
+  getPackDifficultyLabel,
+  getPackStatusClass,
+  getPackStatusLabel,
+} from '../../core/pack-labels'
 
 const gameLabels: Record<GameId, string> = {
   queens: 'Queens',
@@ -37,7 +41,10 @@ export function renderLibraryScreen(state: AppState): string {
 }
 
 function renderGamePackSection(gameId: GameId, packs: DownloadedPack[]): string {
-  const gamePacks = packs.filter((pack) => pack.gameId === gameId)
+  const gamePacks = packs
+    .filter((pack) => pack.gameId === gameId)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+
   const packCards =
     gamePacks.length > 0
       ? gamePacks.map(renderPackCard).join('')
@@ -63,8 +70,14 @@ function renderPackCard(pack: DownloadedPack): string {
   return `
     <article class="pack-card">
       <div>
-        <h3>${pack.title}</h3>
-        <p>${pack.levelCount} niveles · versión ${pack.version}</p>
+        <div class="pack-card-header">
+          <h3>${pack.title}</h3>
+          <span class="pack-category">${pack.category}</span>
+        </div>
+
+        <p>
+          ${pack.levelCount} niveles · versión ${pack.version} · ${getPackDifficultyLabel(pack.difficulty)}
+        </p>
       </div>
 
       <div class="pack-card-footer">
@@ -72,10 +85,63 @@ function renderPackCard(pack: DownloadedPack): string {
           ${getPackStatusLabel(pack.status)}
         </span>
 
-        <button type="button" class="secondary-button" disabled>
-          Próximamente
-        </button>
+        ${renderPackButton(pack)}
       </div>
     </article>
+  `
+}
+
+function renderPackButton(pack: DownloadedPack): string {
+  if (pack.status === 'downloaded') {
+    return `
+      <button type="button" class="secondary-button" disabled>
+        Descargado
+      </button>
+    `
+  }
+
+  if (pack.status === 'downloading') {
+    return `
+      <button type="button" class="secondary-button" disabled>
+        Descargando...
+      </button>
+    `
+  }
+
+  if (pack.status === 'update-available') {
+    return `
+      <button
+        type="button"
+        class="secondary-button"
+        data-action="download-pack"
+        data-pack-id="${pack.id}"
+      >
+        Actualizar
+      </button>
+    `
+  }
+
+  if (pack.status === 'error') {
+    return `
+      <button
+        type="button"
+        class="secondary-button"
+        data-action="download-pack"
+        data-pack-id="${pack.id}"
+      >
+        Reintentar
+      </button>
+    `
+  }
+
+  return `
+    <button
+      type="button"
+      class="secondary-button"
+      data-action="download-pack"
+      data-pack-id="${pack.id}"
+    >
+      Descargar
+    </button>
   `
 }
