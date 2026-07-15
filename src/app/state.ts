@@ -2,6 +2,7 @@ import { applyTheme, loadSettings, saveSettings } from './settings'
 import type { AppState, AppUser, ConnectionMode, Route } from './types'
 import type { UserSettings } from './settings'
 import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
+import type { LevelUpdateProgress } from '../core/level-catalog-types'
 
 const initialSettings = loadSettings()
 const initialUser = getUserById(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
@@ -11,6 +12,12 @@ let state: AppState = {
   currentUser: initialUser,
   settings: initialSettings,
   connectionMode: 'checking',
+  levelUpdate: {
+    mode: 'idle',
+    message: 'Actualización pendiente',
+    completedPacks: 0,
+    totalPacks: 0,
+  },
 }
 
 applyTheme(initialSettings)
@@ -75,6 +82,15 @@ export function subscribe(listener: Listener): () => void {
   return () => {
     listeners.delete(listener)
   }
+}
+
+export function setLevelUpdate(levelUpdate: LevelUpdateProgress): void {
+  state = {
+    ...state,
+    levelUpdate,
+  }
+
+  notify()
 }
 
 function notify(): void {

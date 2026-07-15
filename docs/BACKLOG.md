@@ -121,7 +121,7 @@ Crear almacenamiento local sólido para jugar offline.
 - [x] Crear store de records.
 - [x] Crear store de cola de sincronización.
 - [x] Crear verificación real de conexión al iniciar.
-- [ ] Crear flujo de actualización al iniciar.
+- [x] Crear flujo de actualización al iniciar.
 - [x] Crear flujo offline si no hay internet.
 - [ ] Crear guardado automático de estado.
 

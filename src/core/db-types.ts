@@ -18,6 +18,8 @@ export interface DownloadedPack {
   version: number
   status: 'available' | 'downloading' | 'downloaded' | 'update-available' | 'error'
   levelCount: number
+  fileUrl: string
+  checksum?: string
   downloadedAt?: string
   updatedAt: string
 }

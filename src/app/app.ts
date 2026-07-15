@@ -122,6 +122,10 @@ function renderTopBar(state: AppState): string {
         <div class="status-pill ${state.connectionMode}">
           ${renderConnectionLabel(state.connectionMode)}
         </div>
+
+        <div class="status-pill update-status ${state.levelUpdate.mode}">
+          ${state.levelUpdate.message}
+        </div>
       </div>
     </header>
   `
