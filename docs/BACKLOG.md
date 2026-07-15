@@ -115,11 +115,11 @@ Crear almacenamiento local sólido para jugar offline.
 - [x] Crear store de perfiles locales.
 - [x] Crear store de sesiones.
 - [x] Crear store de configuración.
-- [ ] Crear store de packs descargados.
-- [ ] Crear store de niveles.
-- [ ] Crear store de progreso.
-- [ ] Crear store de records.
-- [ ] Crear store de cola de sincronización.
+- [x] Crear store de packs descargados.
+- [x] Crear store de niveles.
+- [x] Crear store de progreso.
+- [x] Crear store de records.
+- [x] Crear store de cola de sincronización.
 - [x] Crear verificación real de conexión al iniciar.
 - [ ] Crear flujo de actualización al iniciar.
 - [x] Crear flujo offline si no hay internet.
