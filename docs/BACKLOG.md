@@ -87,17 +87,17 @@ Crear experiencia base para usuarios familiares.
 
 ## Tareas
 
-- [ ] Crear modo claro.
-- [ ] Crear modo oscuro.
-- [ ] Crear modo automático según sistema.
-- [ ] Crear preferencias locales.
-- [ ] Crear selección de usuario actual.
-- [ ] Crear usuario Invitado.
-- [ ] Crear selector visual de perfiles.
-- [ ] Crear ajustes de sonido.
-- [ ] Crear ajustes de vibración.
-- [ ] Crear ajustes de accesibilidad básica.
-- [ ] Probar diseño en desktop.
+- [x] Crear modo claro.
+- [x] Crear modo oscuro.
+- [x] Crear modo automático según sistema.
+- [x] Crear preferencias locales.
+- [x] Crear selección de usuario actual.
+- [x] Crear usuario Invitado.
+- [x] Crear selector visual de perfiles.
+- [x] Crear ajustes de sonido.
+- [x] Crear ajustes de vibración.
+- [x] Crear ajustes de accesibilidad básica.
+- [x] Probar diseño en desktop.
 - [ ] Probar diseño en iPhone.
 - [ ] Probar diseño en tablet.
 

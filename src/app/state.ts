@@ -1,19 +1,14 @@
 import { applyTheme, loadSettings, saveSettings } from './settings'
 import type { AppState, AppUser, Route } from './types'
 import type { UserSettings } from './settings'
-
-export const guestUser: AppUser = {
-  id: 'guest',
-  name: 'Invitado',
-  avatar: '👤',
-  isGuest: true,
-}
+import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
 
 const initialSettings = loadSettings()
+const initialUser = getUserById(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
 
 let state: AppState = {
   route: 'home',
-  currentUser: guestUser,
+  currentUser: initialUser,
   settings: initialSettings,
 }
 
@@ -37,6 +32,8 @@ export function setRoute(route: Route): void {
 }
 
 export function setCurrentUser(user: AppUser): void {
+  window.localStorage.setItem(CURRENT_USER_STORAGE_KEY, user.id)
+
   state = {
     ...state,
     currentUser: user,

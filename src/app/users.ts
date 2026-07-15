@@ -1,5 +1,13 @@
 import type { AppUser } from './types'
-import { guestUser } from './state'
+
+export const CURRENT_USER_STORAGE_KEY = 'luzaron-games-current-user'
+
+export const guestUser: AppUser = {
+  id: 'guest',
+  name: 'Invitado',
+  avatar: '👤',
+  isGuest: true,
+}
 
 export const localUsers: AppUser[] = [
   guestUser,
@@ -28,3 +36,9 @@ export const localUsers: AppUser[] = [
     isGuest: false,
   },
 ]
+
+export function getUserById(userId: string | null): AppUser {
+  if (!userId) return guestUser
+
+  return localUsers.find((user) => user.id === userId) ?? guestUser
+}

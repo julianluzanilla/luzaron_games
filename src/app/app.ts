@@ -1,4 +1,4 @@
-import { getState, setCurrentUser, setRoute, updateSettings } from './state'
+import { getState, setCurrentUser, setRoute, subscribe, updateSettings } from './state'
 import type { AppState, Route } from './types'
 import { navigateTo, startRouter } from './router'
 import { renderHomeScreen } from '../ui/screens/home'
@@ -22,9 +22,10 @@ export function mountApp(): void {
   appRoot.addEventListener('click', handleAppClick)
   appRoot.addEventListener('change', handleAppChange)
 
+  subscribe(renderApp)
+
   startRouter((route) => {
     setRoute(route)
-    renderApp(getState())
   })
 }
 
