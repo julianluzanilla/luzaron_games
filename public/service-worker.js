@@ -1,56 +1,68 @@
-const CACHE_NAME = 'luzaron-games-v1'
-
-const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icons/icon.svg',
-  '/icons/maskable-icon.svg',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/maskable-icon-512.png',
-]
+const CACHE_NAME = 'luzaron-games-v2'
+const APP_SHELL = ['/', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)))
-
   self.skipWaiting()
+
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(APP_SHELL)
+    })
+  )
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((cacheNames) =>
-        Promise.all(
+      .then((cacheNames) => {
+        return Promise.all(
           cacheNames
             .filter((cacheName) => cacheName !== CACHE_NAME)
             .map((cacheName) => caches.delete(cacheName))
         )
-      )
+      })
+      .then(() => self.clients.claim())
   )
-
-  self.clients.claim()
 })
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return
+  const request = event.request
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse
-
-      return fetch(event.request)
-        .then((networkResponse) => {
-          const responseClone = networkResponse.clone()
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const responseClone = response.clone()
 
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone)
+            cache.put('/', responseClone)
           })
 
-          return networkResponse
+          return response
         })
         .catch(() => caches.match('/'))
+    )
+
+    return
+  }
+
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      return (
+        cachedResponse ||
+        fetch(request).then((response) => {
+          if (request.method !== 'GET') return response
+
+          const responseClone = response.clone()
+
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseClone)
+          })
+
+          return response
+        })
+      )
     })
   )
 })
