@@ -5,6 +5,8 @@ export type Route =
 
 export type GameId = 'queens' | 'sudoku' | 'wordle'
 
+export type ConnectionMode = 'checking' | 'online' | 'offline'
+
 export interface AppUser {
   id: string
   name: string
@@ -16,4 +18,5 @@ export interface AppState {
   route: Route
   currentUser: AppUser
   settings: UserSettings
+  connectionMode: ConnectionMode
 }

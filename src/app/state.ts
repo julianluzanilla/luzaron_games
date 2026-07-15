@@ -1,5 +1,5 @@
 import { applyTheme, loadSettings, saveSettings } from './settings'
-import type { AppState, AppUser, Route } from './types'
+import type { AppState, AppUser, ConnectionMode, Route } from './types'
 import type { UserSettings } from './settings'
 import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
 
@@ -10,6 +10,7 @@ let state: AppState = {
   route: 'home',
   currentUser: initialUser,
   settings: initialSettings,
+  connectionMode: 'checking',
 }
 
 applyTheme(initialSettings)
@@ -20,6 +21,15 @@ const listeners = new Set<Listener>()
 
 export function getState(): AppState {
   return state
+}
+
+export function setConnectionMode(connectionMode: ConnectionMode): void {
+  state = {
+    ...state,
+    connectionMode,
+  }
+
+  notify()
 }
 
 export function setRoute(route: Route): void {

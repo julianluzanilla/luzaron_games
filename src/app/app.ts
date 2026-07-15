@@ -114,11 +114,23 @@ function renderTopBar(state: AppState): string {
         </span>
       </button>
 
-      <div class="status-pill">
-        ${state.currentUser.isGuest ? 'Invitado' : 'Usuario'}
+      <div class="top-status">
+        <div class="status-pill">
+          ${state.currentUser.isGuest ? 'Invitado' : 'Usuario'}
+        </div>
+
+        <div class="status-pill ${state.connectionMode}">
+          ${renderConnectionLabel(state.connectionMode)}
+        </div>
       </div>
     </header>
   `
+}
+
+function renderConnectionLabel(connectionMode: AppState['connectionMode']): string {
+  if (connectionMode === 'checking') return 'Revisando conexión'
+  if (connectionMode === 'online') return 'Online'
+  return 'Offline'
 }
 
 function renderScreen(route: Route): string {
