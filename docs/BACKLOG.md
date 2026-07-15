@@ -98,8 +98,8 @@ Crear experiencia base para usuarios familiares.
 - [x] Crear ajustes de vibración.
 - [x] Crear ajustes de accesibilidad básica.
 - [x] Probar diseño en desktop.
-- [ ] Probar diseño en iPhone.
-- [ ] Probar diseño en tablet.
+- [x] Probar diseño en iPhone.
+- [x] Probar diseño en tablet.
 
 ---
 
