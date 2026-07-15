@@ -111,18 +111,18 @@ Crear almacenamiento local sólido para jugar offline.
 
 ## Tareas
 
-- [ ] Crear módulo IndexedDB.
-- [ ] Crear store de perfiles locales.
-- [ ] Crear store de sesiones.
-- [ ] Crear store de configuración.
+- [x] Crear módulo IndexedDB.
+- [x] Crear store de perfiles locales.
+- [x] Crear store de sesiones.
+- [x] Crear store de configuración.
 - [ ] Crear store de packs descargados.
 - [ ] Crear store de niveles.
 - [ ] Crear store de progreso.
 - [ ] Crear store de records.
 - [ ] Crear store de cola de sincronización.
-- [ ] Crear verificación real de conexión al iniciar.
+- [x] Crear verificación real de conexión al iniciar.
 - [ ] Crear flujo de actualización al iniciar.
-- [ ] Crear flujo offline si no hay internet.
+- [x] Crear flujo offline si no hay internet.
 - [ ] Crear guardado automático de estado.
 
 ---
