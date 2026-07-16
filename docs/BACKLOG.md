@@ -158,14 +158,14 @@ Crear componentes reutilizables para todos los juegos.
 
 ## Tareas
 
-- [ ] Crear motor común de timer.
+- [x] Crear motor común de timer.
 - [ ] Crear pausa automática al perder foco.
 - [ ] Crear overlay de privacidad al perder foco.
 - [ ] Crear reanudación automática al volver a primer plano.
 - [ ] Crear motor común de records.
 - [ ] Crear motor común de progreso.
-- [ ] Crear historial de movimientos.
-- [ ] Crear sistema común de deshacer.
+- [x] Crear historial de movimientos.
+- [x] Crear sistema común de deshacer.
 - [ ] Crear sistema común de reset.
 - [ ] Crear sistema común de hints.
 - [ ] Crear modal común de puzzle completado.
