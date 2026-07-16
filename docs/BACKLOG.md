@@ -166,8 +166,8 @@ Crear componentes reutilizables para todos los juegos.
 - [x] Crear motor común de progreso.
 - [x] Crear historial de movimientos.
 - [x] Crear sistema común de deshacer.
-- [ ] Crear sistema común de reset.
-- [ ] Crear sistema común de hints.
+- [x] Crear sistema común de reset.
+- [x] Crear sistema común de hints.
 - [ ] Crear modal común de puzzle completado.
 - [ ] Crear botón Siguiente Puzzle.
 - [ ] Crear guardado automático después de movimiento.
