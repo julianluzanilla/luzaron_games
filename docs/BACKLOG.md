@@ -162,8 +162,8 @@ Crear componentes reutilizables para todos los juegos.
 - [x] Crear pausa automática al perder foco.
 - [x] Crear overlay de privacidad al perder foco.
 - [x] Crear reanudación automática al volver a primer plano.
-- [ ] Crear motor común de records.
-- [ ] Crear motor común de progreso.
+- [x] Crear motor común de records.
+- [x] Crear motor común de progreso.
 - [x] Crear historial de movimientos.
 - [x] Crear sistema común de deshacer.
 - [ ] Crear sistema común de reset.
