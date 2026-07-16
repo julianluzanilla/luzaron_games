@@ -1,6 +1,7 @@
 import type { UserSettings } from './settings'
 import type { LevelUpdateProgress } from '../core/level-catalog-types'
 import type { DownloadedPack, LocalLevel } from '../core/db-types'
+import type { AppFocusStatus } from '../games/focus-manager'
 
 export type Route =
   'home' | 'users' | 'library' | 'records' | 'settings' | 'queens' | 'sudoku' | 'wordle'
@@ -25,4 +26,5 @@ export interface AppState {
   packs: DownloadedPack[]
   selectedPackId: string | null
   selectedPackLevels: LocalLevel[]
+  appFocusStatus: AppFocusStatus
 }

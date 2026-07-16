@@ -704,3 +704,33 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+.privacy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 6, 23, 0.76);
+  backdrop-filter: blur(10px);
+}
+
+.privacy-card {
+  width: min(420px, 100%);
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  text-align: center;
+  background: var(--panel);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.privacy-card h2 {
+  margin: 8px 0 10px;
+}
+
+.privacy-card p {
+  margin-bottom: 0;
+  color: var(--muted);
+}

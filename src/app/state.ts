@@ -4,6 +4,7 @@ import type { UserSettings } from './settings'
 import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
 import type { LevelUpdateProgress } from '../core/level-catalog-types'
 import type { DownloadedPack, LocalLevel } from '../core/db-types'
+import type { AppFocusStatus } from '../games/focus-manager'
 
 const initialSettings = loadSettings()
 const initialUser = getUserById(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
@@ -22,6 +23,7 @@ let state: AppState = {
   packs: [],
   selectedPackId: null,
   selectedPackLevels: [],
+  appFocusStatus: 'active',
 }
 
 applyTheme(initialSettings)
@@ -115,6 +117,15 @@ export function setSelectedPack(packId: string | null, selectedPackLevels: Local
     ...state,
     selectedPackId: packId,
     selectedPackLevels,
+  }
+
+  notify()
+}
+
+export function setAppFocusStatus(appFocusStatus: AppFocusStatus): void {
+  state = {
+    ...state,
+    appFocusStatus,
   }
 
   notify()

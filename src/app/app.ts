@@ -7,6 +7,7 @@ import {
   setLevelUpdate,
   setPacks,
   setSelectedPack,
+  setAppFocusStatus,
 } from './state'
 import type { AppState, Route } from './types'
 import type { ThemeMode } from './settings'
@@ -22,6 +23,7 @@ import { saveCurrentSessionFromState } from '../core/session-repository'
 import { getAllPacks } from '../core/packs-repository'
 import { downloadPackById } from '../core/pack-downloader'
 import { getLevelsByPack } from '../core/levels-repository'
+import { getCurrentFocusStatus } from '../games/focus-manager'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -35,6 +37,10 @@ export function mountApp(): void {
   appRoot.addEventListener('click', handleAppClick)
   appRoot.addEventListener('change', handleAppChange)
 
+  window.addEventListener('blur', handleFocusChange)
+  window.addEventListener('focus', handleFocusChange)
+  document.addEventListener('visibilitychange', handleFocusChange)
+
   subscribe((state) => {
     renderApp(state)
     void saveCurrentSessionFromState(state)
@@ -43,6 +49,10 @@ export function mountApp(): void {
   startRouter((route) => {
     setRoute(route)
   })
+}
+
+function handleFocusChange(): void {
+  setAppFocusStatus(getCurrentFocusStatus())
 }
 
 function handleAppClick(event: MouseEvent): void {
@@ -190,6 +200,8 @@ function renderApp(state: AppState): void {
         ${renderBottomNav(state.route)}
       </div>
     </div>
+    
+    ${renderPrivacyOverlay(state)}
   `
 }
 
@@ -277,5 +289,22 @@ function renderBottomNav(route: Route): string {
         Ajustes
       </button>
     </nav>
+  `
+}
+
+function renderPrivacyOverlay(state: AppState): string {
+  if (state.appFocusStatus === 'active') return ''
+
+  return `
+    <div class="privacy-overlay" aria-live="polite">
+      <div class="privacy-card">
+        <p class="eyebrow">Pausa automática</p>
+        <h2>Juego pausado</h2>
+        <p>
+          La partida se pausó porque la app perdió el foco.
+          Al volver, se reanudará automáticamente.
+        </p>
+      </div>
+    </div>
   `
 }
