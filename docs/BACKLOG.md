@@ -168,9 +168,9 @@ Crear componentes reutilizables para todos los juegos.
 - [x] Crear sistema común de deshacer.
 - [x] Crear sistema común de reset.
 - [x] Crear sistema común de hints.
-- [ ] Crear modal común de puzzle completado.
-- [ ] Crear botón Siguiente Puzzle.
-- [ ] Crear guardado automático después de movimiento.
+- [x] Crear modal común de puzzle completado.
+- [x] Crear botón Siguiente Puzzle.
+- [x] Crear guardado automático después de movimiento.
 
 ---
 
