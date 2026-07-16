@@ -3,7 +3,7 @@ import type { AppState, AppUser, ConnectionMode, Route } from './types'
 import type { UserSettings } from './settings'
 import { CURRENT_USER_STORAGE_KEY, getUserById } from './users'
 import type { LevelUpdateProgress } from '../core/level-catalog-types'
-import type { DownloadedPack } from '../core/db-types'
+import type { DownloadedPack, LocalLevel } from '../core/db-types'
 
 const initialSettings = loadSettings()
 const initialUser = getUserById(window.localStorage.getItem(CURRENT_USER_STORAGE_KEY))
@@ -20,6 +20,8 @@ let state: AppState = {
     totalPacks: 0,
   },
   packs: [],
+  selectedPackId: null,
+  selectedPackLevels: [],
 }
 
 applyTheme(initialSettings)
@@ -103,6 +105,16 @@ export function setPacks(packs: DownloadedPack[]): void {
   state = {
     ...state,
     packs,
+  }
+
+  notify()
+}
+
+export function setSelectedPack(packId: string | null, selectedPackLevels: LocalLevel[]): void {
+  state = {
+    ...state,
+    selectedPackId: packId,
+    selectedPackLevels,
   }
 
   notify()

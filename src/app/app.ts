@@ -6,6 +6,7 @@ import {
   updateSettings,
   setLevelUpdate,
   setPacks,
+  setSelectedPack,
 } from './state'
 import type { AppState, Route } from './types'
 import type { ThemeMode } from './settings'
@@ -20,6 +21,7 @@ import { localUsers } from './users'
 import { saveCurrentSessionFromState } from '../core/session-repository'
 import { getAllPacks } from '../core/packs-repository'
 import { downloadPackById } from '../core/pack-downloader'
+import { getLevelsByPack } from '../core/levels-repository'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -45,10 +47,27 @@ export function mountApp(): void {
 
 function handleAppClick(event: MouseEvent): void {
   const target = event.target as HTMLElement
+
   const packButton = target.closest<HTMLButtonElement>('[data-action="download-pack"]')
 
   if (packButton) {
     void handleDownloadPackClick(packButton)
+    return
+  }
+
+  const selectPackButton = target.closest<HTMLButtonElement>('[data-action="select-pack"]')
+
+  if (selectPackButton) {
+    void handleSelectPackClick(selectPackButton)
+    return
+  }
+
+  const closePackSelectorButton = target.closest<HTMLButtonElement>(
+    '[data-action="close-pack-selector"]'
+  )
+
+  if (closePackSelectorButton) {
+    setSelectedPack(null, [])
     return
   }
 
@@ -93,6 +112,7 @@ async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void>
     await downloadPackById(packId)
 
     setPacks(await getAllPacks())
+    setSelectedPack(null, [])
 
     setLevelUpdate({
       mode: 'complete',
@@ -104,6 +124,7 @@ async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void>
     console.error('Pack download failed:', error)
 
     setPacks(await getAllPacks())
+    setSelectedPack(null, [])
 
     setLevelUpdate({
       mode: 'error',
@@ -112,6 +133,16 @@ async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void>
       totalPacks: 1,
     })
   }
+}
+
+async function handleSelectPackClick(button: HTMLButtonElement): Promise<void> {
+  const packId = button.dataset.packId
+
+  if (!packId) return
+
+  const levels = await getLevelsByPack(packId)
+
+  setSelectedPack(packId, levels)
 }
 
 function handleAppChange(event: Event): void {

@@ -140,13 +140,13 @@ Crear sistema de packs descargables y seleccionables.
 - [x] Crear manifest inicial de niveles.
 - [x] Crear pantalla Biblioteca.
 - [x] Mostrar packs por juego.
-- [ ] Mostrar packs por categoría/dificultad.
+- [x] Mostrar packs por categoría/dificultad.
 - [x] Mostrar estado de pack.
 - [x] Descargar pack.
 - [x] Actualizar pack.
 - [x] Guardar pack en IndexedDB.
 - [x] Leer pack desde IndexedDB.
-- [ ] Crear selector de puzzle/nivel.
+- [x] Crear selector de puzzle/nivel.
 
 ---
 
@@ -370,3 +370,4 @@ Planear crecimiento posterior.
 - [ ] Agregar exportación/importación avanzada.
 - [ ] Reemplazar screenshots provisionales por capturas finales.
 - [ ] Planear versión 1.1.
+- [ ] Agregar actualización global automática para descargar todos los packs nuevos/disponibles cuando se abra la app y esté en línea.
