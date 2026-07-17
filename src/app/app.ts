@@ -24,6 +24,11 @@ import { getAllPacks } from '../core/packs-repository'
 import { downloadPackById } from '../core/pack-downloader'
 import { getLevelsByPack } from '../core/levels-repository'
 import { getCurrentFocusStatus } from '../games/focus-manager'
+import { getLevelsByGame } from '../core/levels-repository'
+import { renderQueensScreen } from '../ui/screens/queens'
+import type { LocalLevel } from '../core/db-types'
+
+let cachedQueensLevels: LocalLevel[] = []
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -41,6 +46,8 @@ export function mountApp(): void {
   window.addEventListener('focus', handleFocusChange)
   document.addEventListener('visibilitychange', handleFocusChange)
 
+  void loadQueensLevels()
+
   subscribe((state) => {
     renderApp(state)
     void saveCurrentSessionFromState(state)
@@ -49,6 +56,11 @@ export function mountApp(): void {
   startRouter((route) => {
     setRoute(route)
   })
+}
+
+async function loadQueensLevels(): Promise<void> {
+  cachedQueensLevels = await getLevelsByGame('queens')
+  renderApp(getState())
 }
 
 function handleFocusChange(): void {
@@ -257,7 +269,7 @@ function renderScreen(route: Route): string {
       return renderSettingsScreen(getState())
 
     case 'queens':
-      return renderGamePlaceholder('queens')
+      return renderQueensScreen(cachedQueensLevels)
 
     case 'sudoku':
       return renderGamePlaceholder('sudoku')
