@@ -1,5 +1,5 @@
 import type { LocalLevel } from '../../core/db-types'
-import { applyQueensCellCycle } from '../../games/queens/queens-engine'
+import { applyQueensCellCycle, applyQueensManualX } from '../../games/queens/queens-engine'
 import { createQueensBoardState, isQueensLevel } from '../../games/queens/queens-level'
 import { renderQueensBoard } from '../../games/queens/queens-board-renderer'
 import type { QueensBoardState } from '../../games/queens/queens-types'
@@ -55,6 +55,14 @@ export function applyQueensCellClick(row: number, column: number): boolean {
   if (!activeQueensBoard) return false
 
   activeQueensBoard = applyQueensCellCycle(activeQueensBoard, row, column)
+
+  return true
+}
+
+export function applyQueensCellDragX(row: number, column: number): boolean {
+  if (!activeQueensBoard) return false
+
+  activeQueensBoard = applyQueensManualX(activeQueensBoard, row, column)
 
   return true
 }

@@ -189,8 +189,8 @@ Implementar Queens como primer juego completo.
 - [x] Crear tablero Queens responsivo.
 - [x] Renderizar regiones por color.
 - [x] Implementar ciclo de celda: vacía → X → reina → vacía.
-- [ ] Implementar clic sostenido y arrastre para X.
-- [ ] Implementar autollenado de X al colocar reina.
+- [x] Implementar clic sostenido y arrastre para X.
+- [x] Implementar autollenado de X al colocar reina.
 - [ ] Guardar cada movimiento en historial.
 - [ ] Implementar Deshacer.
 - [ ] Implementar Reset con confirmación.

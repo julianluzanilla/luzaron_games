@@ -26,7 +26,31 @@ import { downloadPackById } from '../core/pack-downloader'
 import { getLevelsByPack } from '../core/levels-repository'
 import { getCurrentFocusStatus } from '../games/focus-manager'
 import { getLevelsByGame } from '../core/levels-repository'
-import { applyQueensCellClick, renderQueensScreen } from '../ui/screens/queens'
+import {
+  applyQueensCellClick,
+  applyQueensCellDragX,
+  renderQueensScreen,
+} from '../ui/screens/queens'
+
+interface QueensPointerState {
+  isActive: boolean
+  pointerId: number | null
+  startRow: number | null
+  startColumn: number | null
+  lastRow: number | null
+  lastColumn: number | null
+  didDrag: boolean
+}
+
+let queensPointerState: QueensPointerState = {
+  isActive: false,
+  pointerId: null,
+  startRow: null,
+  startColumn: null,
+  lastRow: null,
+  lastColumn: null,
+  didDrag: false,
+}
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -39,6 +63,11 @@ const appRoot: HTMLDivElement = appRootElement
 export function mountApp(): void {
   appRoot.addEventListener('click', handleAppClick)
   appRoot.addEventListener('change', handleAppChange)
+  appRoot.addEventListener('pointerdown', handleAppPointerDown)
+  window.addEventListener('pointermove', handleAppPointerMove)
+  window.addEventListener('pointerup', handleAppPointerUp)
+  window.addEventListener('pointercancel', resetQueensPointerState)
+  window.addEventListener('blur', resetQueensPointerState)
 
   window.addEventListener('blur', handleFocusChange)
   window.addEventListener('focus', handleFocusChange)
@@ -56,6 +85,134 @@ export function mountApp(): void {
   })
 }
 
+function handleAppPointerDown(event: PointerEvent): void {
+  const cellButton = getQueensCellButtonFromTarget(event.target)
+
+  if (!cellButton) return
+
+  const position = getQueensCellPosition(cellButton)
+
+  if (!position) return
+
+  event.preventDefault()
+
+  queensPointerState = {
+    isActive: true,
+    pointerId: event.pointerId,
+    startRow: position.row,
+    startColumn: position.column,
+    lastRow: position.row,
+    lastColumn: position.column,
+    didDrag: false,
+  }
+}
+
+function handleAppPointerMove(event: PointerEvent): void {
+  if (!queensPointerState.isActive) return
+  if (queensPointerState.pointerId !== event.pointerId) return
+
+  const isMouseWithoutButtonPressed = event.pointerType === 'mouse' && event.buttons === 0
+
+  if (isMouseWithoutButtonPressed) {
+    resetQueensPointerState()
+    return
+  }
+
+  const cellButton = getQueensCellButtonFromPoint(event.clientX, event.clientY)
+
+  if (!cellButton) return
+
+  const position = getQueensCellPosition(cellButton)
+
+  if (!position) return
+
+  const isSameAsLastCell =
+    queensPointerState.lastRow === position.row && queensPointerState.lastColumn === position.column
+
+  if (isSameAsLastCell) return
+
+  const isSameAsStartCell =
+    queensPointerState.startRow === position.row &&
+    queensPointerState.startColumn === position.column
+
+  queensPointerState.lastRow = position.row
+  queensPointerState.lastColumn = position.column
+
+  if (isSameAsStartCell && !queensPointerState.didDrag) return
+
+  if (!queensPointerState.didDrag) {
+    queensPointerState.didDrag = true
+
+    if (queensPointerState.startRow !== null && queensPointerState.startColumn !== null) {
+      applyQueensCellDragX(queensPointerState.startRow, queensPointerState.startColumn)
+    }
+  }
+
+  applyQueensCellDragX(position.row, position.column)
+  renderApp(getState())
+}
+
+function handleAppPointerUp(event: PointerEvent): void {
+  if (!queensPointerState.isActive) return
+  if (queensPointerState.pointerId !== event.pointerId) return
+
+  const wasDrag = queensPointerState.didDrag
+  const startRow = queensPointerState.startRow
+  const startColumn = queensPointerState.startColumn
+
+  resetQueensPointerState()
+
+  if (wasDrag) {
+    renderApp(getState())
+    return
+  }
+
+  if (startRow !== null && startColumn !== null) {
+    applyQueensCellClick(startRow, startColumn)
+    renderApp(getState())
+  }
+}
+
+function resetQueensPointerState(): void {
+  queensPointerState = {
+    isActive: false,
+    pointerId: null,
+    startRow: null,
+    startColumn: null,
+    lastRow: null,
+    lastColumn: null,
+    didDrag: false,
+  }
+}
+
+function getQueensCellButtonFromTarget(target: EventTarget | null): HTMLButtonElement | null {
+  if (!(target instanceof HTMLElement)) return null
+
+  return target.closest<HTMLButtonElement>('[data-action="queens-cell"]')
+}
+
+function getQueensCellButtonFromPoint(clientX: number, clientY: number): HTMLButtonElement | null {
+  const element = document.elementFromPoint(clientX, clientY)
+
+  if (!(element instanceof HTMLElement)) return null
+
+  return element.closest<HTMLButtonElement>('[data-action="queens-cell"]')
+}
+
+function getQueensCellPosition(
+  cellButton: HTMLButtonElement
+): { row: number; column: number } | null {
+  const row = Number(cellButton.dataset.row)
+  const column = Number(cellButton.dataset.column)
+
+  if (!Number.isInteger(row) || !Number.isInteger(column)) return null
+
+  return {
+    row,
+    column,
+  }
+}
+
 async function loadQueensLevels(): Promise<void> {
   setQueensLevels(await getLevelsByGame('queens'))
 }
@@ -66,20 +223,6 @@ function handleFocusChange(): void {
 
 function handleAppClick(event: MouseEvent): void {
   const target = event.target as HTMLElement
-
-  const queensCellButton = target.closest<HTMLButtonElement>('[data-action="queens-cell-click"]')
-
-  if (queensCellButton) {
-    const row = Number(queensCellButton.dataset.row)
-    const column = Number(queensCellButton.dataset.column)
-
-    if (Number.isInteger(row) && Number.isInteger(column)) {
-      applyQueensCellClick(row, column)
-      renderApp(getState())
-    }
-
-    return
-  }
 
   const packButton = target.closest<HTMLButtonElement>('[data-action="download-pack"]')
 

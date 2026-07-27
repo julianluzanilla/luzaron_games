@@ -1,4 +1,5 @@
 export type QueensCellValue = 'empty' | 'x' | 'queen'
+export type QueensXSource = 'manual' | 'auto'
 
 export interface QueensPosition {
   row: number
@@ -19,6 +20,7 @@ export interface QueensCell {
   column: number
   regionId: string
   value: QueensCellValue
+  xSource?: QueensXSource
 }
 
 export interface QueensBoardState {
