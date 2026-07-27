@@ -43,17 +43,27 @@ export function parseQueensLevelData(level: LocalLevel): QueensLevelData | null 
   if (typeof raw.number !== 'number') return null
   if (typeof raw.size !== 'number') return null
   if (typeof raw.title !== 'string') return null
-  if (!isValidRegions(raw.regions, raw.size)) return null
-  if (!isValidSolution(raw.solution, raw.size)) return null
+
+  const regions = isValidRegions(raw.regions, raw.size)
+    ? raw.regions
+    : createDefaultRegions(raw.size)
+
+  const solution = isValidSolution(raw.solution, raw.size) ? raw.solution : []
 
   return {
     id: raw.id,
     number: raw.number,
     size: raw.size,
     title: raw.title,
-    regions: raw.regions,
-    solution: raw.solution,
+    regions,
+    solution,
   }
+}
+
+function createDefaultRegions(size: number): string[][] {
+  return Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, () => String.fromCharCode(97 + row))
+  )
 }
 
 function isValidRegions(regions: unknown, size: number): regions is string[][] {
@@ -70,7 +80,6 @@ function isValidRegions(regions: unknown, size: number): regions is string[][] {
 
 function isValidSolution(solution: unknown, size: number): solution is QueensPosition[] {
   if (!Array.isArray(solution)) return false
-  if (solution.length !== size) return false
 
   return solution.every((position) => {
     if (typeof position !== 'object' || position === null) return false

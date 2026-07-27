@@ -1,6 +1,11 @@
 import type { LocalLevel } from '../../core/db-types'
+import { applyQueensCellCycle } from '../../games/queens/queens-engine'
 import { createQueensBoardState, isQueensLevel } from '../../games/queens/queens-level'
 import { renderQueensBoard } from '../../games/queens/queens-board-renderer'
+import type { QueensBoardState } from '../../games/queens/queens-types'
+
+let activeQueensBoard: QueensBoardState | null = null
+let activeQueensLevelId: string | null = null
 
 export function renderQueensScreen(levels: LocalLevel[]): string {
   const queensLevels = levels.filter(isQueensLevel)
@@ -20,7 +25,7 @@ export function renderQueensScreen(levels: LocalLevel[]): string {
     `
   }
 
-  const board = createQueensBoardState(firstLevel)
+  const board = getActiveQueensBoard(firstLevel)
 
   return `
     <section class="screen game-screen">
@@ -29,7 +34,7 @@ export function renderQueensScreen(levels: LocalLevel[]): string {
           <p class="eyebrow">Queens</p>
           <h1>${board.title}</h1>
           <p>
-            Primer tablero visual. En el siguiente bloque activaremos los movimientos.
+            Haz clic en una celda para alternar entre vacío, X y reina.
           </p>
         </div>
 
@@ -44,4 +49,21 @@ export function renderQueensScreen(levels: LocalLevel[]): string {
       </div>
     </section>
   `
+}
+
+export function applyQueensCellClick(row: number, column: number): boolean {
+  if (!activeQueensBoard) return false
+
+  activeQueensBoard = applyQueensCellCycle(activeQueensBoard, row, column)
+
+  return true
+}
+
+function getActiveQueensBoard(level: LocalLevel): QueensBoardState {
+  if (!activeQueensBoard || activeQueensLevelId !== level.id) {
+    activeQueensBoard = createQueensBoardState(level)
+    activeQueensLevelId = level.id
+  }
+
+  return activeQueensBoard
 }

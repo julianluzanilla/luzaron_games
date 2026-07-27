@@ -8,6 +8,7 @@ import {
   setPacks,
   setSelectedPack,
   setAppFocusStatus,
+  setQueensLevels,
 } from './state'
 import type { AppState, Route } from './types'
 import type { ThemeMode } from './settings'
@@ -25,10 +26,7 @@ import { downloadPackById } from '../core/pack-downloader'
 import { getLevelsByPack } from '../core/levels-repository'
 import { getCurrentFocusStatus } from '../games/focus-manager'
 import { getLevelsByGame } from '../core/levels-repository'
-import { renderQueensScreen } from '../ui/screens/queens'
-import type { LocalLevel } from '../core/db-types'
-
-let cachedQueensLevels: LocalLevel[] = []
+import { applyQueensCellClick, renderQueensScreen } from '../ui/screens/queens'
 
 const appRootElement = document.querySelector<HTMLDivElement>('#app')
 
@@ -59,8 +57,7 @@ export function mountApp(): void {
 }
 
 async function loadQueensLevels(): Promise<void> {
-  cachedQueensLevels = await getLevelsByGame('queens')
-  renderApp(getState())
+  setQueensLevels(await getLevelsByGame('queens'))
 }
 
 function handleFocusChange(): void {
@@ -69,6 +66,20 @@ function handleFocusChange(): void {
 
 function handleAppClick(event: MouseEvent): void {
   const target = event.target as HTMLElement
+
+  const queensCellButton = target.closest<HTMLButtonElement>('[data-action="queens-cell-click"]')
+
+  if (queensCellButton) {
+    const row = Number(queensCellButton.dataset.row)
+    const column = Number(queensCellButton.dataset.column)
+
+    if (Number.isInteger(row) && Number.isInteger(column)) {
+      applyQueensCellClick(row, column)
+      renderApp(getState())
+    }
+
+    return
+  }
 
   const packButton = target.closest<HTMLButtonElement>('[data-action="download-pack"]')
 
@@ -135,6 +146,7 @@ async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void>
 
     setPacks(await getAllPacks())
     setSelectedPack(null, [])
+    await loadQueensLevels()
 
     setLevelUpdate({
       mode: 'complete',
@@ -147,6 +159,7 @@ async function handleDownloadPackClick(button: HTMLButtonElement): Promise<void>
 
     setPacks(await getAllPacks())
     setSelectedPack(null, [])
+    await loadQueensLevels()
 
     setLevelUpdate({
       mode: 'error',
@@ -269,7 +282,7 @@ function renderScreen(route: Route): string {
       return renderSettingsScreen(getState())
 
     case 'queens':
-      return renderQueensScreen(cachedQueensLevels)
+      return renderQueensScreen(getState().queensLevels)
 
     case 'sudoku':
       return renderGamePlaceholder('sudoku')

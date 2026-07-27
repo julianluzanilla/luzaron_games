@@ -24,6 +24,7 @@ let state: AppState = {
   selectedPackId: null,
   selectedPackLevels: [],
   appFocusStatus: 'active',
+  queensLevels: [],
 }
 
 applyTheme(initialSettings)
@@ -126,6 +127,15 @@ export function setAppFocusStatus(appFocusStatus: AppFocusStatus): void {
   state = {
     ...state,
     appFocusStatus,
+  }
+
+  notify()
+}
+
+export function setQueensLevels(queensLevels: LocalLevel[]): void {
+  state = {
+    ...state,
+    queensLevels,
   }
 
   notify()

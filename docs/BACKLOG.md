@@ -184,11 +184,11 @@ Implementar Queens como primer juego completo.
 
 - [ ] Definir formato final de nivel Queens.
 - [ ] Crear validador de nivel Queens.
-- [ ] Crear pack de prueba Queens 7x7.
-- [ ] Crear pack de prueba Queens 8x8.
-- [ ] Crear tablero Queens responsivo.
-- [ ] Renderizar regiones por color.
-- [ ] Implementar ciclo de celda: vacía → X → reina → vacía.
+- [x] Crear pack de prueba Queens 7x7.
+- [x] Crear pack de prueba Queens 8x8.
+- [x] Crear tablero Queens responsivo.
+- [x] Renderizar regiones por color.
+- [x] Implementar ciclo de celda: vacía → X → reina → vacía.
 - [ ] Implementar clic sostenido y arrastre para X.
 - [ ] Implementar autollenado de X al colocar reina.
 - [ ] Guardar cada movimiento en historial.

@@ -16,12 +16,12 @@ function renderQueensCell(cell: QueensCell): string {
   return `
     <button
       type="button"
-      class="queens-cell region-${normalizeRegionClass(cell.regionId)}"
+      class="queens-cell region-${normalizeRegionClass(cell.regionId)} cell-${cell.value}"
+      data-action="queens-cell-click"
       data-row="${cell.row}"
       data-column="${cell.column}"
       data-region="${cell.regionId}"
       aria-label="Fila ${cell.row + 1}, columna ${cell.column + 1}"
-      disabled
     >
       ${renderCellValue(cell)}
     </button>

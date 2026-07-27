@@ -27,4 +27,5 @@ export interface AppState {
   selectedPackId: string | null
   selectedPackLevels: LocalLevel[]
   appFocusStatus: AppFocusStatus
+  queensLevels: LocalLevel[]
 }
