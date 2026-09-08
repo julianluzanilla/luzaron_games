@@ -3,16 +3,34 @@
 /* ---------------------------------------------------------------------- */
 
 :root {
-  --color-ink: #14213d;
-  --color-ink-soft: #1f2e52;
-  --color-parchment: #f6efe3;
-  --color-parchment-dim: #ece2d0;
-  --color-ember: #e4572e;
-  --color-ember-dark: #c8431d;
-  --color-pine: #2f6f4e;
-  --color-slate: #5b6472;
-  --color-line: rgba(20, 33, 61, 0.14);
-  --color-line-strong: rgba(20, 33, 61, 0.28);
+  --color-bg: #0b1220;
+  --color-panel: #182238;
+  --color-panel-line: #2a3752;
+  --color-ink: #eef2ff;
+  --color-ink-dim: #9aa7c2;
+  --color-board-line: #0a0f1c;
+
+  --color-ember: #ff7a1a;
+  --color-ember-dark: #d9600a;
+  --color-crimson: #e5384d;
+  --color-crimson-dark: #c22239;
+  --color-azure: #2f8fe0;
+  --color-azure-dark: #1f6fb8;
+  --color-pine: #2fbf71;
+
+  /* Vivid, evenly-distinguishable region palette. */
+  --region-0: #f2c230;
+  --region-1: #7c5cfc;
+  --region-2: #e23d6b;
+  --region-3: #2fbf71;
+  --region-4: #2f8fe0;
+  --region-5: #c9622b;
+  --region-6: #ff7a1a;
+  --region-7: #e24aa0;
+  --region-8: #8a8f98;
+  --region-9: #22c1c3;
+  --region-10: #b5121b;
+  --region-11: #4c6fe0;
 
   --font-display: 'Fraunces', ui-serif, Georgia, serif;
   --font-ui: 'Manrope', ui-sans-serif, system-ui, sans-serif;
@@ -20,7 +38,7 @@
   --radius-md: 12px;
   --radius-lg: 20px;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * {
@@ -35,8 +53,8 @@ body {
 
 body {
   min-height: 100dvh;
-  background: var(--color-ink);
-  background-image: radial-gradient(circle at 20% -10%, #223460 0%, var(--color-ink) 55%);
+  background: var(--color-bg);
+  background-image: radial-gradient(circle at 18% -10%, #16223f 0%, var(--color-bg) 55%);
   font-family: var(--font-ui);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
@@ -60,10 +78,8 @@ button {
   width: 100%;
   max-width: 640px;
   min-height: 100dvh;
-  background: var(--color-parchment);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.35);
 }
 
 .app-header {
@@ -81,7 +97,7 @@ button {
 }
 
 .brand-mark {
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1;
   color: var(--color-ember);
 }
@@ -98,19 +114,20 @@ button {
   margin: 2px 0 0;
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: var(--color-slate);
+  color: var(--color-ink-dim);
 }
 
 .timer {
-  background: var(--color-ink);
-  color: var(--color-parchment);
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-line);
+  color: var(--color-ink);
+  padding: 9px 18px;
+  border-radius: 999px;
   font-family: var(--font-display);
 }
 
 .timer-value {
-  font-size: 20px;
+  font-size: 19px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
@@ -129,9 +146,9 @@ button {
 
 .size-chip {
   flex: 0 0 auto;
-  border: 1px solid var(--color-line-strong);
-  background: transparent;
-  color: var(--color-ink);
+  border: 1px solid var(--color-panel-line);
+  background: var(--color-panel);
+  color: var(--color-ink-dim);
   padding: 7px 14px;
   border-radius: 999px;
   font-size: 13px;
@@ -144,13 +161,14 @@ button {
 }
 
 .size-chip:hover {
-  background: var(--color-parchment-dim);
+  border-color: var(--color-ember);
+  color: var(--color-ink);
 }
 
 .size-chip.active {
-  background: var(--color-ink);
-  border-color: var(--color-ink);
-  color: var(--color-parchment);
+  background: var(--color-ember);
+  border-color: var(--color-ember);
+  color: #1a0e03;
 }
 
 .size-chip:active {
@@ -165,12 +183,12 @@ button {
   margin: auto;
   padding: 40px 20px;
   text-align: center;
-  color: var(--color-slate);
+  color: var(--color-ink-dim);
   font-size: 15px;
 }
 
 .state-error {
-  color: var(--color-ember-dark);
+  color: var(--color-crimson);
 }
 
 .puzzle-meta {
@@ -179,7 +197,7 @@ button {
   justify-content: space-between;
   padding: 0 20px;
   font-size: 13px;
-  color: var(--color-slate);
+  color: var(--color-ink-dim);
 }
 
 .best-time {
@@ -202,59 +220,72 @@ button {
   display: grid;
   grid-template-columns: repeat(var(--queens-size), 1fr);
   grid-template-rows: repeat(var(--queens-size), 1fr);
-  width: min(92vw, 480px);
+  width: min(94vw, 480px);
   aspect-ratio: 1 / 1;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 3px solid var(--color-ink);
-  box-shadow: 0 10px 30px rgba(20, 33, 61, 0.25);
+  border: 5px solid var(--color-board-line);
+  background: var(--color-board-line);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
 }
 
 .queens-cell {
   position: relative;
-  border: 1px solid rgba(20, 33, 61, 0.18);
-  background: var(--region-color, var(--color-parchment-dim));
+  border-right: 1px solid rgba(10, 15, 28, 0.35);
+  border-bottom: 1px solid rgba(10, 15, 28, 0.35);
+  background: var(--region-color, var(--color-panel));
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  margin: 0;
   cursor: pointer;
-  font-size: clamp(14px, 4.2vw, 26px);
+  font-size: clamp(20px, 7.5vw, 42px);
   line-height: 1;
-  color: var(--color-ink);
+  font-weight: 800;
+  color: #12141a;
   touch-action: none;
   user-select: none;
   transition: filter 0.1s ease;
 }
 
 .queens-cell:active {
-  filter: brightness(0.94);
+  filter: brightness(0.92);
+}
+
+/* Bold border wherever two different regions meet, so each colour reads as
+   its own bordered shape rather than blending into the grid lines. */
+.queens-cell.edge-region-right {
+  border-right: 3px solid var(--color-board-line);
+}
+
+.queens-cell.edge-region-bottom {
+  border-bottom: 3px solid var(--color-board-line);
 }
 
 .queens-cell.cell-x {
-  color: rgba(20, 33, 61, 0.55);
-  font-weight: 700;
+  color: rgba(18, 20, 26, 0.62);
 }
 
 .queens-cell.cell-x.x-auto {
-  color: rgba(20, 33, 61, 0.32);
+  color: rgba(18, 20, 26, 0.4);
 }
 
 .queens-cell.cell-queen {
-  color: var(--color-ink);
-  font-weight: 700;
+  color: #12141a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .queens-cell.cell-conflict {
   color: #fff;
-  background: var(--color-ember) !important;
+  background: var(--color-crimson) !important;
 }
 
 .queens-cell.cell-conflict::after {
   content: '';
   position: absolute;
-  inset: 3px;
-  border: 2px solid rgba(255, 255, 255, 0.8);
+  inset: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
   border-radius: 4px;
   pointer-events: none;
 }
@@ -262,9 +293,10 @@ button {
 .queens-cell.hint-target::after {
   content: '';
   position: absolute;
-  inset: 2px;
+  inset: 3px;
   border-radius: 6px;
   border: 3px solid var(--color-ember);
+  box-shadow: 0 0 0 2px rgba(255, 122, 26, 0.35);
   animation: hint-pulse 1.1s ease-in-out infinite;
   pointer-events: none;
 }
@@ -272,49 +304,49 @@ button {
 @keyframes hint-pulse {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 0.45;
   }
   50% {
     opacity: 1;
   }
 }
 
-/* Region palette: evenly spaced hues for clear at-a-glance distinction. */
+/* Vivid, flat region palette. */
 .region-0 {
-  --region-color: hsl(6 62% 76%);
+  --region-color: var(--region-0);
 }
 .region-1 {
-  --region-color: hsl(38 68% 74%);
+  --region-color: var(--region-1);
 }
 .region-2 {
-  --region-color: hsl(60 55% 72%);
+  --region-color: var(--region-2);
 }
 .region-3 {
-  --region-color: hsl(94 42% 70%);
+  --region-color: var(--region-3);
 }
 .region-4 {
-  --region-color: hsl(150 38% 68%);
+  --region-color: var(--region-4);
 }
 .region-5 {
-  --region-color: hsl(174 45% 68%);
+  --region-color: var(--region-5);
 }
 .region-6 {
-  --region-color: hsl(198 55% 74%);
+  --region-color: var(--region-6);
 }
 .region-7 {
-  --region-color: hsl(222 55% 80%);
+  --region-color: var(--region-7);
 }
 .region-8 {
-  --region-color: hsl(256 48% 80%);
+  --region-color: var(--region-8);
 }
 .region-9 {
-  --region-color: hsl(286 42% 78%);
+  --region-color: var(--region-9);
 }
 .region-10 {
-  --region-color: hsl(320 50% 78%);
+  --region-color: var(--region-10);
 }
 .region-11 {
-  --region-color: hsl(344 58% 78%);
+  --region-color: var(--region-11);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -324,11 +356,11 @@ button {
 .hint-banner {
   margin: 0 20px 8px;
   padding: 10px 14px;
-  background: #fff4ea;
-  border: 1px solid rgba(228, 87, 46, 0.35);
+  background: rgba(255, 122, 26, 0.14);
+  border: 1px solid rgba(255, 122, 26, 0.4);
   border-radius: var(--radius-md);
   font-size: 14px;
-  color: var(--color-ember-dark);
+  color: #ffb37a;
 }
 
 .controls {
@@ -340,32 +372,51 @@ button {
 
 .control-button {
   flex: 1;
-  padding: 13px 10px;
+  padding: 14px 10px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-line-strong);
-  background: #fff;
+  border: none;
+  background: var(--color-panel);
   color: var(--color-ink);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition:
     transform 0.1s ease,
-    opacity 0.15s ease;
+    opacity 0.15s ease,
+    filter 0.1s ease;
 }
 
 .control-button:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
+}
+
+.control-button:not(:disabled):hover {
+  filter: brightness(1.08);
 }
 
 .control-button:not(:disabled):active {
   transform: scale(0.97);
 }
 
-.control-button-primary {
+[data-action='undo'] {
   background: var(--color-ember);
-  border-color: var(--color-ember);
+  color: #1a0e03;
+}
+
+[data-action='request-reset'] {
+  background: var(--color-crimson);
   color: #fff;
+}
+
+[data-action='hint'] {
+  background: var(--color-azure);
+  color: #fff;
+}
+
+.control-button-primary {
+  background: var(--color-pine);
+  color: #04180d;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -375,7 +426,7 @@ button {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 33, 61, 0.55);
+  background: rgba(4, 7, 15, 0.72);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -392,20 +443,22 @@ button {
 .modal-card {
   width: 100%;
   max-width: 380px;
-  background: var(--color-parchment);
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-line);
   border-radius: var(--radius-lg);
   padding: 26px 24px 22px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
 }
 
 .modal-card h2 {
   font-family: var(--font-display);
   margin: 4px 0 8px;
   font-size: 22px;
+  color: var(--color-ink);
 }
 
 .modal-card p {
-  color: var(--color-slate);
+  color: var(--color-ink-dim);
   font-size: 14px;
   margin: 0 0 6px;
 }
@@ -430,14 +483,14 @@ button {
 
 .modal-stats dt {
   font-size: 12px;
-  color: var(--color-slate);
+  color: var(--color-ink-dim);
   margin-bottom: 4px;
 }
 
 .modal-stats dd {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--color-ink);
 }
@@ -451,7 +504,7 @@ button {
 .pause-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 33, 61, 0.92);
+  background: rgba(4, 7, 15, 0.94);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -463,7 +516,7 @@ button {
 .pause-card {
   max-width: 320px;
   text-align: center;
-  color: var(--color-parchment);
+  color: var(--color-ink);
 }
 
 .pause-card h2 {
@@ -476,7 +529,7 @@ button {
 }
 
 .pause-card p:last-child {
-  color: rgba(246, 239, 227, 0.75);
+  color: var(--color-ink-dim);
   font-size: 14px;
 }
 
