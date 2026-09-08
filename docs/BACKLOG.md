@@ -5,6 +5,14 @@ Este backlog organiza el desarrollo por capítulos. Cada tarea debe marcarse com
 - [ ] Pendiente
 - [x] Terminado
 
+> **Nota (reinicio del proyecto):** el código se reescribió desde cero para enfocarse
+> primero en dejar Queens completamente jugable. Los Capítulos 1–7 (usuarios, IndexedDB,
+> packs descargables, sincronización, motores genéricos) describen el plan original y
+> siguen siendo la hoja de ruta a futuro, pero ese código ya no está en el proyecto —
+> se eliminó junto con el resto del scaffolding que nunca llegó a usarse. Los checks de
+> esos capítulos reflejan el plan aprobado, no el estado actual del repo. El Capítulo 8
+> sí refleja el estado real después del reinicio.
+
 ---
 
 # Capítulo 1 — Planeación de la versión inicial
@@ -182,26 +190,30 @@ Implementar Queens como primer juego completo.
 
 ## Tareas
 
-- [ ] Definir formato final de nivel Queens.
-- [ ] Crear validador de nivel Queens.
-- [x] Crear pack de prueba Queens 7x7.
-- [x] Crear pack de prueba Queens 8x8.
+- [x] Definir formato final de nivel Queens. (`StoredQueensPuzzle`: `regionOf` + `solution`)
+- [x] Crear validador de nivel Queens. (solver con garantía de solución única, `queens-solver.ts`)
+- [x] Crear generador automático de puzzles Queens. (`queens-generator.ts` + `scripts/generate-queens-pool.ts`)
+- [x] Crear pack de prueba Queens 7x7. (50 puzzles reales, no placeholders)
+- [x] Crear pack de prueba Queens 8x8. (50 puzzles reales)
+- [x] Generar bancos para 5x5, 6x6, 9x9, 10x10, 11x11.
+- [ ] Generar banco para 12x12 (generación lenta, pendiente correr más tiempo).
 - [x] Crear tablero Queens responsivo.
 - [x] Renderizar regiones por color.
 - [x] Implementar ciclo de celda: vacía → X → reina → vacía.
 - [x] Implementar clic sostenido y arrastre para X.
 - [x] Implementar autollenado de X al colocar reina.
-- [ ] Guardar cada movimiento en historial.
-- [ ] Implementar Deshacer.
-- [ ] Implementar Reset con confirmación.
-- [ ] Implementar Hint.
-- [ ] Implementar validación de victoria.
-- [ ] Implementar modal de completado.
-- [ ] Implementar Siguiente Puzzle.
-- [ ] Guardar record local.
+- [x] Guardar cada movimiento en historial.
+- [x] Implementar Deshacer.
+- [x] Implementar Reset con confirmación.
+- [x] Implementar Hint (con niveles: fila → columna → región → celda exacta).
+- [x] Implementar validación de victoria.
+- [x] Implementar modal de completado.
+- [x] Implementar Siguiente Puzzle.
+- [x] Guardar mejor tiempo local por tamaño (localStorage).
+- [ ] Guardar historial completo de records (solo se guarda el mejor tiempo por ahora).
 - [ ] Probar en desktop.
 - [ ] Probar en iPhone.
-- [ ] Probar offline.
+- [ ] Probar offline (el service worker se desactivó temporalmente durante este reinicio).
 
 ---
 

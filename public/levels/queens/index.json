@@ -1,0 +1,32 @@
+{
+  "sizes": [
+    {
+      "size": 5,
+      "count": 14
+    },
+    {
+      "size": 6,
+      "count": 50
+    },
+    {
+      "size": 7,
+      "count": 50
+    },
+    {
+      "size": 8,
+      "count": 50
+    },
+    {
+      "size": 9,
+      "count": 50
+    },
+    {
+      "size": 10,
+      "count": 20
+    },
+    {
+      "size": 11,
+      "count": 10
+    }
+  ]
+}

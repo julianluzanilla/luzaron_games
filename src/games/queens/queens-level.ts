@@ -1,98 +1,44 @@
-import type { LocalLevel } from '../../core/db-types'
-import type { QueensBoardState, QueensCell, QueensLevelData, QueensPosition } from './queens-types'
+import type { QueensBoardState, QueensCell, QueensPosition } from './queens-types'
 
-export function isQueensLevel(level: LocalLevel): boolean {
-  return level.gameId === 'queens' && parseQueensLevelData(level) !== null
+export interface StoredQueensPuzzle {
+  id: string
+  size: number
+  /** regionOf[row][column] = region id (0..size-1) */
+  regionOf: number[][]
+  /** solution[row] = column of the queen in that row */
+  solution: number[]
 }
 
-export function createQueensBoardState(level: LocalLevel): QueensBoardState {
-  const data = parseQueensLevelData(level)
+export interface StoredQueensPack {
+  size: number
+  generatedAt: string
+  puzzles: StoredQueensPuzzle[]
+}
 
-  if (!data) {
-    throw new Error(`Invalid Queens level: ${level.id}`)
-  }
+export function createBoardStateFromPuzzle(
+  puzzle: StoredQueensPuzzle,
+  puzzleNumber: number
+): QueensBoardState {
+  const { size } = puzzle
 
-  const cells: QueensCell[][] = Array.from({ length: data.size }, (_, row) =>
-    Array.from({ length: data.size }, (_, column) => ({
+  const cells: QueensCell[][] = Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) => ({
       row,
       column,
-      regionId: data.regions[row]?.[column] ?? `region-${row}`,
+      regionId: String(puzzle.regionOf[row][column]),
       value: 'empty',
     }))
   )
 
+  const solution: QueensPosition[] = puzzle.solution.map((column, row) => ({ row, column }))
+
   return {
-    levelId: data.id,
-    size: data.size,
-    title: data.title,
+    levelId: puzzle.id,
+    size,
+    title: `Queens ${size}x${size} · #${puzzleNumber}`,
     cells,
-    solution: data.solution,
+    solution,
     hintsUsed: 0,
     isCompleted: false,
   }
-}
-
-export function parseQueensLevelData(level: LocalLevel): QueensLevelData | null {
-  const data = level.data
-
-  if (typeof data !== 'object' || data === null) return null
-
-  const raw = data as Partial<QueensLevelData>
-
-  if (typeof raw.id !== 'string') return null
-  if (typeof raw.number !== 'number') return null
-  if (typeof raw.size !== 'number') return null
-  if (typeof raw.title !== 'string') return null
-
-  const regions = isValidRegions(raw.regions, raw.size)
-    ? raw.regions
-    : createDefaultRegions(raw.size)
-
-  const solution = isValidSolution(raw.solution, raw.size) ? raw.solution : []
-
-  return {
-    id: raw.id,
-    number: raw.number,
-    size: raw.size,
-    title: raw.title,
-    regions,
-    solution,
-  }
-}
-
-function createDefaultRegions(size: number): string[][] {
-  return Array.from({ length: size }, (_, row) =>
-    Array.from({ length: size }, () => String.fromCharCode(97 + row))
-  )
-}
-
-function isValidRegions(regions: unknown, size: number): regions is string[][] {
-  if (!Array.isArray(regions)) return false
-  if (regions.length !== size) return false
-
-  return regions.every((row) => {
-    if (!Array.isArray(row)) return false
-    if (row.length !== size) return false
-
-    return row.every((cell) => typeof cell === 'string' && cell.length > 0)
-  })
-}
-
-function isValidSolution(solution: unknown, size: number): solution is QueensPosition[] {
-  if (!Array.isArray(solution)) return false
-
-  return solution.every((position) => {
-    if (typeof position !== 'object' || position === null) return false
-
-    const candidate = position as Partial<QueensPosition>
-
-    return (
-      typeof candidate.row === 'number' &&
-      typeof candidate.column === 'number' &&
-      candidate.row >= 0 &&
-      candidate.row < size &&
-      candidate.column >= 0 &&
-      candidate.column < size
-    )
-  })
 }

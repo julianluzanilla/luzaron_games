@@ -8,11 +8,13 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "pool:queens": "tsx scripts/generate-queens-pool.ts"
   },
   "devDependencies": {
     "prettier": "^3.9.4",
     "sharp": "^0.35.2",
+    "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "vite": "^8.1.0"
   },
