@@ -63,9 +63,26 @@ function regionBoundaryClasses(cell: QueensCell, board: QueensBoardState): strin
   return classes
 }
 
+const QUEEN_ICON = `
+  <svg class="cell-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <rect x="3" y="13" width="18" height="6" rx="1" />
+    <polygon points="3,13 5.5,5 8.5,11 12,3 15.5,11 18.5,5 21,13" />
+    <circle cx="5.5" cy="5" r="1.6" />
+    <circle cx="12" cy="3" r="1.8" />
+    <circle cx="18.5" cy="5" r="1.6" />
+  </svg>
+`
+
+const X_ICON = `
+  <svg class="cell-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" />
+    <line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" />
+  </svg>
+`
+
 function renderCellValue(cell: QueensCell): string {
-  if (cell.value === 'queen') return '♕'
-  if (cell.value === 'x') return '×'
+  if (cell.value === 'queen') return QUEEN_ICON
+  if (cell.value === 'x') return X_ICON
 
   return ''
 }

@@ -13,6 +13,19 @@ const BEST_TIME_PREFIX = 'luzaron-queens-best-v1:'
 const LAST_SIZE_KEY = 'luzaron-queens-last-size-v1'
 const MAX_HISTORY = 200
 
+interface GameEntry {
+  id: string
+  label: string
+  available: boolean
+}
+
+const GAMES: GameEntry[] = [
+  { id: 'queens', label: 'Queens', available: true },
+  { id: 'sudoku', label: 'Sudoku', available: false },
+  { id: 'wordle', label: 'Wordle', available: false },
+  { id: 'mahjong', label: 'Mahjong Solitaire', available: false },
+]
+
 interface AppState {
   availableSizes: PoolSizeEntry[]
   size: number
@@ -26,6 +39,8 @@ interface AppState {
   elapsedMs: number
   timerRunning: boolean
   isWindowFocused: boolean
+  /** True only when losing focus interrupted a puzzle whose timer was actively running. */
+  pausedByBlur: boolean
   isCompleted: boolean
   isLoading: boolean
   errorMessage: string | null
@@ -45,6 +60,7 @@ const state: AppState = {
   elapsedMs: 0,
   timerRunning: false,
   isWindowFocused: document.hasFocus(),
+  pausedByBlur: false,
   isCompleted: false,
   isLoading: true,
   errorMessage: null,
@@ -188,9 +204,14 @@ function handleFocusChange(): void {
   state.isWindowFocused = isFocused
 
   if (!isFocused) {
+    // Only treat this as an interruption worth pausing for if a puzzle's
+    // timer was genuinely running (an active session) — not on every
+    // window/tab switch regardless of what's on screen.
+    state.pausedByBlur = state.timerRunning
     pauseTimer()
-  } else if (!state.isCompleted && state.board) {
-    startTimer()
+  } else if (state.pausedByBlur) {
+    state.pausedByBlur = false
+    if (!state.isCompleted && state.board) startTimer()
   }
 
   render()
@@ -465,12 +486,12 @@ function renderTimerOnly(): void {
 function render(justWonWithBest = false): void {
   root.innerHTML = `
     <div class="app-shell">
-      ${renderHeader()}
+      ${renderTopNav()}
       ${renderMain()}
     </div>
     ${state.pendingReset ? renderResetConfirm() : ''}
     ${state.isCompleted ? renderCompletionModal(justWonWithBest) : ''}
-    ${!state.isWindowFocused && state.board && !state.isCompleted ? renderPauseOverlay() : ''}
+    ${state.pausedByBlur ? renderPauseOverlay() : ''}
   `
 
   applyHintHighlight()
@@ -487,7 +508,39 @@ function applyHintHighlight(): void {
   cell?.classList.add('hint-target')
 }
 
-function renderHeader(): string {
+function renderTopNav(): string {
+  const tabs = GAMES.map(
+    (game) => `
+      <button
+        type="button"
+        class="game-tab ${game.id === 'queens' ? 'active' : ''}"
+        data-action="select-game"
+        data-game="${game.id}"
+        ${game.available ? '' : 'disabled'}
+      >
+        <span>${game.label}</span>
+        ${game.available ? '' : '<span class="game-tab-badge">Pronto</span>'}
+      </button>
+    `
+  ).join('')
+
+  return `
+    <header class="app-header">
+      <span class="brand-mark" aria-hidden="true">♛</span>
+      <nav class="game-nav" aria-label="Selector de juego">${tabs}</nav>
+    </header>
+  `
+}
+
+function renderMain(): string {
+  if (state.errorMessage) {
+    return `<div class="state-message state-error">${state.errorMessage}</div>`
+  }
+
+  if (state.isLoading || !state.board) {
+    return `<div class="state-message">Generando tablero…</div>`
+  }
+
   const sizeChips = state.availableSizes
     .map(
       (entry) => `
@@ -502,57 +555,41 @@ function renderHeader(): string {
     .join('')
 
   return `
-    <header class="app-header">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true">♛</span>
-        <div>
-          <p class="brand-title">Queens</p>
-          <p class="brand-subtitle">Luzaron Games</p>
+    <div class="game-area">
+      <div class="game-area-header">
+        <div class="timer" aria-label="Tiempo transcurrido">
+          <span aria-hidden="true">♛</span>
+          <span class="timer-value" data-timer>${formatTime(state.elapsedMs)}</span>
+        </div>
+        <div class="puzzle-meta">
+          <span>Puzzle ${state.puzzleNumber} de ${state.puzzleCount}</span>
+          ${renderBestTime()}
         </div>
       </div>
 
-      <div class="timer" aria-label="Tiempo transcurrido">
-        <span class="timer-value" data-timer>${formatTime(state.elapsedMs)}</span>
+      <div class="board-frame">
+        <div class="board-stage">
+          ${renderQueensBoard(state.board)}
+        </div>
       </div>
-    </header>
 
-    <nav class="size-selector" aria-label="Tamaño del tablero">
-      ${sizeChips}
-    </nav>
-  `
-}
+      <nav class="size-selector" aria-label="Tamaño del tablero">
+        ${sizeChips}
+      </nav>
 
-function renderMain(): string {
-  if (state.errorMessage) {
-    return `<div class="state-message state-error">${state.errorMessage}</div>`
-  }
+      ${state.activeHint ? `<p class="hint-banner">💡 ${state.activeHint.message}</p>` : ''}
 
-  if (state.isLoading || !state.board) {
-    return `<div class="state-message">Generando tablero…</div>`
-  }
-
-  return `
-    <div class="puzzle-meta">
-      <span>Puzzle ${state.puzzleNumber} de ${state.puzzleCount}</span>
-      ${renderBestTime()}
-    </div>
-
-    <div class="board-stage">
-      ${renderQueensBoard(state.board)}
-    </div>
-
-    ${state.activeHint ? `<p class="hint-banner">💡 ${state.activeHint.message}</p>` : ''}
-
-    <div class="controls">
-      <button type="button" class="control-button" data-action="undo" ${state.history.length === 0 ? 'disabled' : ''}>
-        ↺ Deshacer
-      </button>
-      <button type="button" class="control-button" data-action="request-reset">
-        ⟲ Reset
-      </button>
-      <button type="button" class="control-button" data-action="hint">
-        💡 Hint
-      </button>
+      <div class="controls">
+        <button type="button" class="control-button" data-action="undo" ${state.history.length === 0 ? 'disabled' : ''}>
+          ↺ Deshacer
+        </button>
+        <button type="button" class="control-button" data-action="request-reset">
+          ⟲ Reset
+        </button>
+        <button type="button" class="control-button" data-action="hint">
+          💡 Hint
+        </button>
+      </div>
     </div>
   `
 }
