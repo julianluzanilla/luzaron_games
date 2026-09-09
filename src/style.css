@@ -618,3 +618,322 @@ button {
     font-size: 13px;
   }
 }
+
+/* ---------------------------------------------------------------------- */
+/* Wordle                                                                  */
+/* ---------------------------------------------------------------------- */
+
+.wordle-area {
+  gap: 0;
+}
+
+.wordle-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wordle-mode-label {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--color-ink);
+}
+
+.wordle-status-detail {
+  font-size: 13px;
+  color: var(--color-ink-dim);
+}
+
+.icon-button {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--color-panel-line);
+  background: var(--color-panel);
+  color: var(--color-ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    transform 0.1s ease;
+}
+
+.icon-button:hover {
+  filter: brightness(1.15);
+}
+
+.icon-button:active {
+  transform: scale(0.94);
+}
+
+/* Espacio fijo para el aviso, para que el tablero no brinque. */
+.wordle-message-slot {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wordle-message {
+  margin: 0;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #0b1220;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.wordle-frame {
+  /* El marco se ajusta al tablero en vez de ocupar todo el ancho. */
+  width: auto;
+  padding: 14px;
+}
+
+.wordle-board {
+  --wordle-length: 5;
+  --wordle-attempts: 6;
+  --wordle-gap: 7px;
+  /* La celda se ajusta al ancho disponible y, sobre todo, a la altura: así
+     el teclado siempre cabe en pantalla aunque sean 7 filas de 6 letras. */
+  --wordle-tile: min(
+    68px,
+    (86vw - (var(--wordle-length) - 1) * var(--wordle-gap)) / var(--wordle-length),
+    (41vh - (var(--wordle-attempts) - 1) * var(--wordle-gap)) / var(--wordle-attempts)
+  );
+  display: flex;
+  flex-direction: column;
+  gap: var(--wordle-gap);
+  width: calc(
+    var(--wordle-tile) * var(--wordle-length) + (var(--wordle-length) - 1) * var(--wordle-gap)
+  );
+  margin: 0 auto;
+}
+
+.wordle-row {
+  display: grid;
+  grid-template-columns: repeat(var(--wordle-length), 1fr);
+  gap: 7px;
+}
+
+.wordle-tile {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-panel-line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 6.5vw, 32px);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.wordle-tile.tile-filled {
+  border-color: #64719a;
+}
+
+.wordle-tile.tile-absent {
+  background: #2b3450;
+  border-color: #2b3450;
+  color: var(--color-ink-dim);
+}
+
+.wordle-tile.tile-present {
+  background: var(--region-0);
+  border-color: var(--region-0);
+  color: #1a1405;
+}
+
+.wordle-tile.tile-correct {
+  background: var(--color-pine);
+  border-color: var(--color-pine);
+  color: #04180d;
+}
+
+.wordle-tile.tile-revealing {
+  animation: tile-flip 460ms ease both;
+}
+
+@keyframes tile-flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  45% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+.wordle-row.row-shake {
+  animation: row-shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes row-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Teclado virtual                                                         */
+/* ---------------------------------------------------------------------- */
+
+.wordle-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  max-width: 540px;
+  padding: 16px 0 0;
+}
+
+.wordle-keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.wordle-key {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 54px;
+  padding: 0 2px;
+  border: none;
+  border-radius: 8px;
+  background: #4a5470;
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.08s ease;
+}
+
+.wordle-key:active {
+  transform: scale(0.94);
+}
+
+.wordle-key-wide {
+  flex: 1.7 1 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.wordle-key.key-absent {
+  background: #262f45;
+  color: #6d7893;
+}
+
+.wordle-key.key-present {
+  background: var(--region-0);
+  color: #1a1405;
+}
+
+.wordle-key.key-correct {
+  background: var(--color-pine);
+  color: #04180d;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Configuración de Wordle                                                 */
+/* ---------------------------------------------------------------------- */
+
+.settings-group {
+  margin: 18px 0 0;
+}
+
+.settings-group h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-dim);
+}
+
+.settings-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--color-ink-dim);
+}
+
+.modal-stat-text {
+  font-size: 18px !important;
+}
+
+@media (max-width: 400px) {
+  .wordle-key {
+    height: 48px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .wordle-keyboard-row {
+    gap: 4px;
+  }
+
+  .wordle-key-wide {
+    font-size: 11px;
+  }
+}
+
+/* Pantallas bajas (teléfonos chicos en vertical): el tablero cede altura
+   para que el teclado completo siga visible sin hacer scroll. */
+@media (max-height: 740px) {
+  .wordle-board {
+    --wordle-tile: min(
+      68px,
+      (86vw - (var(--wordle-length) - 1) * var(--wordle-gap)) / var(--wordle-length),
+      (37vh - (var(--wordle-attempts) - 1) * var(--wordle-gap)) / var(--wordle-attempts)
+    );
+  }
+
+  .wordle-area {
+    padding-bottom: 12px;
+  }
+
+  .wordle-keyboard {
+    padding-top: 12px;
+  }
+
+  .wordle-key {
+    height: 46px;
+  }
+
+  .wordle-area .size-selector {
+    padding: 12px 4px 0;
+  }
+}

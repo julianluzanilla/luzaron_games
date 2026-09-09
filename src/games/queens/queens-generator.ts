@@ -108,9 +108,7 @@ function growRegions(size: number, solution: number[]): number[][] | null {
   let stuckRounds = 0
 
   while (claimed < total) {
-    const order = shuffled([...Array(size).keys()]).sort(
-      (a, b) => regionSize[a] - regionSize[b]
-    )
+    const order = shuffled([...Array(size).keys()]).sort((a, b) => regionSize[a] - regionSize[b])
 
     let chosenRegionId = -1
 
@@ -155,7 +153,11 @@ function growRegions(size: number, solution: number[]): number[][] | null {
   return regionOf
 }
 
-function regionCells(size: number, regionOf: number[][], regionId: number): Array<[number, number]> {
+function regionCells(
+  size: number,
+  regionOf: number[][],
+  regionId: number
+): Array<[number, number]> {
   const cells: Array<[number, number]> = []
 
   for (let row = 0; row < size; row += 1) {
@@ -284,7 +286,10 @@ function repairToUniqueSolution(
 
         regionOf[row][column] = newRegionId
 
-        if (!isRegionConnected(size, regionOf, regionId) || !isRegionConnected(size, regionOf, newRegionId)) {
+        if (
+          !isRegionConnected(size, regionOf, regionId) ||
+          !isRegionConnected(size, regionOf, newRegionId)
+        ) {
           regionOf[row][column] = regionId
           continue
         }

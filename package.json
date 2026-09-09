@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "pool:queens": "tsx scripts/generate-queens-pool.ts"
+    "pool:queens": "tsx scripts/generate-queens-pool.ts",
+    "words:wordle": "node scripts/generate-wordle-words.mjs"
   },
   "devDependencies": {
     "prettier": "^3.9.4",

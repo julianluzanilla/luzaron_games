@@ -2,12 +2,7 @@ import { createPositionKey, getQueensConflictKeys } from './queens-engine'
 import type { QueensBoardState, QueensPosition } from './queens-types'
 
 export type QueensHintKind =
-  | 'wrong-queen'
-  | 'wrong-x'
-  | 'missing-row'
-  | 'missing-column'
-  | 'missing-region'
-  | 'reveal-cell'
+  'wrong-queen' | 'wrong-x' | 'missing-row' | 'missing-column' | 'missing-region' | 'reveal-cell'
 
 export interface QueensHint {
   kind: QueensHintKind
@@ -40,7 +35,11 @@ export function getQueensHint(board: QueensBoardState, tier: number): QueensHint
 
   for (const row of board.cells) {
     for (const cell of row) {
-      if (cell.value === 'x' && cell.xSource === 'manual' && solutionSet.has(createPositionKey(cell))) {
+      if (
+        cell.value === 'x' &&
+        cell.xSource === 'manual' &&
+        solutionSet.has(createPositionKey(cell))
+      ) {
         return {
           kind: 'wrong-x',
           message: 'Esa X está tapando una celda donde sí debería ir una reina.',
@@ -51,7 +50,9 @@ export function getQueensHint(board: QueensBoardState, tier: number): QueensHint
   }
 
   const placedRows = new Set(
-    board.cells.flatMap((row) => row.filter((cell) => cell.value === 'queen').map((cell) => cell.row))
+    board.cells.flatMap((row) =>
+      row.filter((cell) => cell.value === 'queen').map((cell) => cell.row)
+    )
   )
 
   const missingRow = board.solution.find((position) => !placedRows.has(position.row))

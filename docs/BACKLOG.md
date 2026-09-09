@@ -230,7 +230,7 @@ Implementar Sudoku Mini 6x6 y Sudoku Regular 9x9.
 - [ ] Crear pack de prueba Sudoku 9x9.
 - [ ] Crear tablero Sudoku responsivo.
 - [ ] Implementar selección de celda.
-- [ ] Implementar teclado físico.
+- [x] Implementar teclado físico.
 - [ ] Implementar listado inferior de números.
 - [ ] Implementar notas/candidatos.
 - [ ] Implementar validación.
@@ -247,24 +247,28 @@ Implementar Sudoku Mini 6x6 y Sudoku Regular 9x9.
 
 ## Objetivo
 
-Implementar Wordle español e inglés de 5 letras.
+Implementar Wordle español e inglés, de 5 y 6 letras, con palabra diaria y modo práctica.
 
 ## Tareas
 
-- [ ] Definir formato final de diccionario Wordle.
-- [ ] Crear diccionario de prueba español 5 letras.
-- [ ] Crear diccionario de prueba inglés 5 letras.
-- [ ] Crear normalizador de palabras.
-- [ ] Igualar Ñ y N.
-- [ ] Crear tablero Wordle.
-- [ ] Crear teclado virtual.
-- [ ] Implementar teclado físico.
-- [ ] Validar palabra ingresada.
-- [ ] Marcar letras correctas.
-- [ ] Marcar letras presentes.
-- [ ] Marcar letras ausentes.
-- [ ] Crear condición de victoria.
-- [ ] Crear condición de derrota.
+- [x] Definir formato final de diccionario Wordle.
+- [x] Crear diccionario de prueba español 5 letras.
+- [x] Crear diccionario de prueba inglés 5 letras.
+- [x] Crear normalizador de palabras.
+- [x] Igualar Ñ y N.
+- [x] Crear tablero Wordle.
+- [x] Crear teclado virtual.
+- [x] Implementar teclado físico.
+- [x] Validar palabra ingresada.
+- [x] Marcar letras correctas.
+- [x] Marcar letras presentes.
+- [x] Marcar letras ausentes.
+- [x] Crear condición de victoria.
+- [x] Crear condición de derrota.
+- [x] Selector de idioma, longitud y dificultad en la configuración del juego.
+- [x] Modo difícil (obliga a reutilizar las pistas reveladas).
+- [x] Palabra diaria determinista + modo práctica.
+- [x] Guardar el avance de la palabra diaria.
 - [ ] Guardar estadísticas.
 - [ ] Probar en desktop.
 - [ ] Probar en iPhone.
@@ -374,7 +378,7 @@ Planear crecimiento posterior.
 - [ ] Agregar rankings completos.
 - [ ] Agregar hints avanzados.
 - [ ] Agregar más packs de Queens.
-- [ ] Agregar Wordle 6 letras.
+- [x] Agregar Wordle 6 letras.
 - [ ] Agregar Wordle 7 letras.
 - [ ] Agregar más categorías de Sudoku.
 - [ ] Mejorar panel admin.

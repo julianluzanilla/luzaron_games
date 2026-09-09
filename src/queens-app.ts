@@ -8,23 +8,11 @@ import { createBoardStateFromPuzzle } from './games/queens/queens-level'
 import { getQueensHint, type QueensHint } from './games/queens/queens-hints'
 import { pickNextPuzzle, loadAvailableSizes, type PoolSizeEntry } from './games/queens/queens-pool'
 import type { QueensBoardState } from './games/queens/queens-types'
+import { renderTopNav } from './shell/game-nav'
 
 const BEST_TIME_PREFIX = 'luzaron-queens-best-v1:'
 const LAST_SIZE_KEY = 'luzaron-queens-last-size-v1'
 const MAX_HISTORY = 200
-
-interface GameEntry {
-  id: string
-  label: string
-  available: boolean
-}
-
-const GAMES: GameEntry[] = [
-  { id: 'queens', label: 'Queens', available: true },
-  { id: 'sudoku', label: 'Sudoku', available: false },
-  { id: 'wordle', label: 'Wordle', available: false },
-  { id: 'mahjong', label: 'Mahjong Solitaire', available: false },
-]
 
 interface AppState {
   availableSizes: PoolSizeEntry[]
@@ -74,7 +62,7 @@ let dragPointerId: number | null = null
 let dragLastCell: string | null = null
 let dragHistoryPushed = false
 
-let root: HTMLDivElement
+let root: HTMLDivElement | null = null
 
 export function mountQueensApp(): void {
   const found = document.querySelector<HTMLDivElement>('#app')
@@ -96,6 +84,22 @@ export function mountQueensApp(): void {
   void initialize()
 }
 
+export function unmountQueensApp(): void {
+  root?.removeEventListener('click', handleClick)
+  root?.removeEventListener('pointerdown', handlePointerDown)
+  window.removeEventListener('pointermove', handlePointerMove)
+  window.removeEventListener('pointerup', handlePointerUp)
+  window.removeEventListener('pointercancel', resetDragState)
+  window.removeEventListener('blur', handleFocusChange)
+  window.removeEventListener('focus', handleFocusChange)
+  document.removeEventListener('visibilitychange', handleFocusChange)
+
+  pauseTimer()
+  resetDragState()
+
+  if (root) root.innerHTML = ''
+}
+
 async function initialize(): Promise<void> {
   try {
     const sizes = await loadAvailableSizes()
@@ -103,7 +107,9 @@ async function initialize(): Promise<void> {
     state.availableSizes = sizes
 
     const storedSize = Number(window.localStorage.getItem(LAST_SIZE_KEY))
-    const preferredSize = sizes.find((entry) => entry.size === storedSize) ? storedSize : sizes[0]?.size
+    const preferredSize = sizes.find((entry) => entry.size === storedSize)
+      ? storedSize
+      : sizes[0]?.size
 
     if (preferredSize) {
       await startNewPuzzle(preferredSize)
@@ -479,14 +485,18 @@ function resetDragState(): void {
 // ---------- Rendering ----------
 
 function renderTimerOnly(): void {
+  if (!root) return
+
   const el = root.querySelector('[data-timer]')
   if (el) el.textContent = formatTime(state.elapsedMs)
 }
 
 function render(justWonWithBest = false): void {
+  if (!root) return
+
   root.innerHTML = `
     <div class="app-shell">
-      ${renderTopNav()}
+      ${renderTopNav('queens')}
       ${renderMain()}
     </div>
     ${state.pendingReset ? renderResetConfirm() : ''}
@@ -500,36 +510,12 @@ function render(justWonWithBest = false): void {
 function applyHintHighlight(): void {
   const position = state.activeHint?.position
 
-  if (!position) return
+  if (!position || !root) return
 
   const selector = `[data-action="queens-cell"][data-row="${position.row}"][data-column="${position.column}"]`
   const cell = root.querySelector(selector)
 
   cell?.classList.add('hint-target')
-}
-
-function renderTopNav(): string {
-  const tabs = GAMES.map(
-    (game) => `
-      <button
-        type="button"
-        class="game-tab ${game.id === 'queens' ? 'active' : ''}"
-        data-action="select-game"
-        data-game="${game.id}"
-        ${game.available ? '' : 'disabled'}
-      >
-        <span>${game.label}</span>
-        ${game.available ? '' : '<span class="game-tab-badge">Pronto</span>'}
-      </button>
-    `
-  ).join('')
-
-  return `
-    <header class="app-header">
-      <span class="brand-mark" aria-hidden="true">♛</span>
-      <nav class="game-nav" aria-label="Selector de juego">${tabs}</nav>
-    </header>
-  `
 }
 
 function renderMain(): string {
