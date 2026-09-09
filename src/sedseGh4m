@@ -101,22 +101,6 @@ export function mountQueensApp(): void {
   void initialize()
 }
 
-export function unmountQueensApp(): void {
-  root.removeEventListener('click', handleClick)
-  root.removeEventListener('pointerdown', handlePointerDown)
-  window.removeEventListener('pointermove', handlePointerMove)
-  window.removeEventListener('pointerup', handlePointerUp)
-  window.removeEventListener('pointercancel', resetDragState)
-  window.removeEventListener('blur', handleFocusChange)
-  window.removeEventListener('focus', handleFocusChange)
-  document.removeEventListener('visibilitychange', handleFocusChange)
-
-  pauseTimer()
-  resetDragState()
-
-  root.innerHTML = ''
-}
-
 async function initialize(): Promise<void> {
   try {
     const sizes = await loadAvailableSizes()

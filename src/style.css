@@ -485,6 +485,19 @@ button {
   color: #fff;
 }
 
+.puzzle-nav {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 640px;
+  padding: 4px 4px 0;
+}
+
+.control-button-accent {
+  background: #7c5cfc;
+  color: #fff;
+}
+
 .control-button-primary {
   background: var(--color-pine);
   color: #04180d;
@@ -568,8 +581,14 @@ button {
 
 .modal-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 8px;
+}
+
+.modal-actions .control-button {
+  flex: 1 1 auto;
+  min-width: 110px;
 }
 
 .pause-overlay {
@@ -620,320 +639,257 @@ button {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Wordle                                                                  */
+/* Sudoku                                                                  */
 /* ---------------------------------------------------------------------- */
 
-.wordle-area {
-  gap: 0;
+/*
+ * Todos los colores del Sudoku salen de estas variables. Los valores de
+ * :root son los del tema oscuro (el único que la app usa hoy); el bloque
+ * [data-theme='light'] deja lista la versión de día. Nada del juego activa
+ * el cambio: basta con poner data-theme="light" en <html> desde el menú
+ * general cuando exista.
+ *
+ * Regla de color de los números: los precargados usan la tinta más fuerte
+ * del tema (negro en modo día) y los que escribe el jugador van en azul.
+ */
+:root {
+  --sudoku-board-bg: #101a2e;
+  --sudoku-cell-bg: #101a2e;
+  --sudoku-cell-peer: #17233d;
+  --sudoku-cell-same: #1d3255;
+  --sudoku-cell-selected: #26436f;
+  --sudoku-line: #2a3752;
+  --sudoku-line-strong: #4a5b80;
+  --sudoku-given: #eef2ff;
+  --sudoku-user: #4da3ff;
+  --sudoku-revealed: #2fbf71;
+  --sudoku-conflict-bg: #4a1622;
+  --sudoku-conflict-ink: #ff6b7f;
+  --sudoku-flash: #2fbf71;
+  --sudoku-key-bg: #182238;
+  --sudoku-key-line: #2a3752;
+  --sudoku-key-ink: #eef2ff;
 }
 
-.wordle-status {
+:root[data-theme='light'] {
+  --sudoku-board-bg: #ffffff;
+  --sudoku-cell-bg: #ffffff;
+  --sudoku-cell-peer: #e9eef7;
+  --sudoku-cell-same: #d3e2f7;
+  --sudoku-cell-selected: #bcd7f5;
+  --sudoku-line: #c3cbd9;
+  --sudoku-line-strong: #33405c;
+  --sudoku-given: #000000;
+  --sudoku-user: #1f6fb8;
+  --sudoku-revealed: #17864b;
+  --sudoku-conflict-bg: #fbdcdf;
+  --sudoku-conflict-ink: #c22239;
+  --sudoku-flash: #17864b;
+  --sudoku-key-bg: #ffffff;
+  --sudoku-key-line: #c3cbd9;
+  --sudoku-key-ink: #10131a;
+}
+
+.sudoku-board {
+  --board-size: min(92vw, 460px);
+
+  width: var(--board-size);
+  display: grid;
+  grid-template-columns: repeat(var(--sudoku-size), 1fr);
+  aspect-ratio: 1;
+  background: var(--sudoku-board-bg);
+  border: 3px solid var(--sudoku-line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sudoku-cell {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.wordle-mode-label {
-  font-family: var(--font-display);
-  font-size: 18px;
-  color: var(--color-ink);
-}
-
-.wordle-status-detail {
-  font-size: 13px;
-  color: var(--color-ink-dim);
-}
-
-.icon-button {
-  flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  border: 1px solid var(--color-panel-line);
-  background: var(--color-panel);
-  color: var(--color-ink);
-  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--sudoku-line);
+  border-bottom: 1px solid var(--sudoku-line);
+  background: var(--sudoku-cell-bg);
+  color: var(--sudoku-given);
+  font-family: var(--font-ui);
+  font-size: calc(var(--board-size) / var(--sudoku-size) * 0.52);
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
   transition:
-    filter 0.15s ease,
-    transform 0.1s ease;
+    background-color 120ms ease,
+    color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.icon-button:hover {
-  filter: brightness(1.15);
+/* Sin borde en la última columna ni en la última fila: ya está el marco. */
+.sudoku-board-6 .sudoku-cell:nth-child(6n),
+.sudoku-board-9 .sudoku-cell:nth-child(9n) {
+  border-right: 0;
 }
 
-.icon-button:active {
-  transform: scale(0.94);
+.sudoku-board-6 .sudoku-cell:nth-last-child(-n + 6),
+.sudoku-board-9 .sudoku-cell:nth-last-child(-n + 9) {
+  border-bottom: 0;
 }
 
-/* Espacio fijo para el aviso, para que el tablero no brinque. */
-.wordle-message-slot {
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.sudoku-cell.box-edge-right {
+  border-right: 2px solid var(--sudoku-line-strong);
 }
 
-.wordle-message {
-  margin: 0;
-  padding: 6px 16px;
-  border-radius: 999px;
-  background: var(--color-ink);
-  color: #0b1220;
-  font-size: 13px;
-  font-weight: 800;
-  text-align: center;
+.sudoku-cell.box-edge-bottom {
+  border-bottom: 2px solid var(--sudoku-line-strong);
 }
 
-.wordle-frame {
-  /* El marco se ajusta al tablero en vez de ocupar todo el ancho. */
-  width: auto;
-  padding: 14px;
-}
-
-.wordle-board {
-  --wordle-length: 5;
-  --wordle-attempts: 6;
-  --wordle-gap: 7px;
-  /* La celda se ajusta al ancho disponible y, sobre todo, a la altura: así
-     el teclado siempre cabe en pantalla aunque sean 7 filas de 6 letras. */
-  --wordle-tile: min(
-    68px,
-    (86vw - (var(--wordle-length) - 1) * var(--wordle-gap)) / var(--wordle-length),
-    (41vh - (var(--wordle-attempts) - 1) * var(--wordle-gap)) / var(--wordle-attempts)
-  );
-  display: flex;
-  flex-direction: column;
-  gap: var(--wordle-gap);
-  width: calc(
-    var(--wordle-tile) * var(--wordle-length) + (var(--wordle-length) - 1) * var(--wordle-gap)
-  );
-  margin: 0 auto;
-}
-
-.wordle-row {
-  display: grid;
-  grid-template-columns: repeat(var(--wordle-length), 1fr);
-  gap: 7px;
-}
-
-.wordle-tile {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-panel-line);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: clamp(20px, 6.5vw, 32px);
+/* Números precargados vs. números del jugador. */
+.sudoku-cell.cell-given {
+  color: var(--sudoku-given);
   font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
-  user-select: none;
+  cursor: default;
 }
 
-.wordle-tile.tile-filled {
-  border-color: #64719a;
+.sudoku-cell.cell-user {
+  color: var(--sudoku-user);
+  font-weight: 600;
 }
 
-.wordle-tile.tile-absent {
-  background: #2b3450;
-  border-color: #2b3450;
-  color: var(--color-ink-dim);
+.sudoku-cell.cell-revealed {
+  color: var(--sudoku-revealed);
+  font-weight: 600;
 }
 
-.wordle-tile.tile-present {
-  background: var(--region-0);
-  border-color: var(--region-0);
-  color: #1a1405;
+/* Ayudas de lectura alrededor de la celda seleccionada. */
+.sudoku-cell.cell-peer {
+  background: var(--sudoku-cell-peer);
 }
 
-.wordle-tile.tile-correct {
-  background: var(--color-pine);
-  border-color: var(--color-pine);
-  color: #04180d;
+.sudoku-cell.cell-same-value {
+  background: var(--sudoku-cell-same);
 }
 
-.wordle-tile.tile-revealing {
-  animation: tile-flip 460ms ease both;
+.sudoku-cell.cell-selected {
+  background: var(--sudoku-cell-selected);
 }
 
-@keyframes tile-flip {
+/* Conflicto de regla: repetido en fila, columna o caja. */
+.sudoku-cell.cell-conflict {
+  background: var(--sudoku-conflict-bg);
+  color: var(--sudoku-conflict-ink);
+}
+
+.sudoku-cell.cell-hinted .sudoku-value {
+  animation: sudoku-hint-pop 600ms ease;
+}
+
+/* Destello de logro: fila, columna o caja completada. No deja rastro. */
+.sudoku-cell.cell-flash {
+  animation: sudoku-unit-flash 850ms ease;
+}
+
+@keyframes sudoku-unit-flash {
   0% {
-    transform: rotateX(0deg);
+    background: var(--sudoku-flash);
+    color: var(--sudoku-board-bg);
+    transform: scale(1);
   }
-  45% {
-    transform: rotateX(90deg);
+  35% {
+    background: var(--sudoku-flash);
+    color: var(--sudoku-board-bg);
+    transform: scale(1.04);
   }
   100% {
-    transform: rotateX(0deg);
+    background: var(--sudoku-cell-bg);
+    transform: scale(1);
   }
 }
 
-.wordle-row.row-shake {
-  animation: row-shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-
-@keyframes row-shake {
-  10%,
-  90% {
-    transform: translateX(-2px);
+@keyframes sudoku-hint-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
   }
-  20%,
-  80% {
-    transform: translateX(4px);
-  }
-  30%,
-  50%,
-  70% {
-    transform: translateX(-7px);
-  }
-  40%,
   60% {
-    transform: translateX(7px);
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
-/* ---------------------------------------------------------------------- */
-/* Teclado virtual                                                         */
-/* ---------------------------------------------------------------------- */
-
-.wordle-keyboard {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  width: 100%;
-  max-width: 540px;
-  padding: 16px 0 0;
+@media (prefers-reduced-motion: reduce) {
+  .sudoku-cell.cell-flash,
+  .sudoku-cell.cell-hinted .sudoku-value {
+    animation-duration: 1ms;
+  }
 }
 
-.wordle-keyboard-row {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-}
-
-.wordle-key {
-  flex: 1 1 0;
-  min-width: 0;
-  height: 54px;
-  padding: 0 2px;
-  border: none;
-  border-radius: 8px;
-  background: #4a5470;
-  color: var(--color-ink);
-  font-size: 15px;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    transform 0.08s ease;
-}
-
-.wordle-key:active {
-  transform: scale(0.94);
-}
-
-.wordle-key-wide {
-  flex: 1.7 1 0;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-}
-
-.wordle-key.key-absent {
-  background: #262f45;
-  color: #6d7893;
-}
-
-.wordle-key.key-present {
-  background: var(--region-0);
-  color: #1a1405;
-}
-
-.wordle-key.key-correct {
-  background: var(--color-pine);
-  color: #04180d;
-}
-
-/* ---------------------------------------------------------------------- */
-/* Configuración de Wordle                                                 */
-/* ---------------------------------------------------------------------- */
-
-.settings-group {
-  margin: 18px 0 0;
-}
-
-.settings-group h3 {
-  margin: 0 0 8px;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-ink-dim);
-}
-
-.settings-chips {
-  display: flex;
-  flex-wrap: wrap;
+/* Teclado numérico */
+.sudoku-pad {
+  width: min(92vw, 460px);
+  margin: 16px auto 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 
-.settings-hint {
-  margin: 10px 0 0;
-  font-size: 12px;
+.sudoku-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px 4px;
+  border: 1px solid var(--sudoku-key-line);
+  border-radius: var(--radius-md);
+  background: var(--sudoku-key-bg);
+  color: var(--sudoku-key-ink);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition:
+    transform 80ms ease,
+    border-color 120ms ease;
+}
+
+.sudoku-key:hover {
+  border-color: var(--sudoku-user);
+}
+
+.sudoku-key:active {
+  transform: translateY(1px);
+}
+
+.sudoku-key-digit {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sudoku-user);
+}
+
+.sudoku-key-left {
+  font-size: 11px;
   color: var(--color-ink-dim);
 }
 
-.modal-stat-text {
-  font-size: 18px !important;
+.sudoku-key.key-done {
+  opacity: 0.4;
 }
 
-@media (max-width: 400px) {
-  .wordle-key {
-    height: 48px;
-    font-size: 14px;
-    border-radius: 6px;
-  }
-
-  .wordle-keyboard-row {
-    gap: 4px;
-  }
-
-  .wordle-key-wide {
-    font-size: 11px;
-  }
+.sudoku-key-erase .sudoku-key-digit {
+  color: var(--color-ink-dim);
 }
 
-/* Pantallas bajas (teléfonos chicos en vertical): el tablero cede altura
-   para que el teclado completo siga visible sin hacer scroll. */
-@media (max-height: 740px) {
-  .wordle-board {
-    --wordle-tile: min(
-      68px,
-      (86vw - (var(--wordle-length) - 1) * var(--wordle-gap)) / var(--wordle-length),
-      (37vh - (var(--wordle-attempts) - 1) * var(--wordle-gap)) / var(--wordle-attempts)
-    );
+@media (max-width: 420px) {
+  .sudoku-pad {
+    gap: 6px;
   }
 
-  .wordle-area {
-    padding-bottom: 12px;
+  .sudoku-key {
+    padding: 8px 2px;
   }
 
-  .wordle-keyboard {
-    padding-top: 12px;
-  }
-
-  .wordle-key {
-    height: 46px;
-  }
-
-  .wordle-area .size-selector {
-    padding: 12px 4px 0;
+  .sudoku-key-digit {
+    font-size: 19px;
   }
 }

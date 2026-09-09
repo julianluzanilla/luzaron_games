@@ -225,18 +225,24 @@ Implementar Sudoku Mini 6x6 y Sudoku Regular 9x9.
 
 ## Tareas
 
-- [ ] Definir formato final de nivel Sudoku.
-- [ ] Crear pack de prueba Sudoku 6x6.
-- [ ] Crear pack de prueba Sudoku 9x9.
-- [ ] Crear tablero Sudoku responsivo.
-- [ ] Implementar selección de celda.
+- [x] Definir formato final de nivel Sudoku.
+- [x] Crear generador con solución única y calificador de dificultad.
+- [x] Crear packs Sudoku 6x6 (150 por dificultad).
+- [x] Crear packs Sudoku 9x9 (150 por dificultad).
+- [x] Crear tablero Sudoku responsivo.
+- [x] Implementar selección de celda.
 - [x] Implementar teclado físico.
-- [ ] Implementar listado inferior de números.
+- [x] Implementar listado inferior de números.
 - [ ] Implementar notas/candidatos.
-- [ ] Implementar validación.
-- [ ] Implementar condición de victoria.
-- [ ] Implementar modal de completado.
-- [ ] Guardar record local.
+- [x] Implementar validación (conflictos de fila, columna y caja).
+- [x] Implementar condición de victoria.
+- [x] Implementar destello de fila/columna/caja completada.
+- [x] Implementar pista (revela la celda correcta).
+- [x] Implementar reinicio con confirmación.
+- [x] Implementar timer con pausa por pérdida de foco.
+- [x] Implementar modal de completado.
+- [x] Guardar record local por variante y dificultad.
+- [x] Dejar tokens de color listos para modo día y modo noche.
 - [ ] Probar en desktop.
 - [ ] Probar en iPhone.
 - [ ] Probar offline.

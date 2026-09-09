@@ -13,7 +13,6 @@ interface GameModule {
 
 const MODULES: Partial<Record<GameId, GameModule>> = {
   queens: { mount: mountQueensApp, unmount: unmountQueensApp },
-  sudoku: { mount: mountSudokuApp, unmount: unmountSudokuApp },
   wordle: { mount: mountWordleApp, unmount: unmountWordleApp },
 }
 

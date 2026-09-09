@@ -1,0 +1,34 @@
+{
+  "packs": [
+    {
+      "variant": "mini",
+      "difficulty": "easy",
+      "count": 150
+    },
+    {
+      "variant": "mini",
+      "difficulty": "normal",
+      "count": 150
+    },
+    {
+      "variant": "mini",
+      "difficulty": "hard",
+      "count": 150
+    },
+    {
+      "variant": "classic",
+      "difficulty": "easy",
+      "count": 150
+    },
+    {
+      "variant": "classic",
+      "difficulty": "normal",
+      "count": 150
+    },
+    {
+      "variant": "classic",
+      "difficulty": "hard",
+      "count": 150
+    }
+  ]
+}

@@ -10,7 +10,8 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "pool:queens": "tsx scripts/generate-queens-pool.ts",
-    "words:wordle": "node scripts/generate-wordle-words.mjs"
+    "words:wordle": "node scripts/generate-wordle-words.mjs",
+    "pool:sudoku": "tsx scripts/generate-sudoku-pool.ts"
   },
   "devDependencies": {
     "nspell": "^2.1.5",

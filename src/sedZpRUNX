@@ -1,7 +1,6 @@
 import './style.css'
 import { GAMES, type GameId } from './shell/game-nav'
 import { mountQueensApp, unmountQueensApp } from './queens-app'
-import { mountSudokuApp, unmountSudokuApp } from './sudoku-app'
 import { mountWordleApp, unmountWordleApp } from './wordle-app'
 
 const LAST_GAME_KEY = 'luzaron-last-game-v1'

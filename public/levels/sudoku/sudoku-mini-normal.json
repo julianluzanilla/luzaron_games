@@ -1,0 +1,1057 @@
+{
+  "variant": "mini",
+  "difficulty": "normal",
+  "generatedAt": "2026-09-09T05:46:22.217Z",
+  "puzzles": [
+    {
+      "id": "sudoku-mini-normal-0001",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "200100106200310000000014001603005001",
+      "solution": "253146146235314562562314421653635421"
+    },
+    {
+      "id": "sudoku-mini-normal-0002",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "010002036040050030060050023410600020",
+      "solution": "415362236145152634364251523416641523"
+    },
+    {
+      "id": "sudoku-mini-normal-0003",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "200400046005300064560003400650002001",
+      "solution": "235416146235321564564123413652652341"
+    },
+    {
+      "id": "sudoku-mini-normal-0004",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000104120050200640063005010062602000",
+      "solution": "536124124356251643463215315462642531"
+    },
+    {
+      "id": "sudoku-mini-normal-0005",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "005020003000031560046130000600050203",
+      "solution": "465321123456231564546132312645654213"
+    },
+    {
+      "id": "sudoku-mini-normal-0006",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "405020030100050064360050001000040502",
+      "solution": "415623236145152364364251521436643512"
+    },
+    {
+      "id": "sudoku-mini-normal-0007",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "106020004006301000000201500300040502",
+      "solution": "156423234156321645465231512364643512"
+    },
+    {
+      "id": "sudoku-mini-normal-0008",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "300000020046250460063051510000000002",
+      "solution": "346125125346251463463251512634634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0009",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "021600056024004000200300540210002450",
+      "solution": "421635356124134562265341543216612453"
+    },
+    {
+      "id": "sudoku-mini-normal-0010",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000305230000140603306014000061501000",
+      "solution": "614325235146142653356214423561561432"
+    },
+    {
+      "id": "sudoku-mini-normal-0011",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000005200104042063360240504006601000",
+      "solution": "413625256134142563365241524316631452"
+    },
+    {
+      "id": "sudoku-mini-normal-0012",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "005460006005320000500023400600052300",
+      "solution": "235461146235321546564123413652652314"
+    },
+    {
+      "id": "sudoku-mini-normal-0013",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "001200000130120640064012042000005400",
+      "solution": "431256256134123645564312342561615423"
+    },
+    {
+      "id": "sudoku-mini-normal-0014",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "506304000250050600003020015000602501",
+      "solution": "526314134256251643463125315462642531"
+    },
+    {
+      "id": "sudoku-mini-normal-0015",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "400025030100100500006004002030610002",
+      "solution": "461325235146124563356214542631613452"
+    },
+    {
+      "id": "sudoku-mini-normal-0016",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "604020200000150064340015000001060402",
+      "solution": "614523235146152364346215423651561432"
+    },
+    {
+      "id": "sudoku-mini-normal-0017",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "200500000106002403403210501000004001",
+      "solution": "216534345126152463463215531642624351"
+    },
+    {
+      "id": "sudoku-mini-normal-0018",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "063000140000004562526300000051000420",
+      "solution": "263145145236314562526314432651651423"
+    },
+    {
+      "id": "sudoku-mini-normal-0019",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "014306006100100000300004003500601430",
+      "solution": "514326236145142653365214423561651432"
+    },
+    {
+      "id": "sudoku-mini-normal-0020",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "041503306000120000000231000406604350",
+      "solution": "241563356124123645465231532416614352"
+    },
+    {
+      "id": "sudoku-mini-normal-0021",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000005005140142003500214024500600000",
+      "solution": "416325235146142653563214324561651432"
+    },
+    {
+      "id": "sudoku-mini-normal-0022",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "203006050030014500002340420010600405",
+      "solution": "243156156234314562562341425613631425"
+    },
+    {
+      "id": "sudoku-mini-normal-0023",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "046300205000320004500013000502000430",
+      "solution": "146325235146321654564213413562652431"
+    },
+    {
+      "id": "sudoku-mini-normal-0024",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "003060106200010506405020000602020300",
+      "solution": "253461146235312546465123534612621354"
+    },
+    {
+      "id": "sudoku-mini-normal-0025",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "540620236000120000000031000406054012",
+      "solution": "541623236145123564465231312456654312"
+    },
+    {
+      "id": "sudoku-mini-normal-0026",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000400200006350642462051503004004000",
+      "solution": "136425245136351642462351513264624513"
+    },
+    {
+      "id": "sudoku-mini-normal-0027",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "030105000006350060060051500000604010",
+      "solution": "236145145236351462462351513624624513"
+    },
+    {
+      "id": "sudoku-mini-normal-0028",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "004503035006050000000020400650502400",
+      "solution": "624513135246251364346125413652562431"
+    },
+    {
+      "id": "sudoku-mini-normal-0029",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "014000300020140035560041020006000410",
+      "solution": "214563356124142635563241421356635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0030",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "100564000000210600004031020000645002",
+      "solution": "132564456123213645564231321456645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0031",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "150002000100321060060213003000600045",
+      "solution": "156432234156321564465213543621612345"
+    },
+    {
+      "id": "sudoku-mini-normal-0032",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "043052000130000460065010021000630520",
+      "solution": "143652256134312465465213521346634521"
+    },
+    {
+      "id": "sudoku-mini-normal-0033",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "010060350020023006500200040031030050",
+      "solution": "412365356124123546564213245631631452"
+    },
+    {
+      "id": "sudoku-mini-normal-0034",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000000130040214036360412040021000000",
+      "solution": "452163136245214536365412543621621354"
+    },
+    {
+      "id": "sudoku-mini-normal-0035",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "145600200040000260062000010006004513",
+      "solution": "145632236145351264462351513426624513"
+    },
+    {
+      "id": "sudoku-mini-normal-0036",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000240006100103050060302002400034000",
+      "solution": "351246246135123654465312512463634521"
+    },
+    {
+      "id": "sudoku-mini-normal-0037",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000040130050051004400120010062040000",
+      "solution": "526341134256251634463125315462642513"
+    },
+    {
+      "id": "sudoku-mini-normal-0038",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "100005050104241600000241402030600002",
+      "solution": "124365356124241653563241412536635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0039",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "005062006340200004300001013400640500",
+      "solution": "435162126345251634364251513426642513"
+    },
+    {
+      "id": "sudoku-mini-normal-0040",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "362040045000004053530000000560050324",
+      "solution": "362145145236214653536412423561651324"
+    },
+    {
+      "id": "sudoku-mini-normal-0041",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "015030000125050403403000521000030510",
+      "solution": "215634346125152463463251521346634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0042",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "030000106204004003300100501306600050",
+      "solution": "432615156234214563365142541326623451"
+    },
+    {
+      "id": "sudoku-mini-normal-0043",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "431000200100003040060200302006000321",
+      "solution": "431562256134123645564213312456645321"
+    },
+    {
+      "id": "sudoku-mini-normal-0044",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "050040234150000020060004013562020030",
+      "solution": "156243234156341625562314413562625431"
+    },
+    {
+      "id": "sudoku-mini-normal-0045",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "201056000000103500004201000600640302",
+      "solution": "231456456123123564564231312645645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0046",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "060502240130000050030000012065603020",
+      "solution": "361542245136124653536214412365653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0047",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000420045006020500006010400650052000",
+      "solution": "361425245136124563536214413652652341"
+    },
+    {
+      "id": "sudoku-mini-normal-0048",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "350000000130100654405002012000000021",
+      "solution": "351246246135123654465312512463634521"
+    },
+    {
+      "id": "sudoku-mini-normal-0049",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "502013030005000504405000300050650301",
+      "solution": "542613136245213564465132321456654321"
+    },
+    {
+      "id": "sudoku-mini-normal-0050",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "410000230100050004300050001036600012",
+      "solution": "415623236145152364364251521436643512"
+    },
+    {
+      "id": "sudoku-mini-normal-0051",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "105006230000001400062300000024600503",
+      "solution": "145236236145351462462351513624624513"
+    },
+    {
+      "id": "sudoku-mini-normal-0052",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "604001100050231040060120010004500302",
+      "solution": "654231123456231645465123312564546312"
+    },
+    {
+      "id": "sudoku-mini-normal-0053",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "300520005030100003400005030600024001",
+      "solution": "316524245136152463463215531642624351"
+    },
+    {
+      "id": "sudoku-mini-normal-0054",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "215060000100150004400051001000030510",
+      "solution": "215463346125152634463251521346634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0055",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "040060000024200640465001520000030050",
+      "solution": "142563356124213645465231524316631452"
+    },
+    {
+      "id": "sudoku-mini-normal-0056",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "401003200006103004500201300005600302",
+      "solution": "461523235146123654546231312465654312"
+    },
+    {
+      "id": "sudoku-mini-normal-0057",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000132003006201640056203300500045000",
+      "solution": "564132123456231645456213312564645321"
+    },
+    {
+      "id": "sudoku-mini-normal-0058",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "005300000056051604306120010000003400",
+      "solution": "625341134256251634346125412563563412"
+    },
+    {
+      "id": "sudoku-mini-normal-0059",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "004020205040052004300210020601060400",
+      "solution": "614523235146152364346215423651561432"
+    },
+    {
+      "id": "sudoku-mini-normal-0060",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "013005050000102060065201000010600450",
+      "solution": "413625256134142563365241524316631452"
+    },
+    {
+      "id": "sudoku-mini-normal-0061",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "003024104000041063360200000605530400",
+      "solution": "653124124356241563365241412635536412"
+    },
+    {
+      "id": "sudoku-mini-normal-0062",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000006340005124003500214410032600000",
+      "solution": "251346346125124563563214415632632451"
+    },
+    {
+      "id": "sudoku-mini-normal-0063",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "300400046030010063560020030050005001",
+      "solution": "352416146235214563563124431652625341"
+    },
+    {
+      "id": "sudoku-mini-normal-0064",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000501005340001065540100012600604000",
+      "solution": "463521125346231465546132312654654213"
+    },
+    {
+      "id": "sudoku-mini-normal-0065",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000003000156300605502004413000600000",
+      "solution": "156243234156341625562314413562625431"
+    },
+    {
+      "id": "sudoku-mini-normal-0066",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000030204050105040046205060501010000",
+      "solution": "651432234156125643346215463521512364"
+    },
+    {
+      "id": "sudoku-mini-normal-0067",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000004000103241600005241502000600000",
+      "solution": "123564456123241635365241532416614352"
+    },
+    {
+      "id": "sudoku-mini-normal-0068",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "006040300020100460063001020004030500",
+      "solution": "216345345126152463463251521634634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0069",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "326000105200001000000500002401000325",
+      "solution": "326154145236251643463512532461614325"
+    },
+    {
+      "id": "sudoku-mini-normal-0070",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "002031005006004603306100000300620400",
+      "solution": "462531135246214653356124541362623415"
+    },
+    {
+      "id": "sudoku-mini-normal-0071",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000461006000312006400123000600621000",
+      "solution": "253461146235312546465123534612621354"
+    },
+    {
+      "id": "sudoku-mini-normal-0072",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000006230005301062460301500024600500",
+      "solution": "145236236145351462462351513624624513"
+    },
+    {
+      "id": "sudoku-mini-normal-0073",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "102005050123000500004000321450600302",
+      "solution": "132645456123213564564231321456645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0074",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000540040100051064460310004020023050",
+      "solution": "136542245136351264462315514623623451"
+    },
+    {
+      "id": "sudoku-mini-normal-0075",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "204000105000301002500104000603000401",
+      "solution": "264315135246341562526134412653653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0076",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "002060300105210000000041401006030400",
+      "solution": "152364346125214653563241421536635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0077",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "006400000120050603403050021000004500",
+      "solution": "216435345126152643463251521364634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0078",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "402005130046200500006004540032600001",
+      "solution": "462315135246214563356124541632623451"
+    },
+    {
+      "id": "sudoku-mini-normal-0079",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "021006000020034602205340010000600215",
+      "solution": "421536356124134652265341512463643215"
+    },
+    {
+      "id": "sudoku-mini-normal-0080",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "305040046000001050060100000560050304",
+      "solution": "325641146235231456564123413562652314"
+    },
+    {
+      "id": "sudoku-mini-normal-0081",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000000100230201645465103542006000000",
+      "solution": "324561156234231645465123542316613452"
+    },
+    {
+      "id": "sudoku-mini-normal-0082",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000406006100020645564030001500605000",
+      "solution": "312456456123123645564231231564645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0083",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "002000050034003046560100320060000310",
+      "solution": "432651156234213546564123321465645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0084",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "410020006040000364364000020400040012",
+      "solution": "415623236145152364364251521436643512"
+    },
+    {
+      "id": "sudoku-mini-normal-0085",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "200005356004004500003200400356600000",
+      "solution": "241635356124124563563241412356635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0086",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "405000120400030500006030002645000302",
+      "solution": "465123123456231564546231312645654312"
+    },
+    {
+      "id": "sudoku-mini-normal-0087",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "012600006104003000000200201400005310",
+      "solution": "412653356124123546564231231465645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0088",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "230640000005050062460050500020023014",
+      "solution": "235641146235351462462153514326623514"
+    },
+    {
+      "id": "sudoku-mini-normal-0089",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "001050005120102000000203264500010400",
+      "solution": "621354345126132645456213264531513462"
+    },
+    {
+      "id": "sudoku-mini-normal-0090",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "060010100250015630046120023000050040",
+      "solution": "562413134256215634346125423561651342"
+    },
+    {
+      "id": "sudoku-mini-normal-0091",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "410600006134030000000010321400005021",
+      "solution": "413652256134132546564213321465645321"
+    },
+    {
+      "id": "sudoku-mini-normal-0092",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "403000100005240506305014500003000401",
+      "solution": "453162126345241536365214514623632451"
+    },
+    {
+      "id": "sudoku-mini-normal-0093",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "040003003456000030060100415300600040",
+      "solution": "546213123456251634364125415362632541"
+    },
+    {
+      "id": "sudoku-mini-normal-0094",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000006340025030054460010250061600030",
+      "solution": "521346346125132654465213253461614532"
+    },
+    {
+      "id": "sudoku-mini-normal-0095",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "001402005000103600006203000500504300",
+      "solution": "631452245136123645456213312564564321"
+    },
+    {
+      "id": "sudoku-mini-normal-0096",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "302400006000210040060023500600001304",
+      "solution": "352461146235213546465123534612621354"
+    },
+    {
+      "id": "sudoku-mini-normal-0097",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "301002040030100500005003030020600304",
+      "solution": "351462246135123546465213534621612354"
+    },
+    {
+      "id": "sudoku-mini-normal-0098",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "050416000205004060060100401000625040",
+      "solution": "352416146235214563563124431652625341"
+    },
+    {
+      "id": "sudoku-mini-normal-0099",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000016140030300064460003030042620000",
+      "solution": "253416146235312564465123531642624351"
+    },
+    {
+      "id": "sudoku-mini-normal-0100",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000006156230200000000102012365600000",
+      "solution": "324516156234241653563142412365635421"
+    },
+    {
+      "id": "sudoku-mini-normal-0101",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "004030230100002306305200001060050400",
+      "solution": "514632236145142356365214421563653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0102",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "562410004000000604306000000500051342",
+      "solution": "562413134256215634346125423561651342"
+    },
+    {
+      "id": "sudoku-mini-normal-0103",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "050004024350000560003000012630600010",
+      "solution": "356124124356241563563241412635635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0104",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "006100140200350000000015004023003500",
+      "solution": "236154145236351462462315514623623541"
+    },
+    {
+      "id": "sudoku-mini-normal-0105",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "500610100035000063360000420000053001",
+      "solution": "532614146235214563365142421356653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0106",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "600053000200051030040510002000560401",
+      "solution": "624153135246251634346512412365563421"
+    },
+    {
+      "id": "sudoku-mini-normal-0107",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "001020006035100500005041410300050400",
+      "solution": "531624246135124563365241412356653412"
+    },
+    {
+      "id": "sudoku-mini-normal-0108",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "006510000206200403403005502000004300",
+      "solution": "326514145236251463463125532641614352"
+    },
+    {
+      "id": "sudoku-mini-normal-0109",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "643100000046201000000205410003006421",
+      "solution": "643152125346251634364215412563536421"
+    },
+    {
+      "id": "sudoku-mini-normal-0110",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "510000234050100030060005020461000023",
+      "solution": "516342234156152634463215325461641523"
+    },
+    {
+      "id": "sudoku-mini-normal-0111",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "043500006000312000000123000600004350",
+      "solution": "243516156234312465465123531642624351"
+    },
+    {
+      "id": "sudoku-mini-normal-0112",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "040016150030002000000100030042620050",
+      "solution": "243516156234312465465123531642624351"
+    },
+    {
+      "id": "sudoku-mini-normal-0113",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "400030030100042350063210004061050003",
+      "solution": "415632236145142356563214324561651423"
+    },
+    {
+      "id": "sudoku-mini-normal-0114",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "604000005100102004300205003600000402",
+      "solution": "614523235146152364346215423651561432"
+    },
+    {
+      "id": "sudoku-mini-normal-0115",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "560004024006241000000201400630600012",
+      "solution": "563124124356241563356241412635635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0116",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000050406100102506504231003405040000",
+      "solution": "321654456123132546564231213465645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0117",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "005000103006001630064200400501000300",
+      "solution": "645123123456251634364215432561516342"
+    },
+    {
+      "id": "sudoku-mini-normal-0118",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "032004000230014003000140021000500420",
+      "solution": "632514145236214653356142421365563421"
+    },
+    {
+      "id": "sudoku-mini-normal-0119",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000500350120120000000031032016004000",
+      "solution": "241563356124123645465231532416614352"
+    },
+    {
+      "id": "sudoku-mini-normal-0120",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "060001000346231000000132312004600010",
+      "solution": "463521125346231465546132312654654213"
+    },
+    {
+      "id": "sudoku-mini-normal-0121",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "100643000000050360063050000000634002",
+      "solution": "125643346125251364463251512436634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0122",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "610000004050052600006210020500060024",
+      "solution": "615432234156152643346215423561561324"
+    },
+    {
+      "id": "sudoku-mini-normal-0123",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "003005206100310600002041001506600400",
+      "solution": "143265256134314652562341431526625413"
+    },
+    {
+      "id": "sudoku-mini-normal-0124",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "003050100300050630064020002003030400",
+      "solution": "643251125346251634364125412563536412"
+    },
+    {
+      "id": "sudoku-mini-normal-0125",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "040060136000204500005402000651050020",
+      "solution": "542163136245214536365412423651651324"
+    },
+    {
+      "id": "sudoku-mini-normal-0126",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "630015100040000650050000010002560031",
+      "solution": "634215125346241653356124413562562431"
+    },
+    {
+      "id": "sudoku-mini-normal-0127",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "540360000105100500005004402000053001",
+      "solution": "541362236145124536365214412653653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0128",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "001600200105003004500230302006005300",
+      "solution": "451623236145123564564231312456645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0129",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "050060100200200506405003004002020050",
+      "solution": "352461146235213546465123534612621354"
+    },
+    {
+      "id": "sudoku-mini-normal-0130",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "100050450000213460064231000040040002",
+      "solution": "132654456123213465564231321546645312"
+    },
+    {
+      "id": "sudoku-mini-normal-0131",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "006020100040050403403050510004030500",
+      "solution": "346125125346251463463251512634634512"
+    },
+    {
+      "id": "sudoku-mini-normal-0132",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000200005036102650064302420500003001",
+      "solution": "316245245136132654564312421563653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0133",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "064032003406200040050003302500040320",
+      "solution": "564132123456231645456213312564645321"
+    },
+    {
+      "id": "sudoku-mini-normal-0134",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "430006050104020003300040503060600015",
+      "solution": "431526256134124653365241513462642315"
+    },
+    {
+      "id": "sudoku-mini-normal-0135",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "500306006240240000000024013502602001",
+      "solution": "524316136245241653365124413562652431"
+    },
+    {
+      "id": "sudoku-mini-normal-0136",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "530604040200004003300100001050603021",
+      "solution": "532614146235214563365142421356653421"
+    },
+    {
+      "id": "sudoku-mini-normal-0137",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "460050105300040030050010002403030021",
+      "solution": "463152125346241635356214512463634521"
+    },
+    {
+      "id": "sudoku-mini-normal-0138",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "032010006004200050060002500400040320",
+      "solution": "432516156234214653365142523461641325"
+    },
+    {
+      "id": "sudoku-mini-normal-0139",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "040230023406200000000005405060032010",
+      "solution": "546231123456251643364125415362632514"
+    },
+    {
+      "id": "sudoku-mini-normal-0140",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "405030036100102000000204004560050403",
+      "solution": "415632236145142356563214324561651423"
+    },
+    {
+      "id": "sudoku-mini-normal-0141",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "543000106000051063060150000601000534",
+      "solution": "543216126345251463364152435621612534"
+    },
+    {
+      "id": "sudoku-mini-normal-0142",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "430205100006040053560000300002602031",
+      "solution": "436215125346241653563124314562652431"
+    },
+    {
+      "id": "sudoku-mini-normal-0143",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "060030034050120040046015050360010020",
+      "solution": "561432234156125643346215452361613524"
+    },
+    {
+      "id": "sudoku-mini-normal-0144",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "000103106200050004400010002406605000",
+      "solution": "524163136245251634463512312456645321"
+    },
+    {
+      "id": "sudoku-mini-normal-0145",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "203064046005000050060001400520620403",
+      "solution": "253164146235314652562341431526625413"
+    },
+    {
+      "id": "sudoku-mini-normal-0146",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "600150000206010640056000304000061003",
+      "solution": "632154145236213645456312324561561423"
+    },
+    {
+      "id": "sudoku-mini-normal-0147",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "060420000306000564456000302600045010",
+      "solution": "563421124356231564456132312645645213"
+    },
+    {
+      "id": "sudoku-mini-normal-0148",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "004360050100200653563001002000035400",
+      "solution": "124365356124241653563241412536635412"
+    },
+    {
+      "id": "sudoku-mini-normal-0149",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "036000045006301064500103400650000340",
+      "solution": "236415145236321564564123413652652341"
+    },
+    {
+      "id": "sudoku-mini-normal-0150",
+      "variant": "mini",
+      "difficulty": "normal",
+      "givens": "605304000006102600006215400000501402",
+      "solution": "615324234156152643346215423561561432"
+    }
+  ]
+}
