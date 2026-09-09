@@ -13,6 +13,7 @@
     "words:wordle": "node scripts/generate-wordle-words.mjs"
   },
   "devDependencies": {
+    "nspell": "^2.1.5",
     "prettier": "^3.9.4",
     "sharp": "^0.35.2",
     "tsx": "^4.23.13",

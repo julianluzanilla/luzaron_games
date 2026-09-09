@@ -36,23 +36,50 @@ Wordle usa listas de palabras estáticas en `public/words/wordle/`, dos por idio
 - `{es|en}-{5|6}-answers.txt` — palabras que pueden salir como solución.
 
 Todas están normalizadas (mayúsculas, sin tildes y con Ñ convertida en N, regla 13.3 del
-PRODUCT_SPEC), así que el jugador escribe sin acentos. Las soluciones son solo palabras
-frecuentes de verdad, sin nombres propios ni groserías; como intento se acepta el diccionario
-completo.
+PRODUCT_SPEC), así que el jugador escribe sin acentos.
 
-Para regenerarlas (requiere internet):
+| Lista | Intentos | Soluciones |
+| ----- | -------: | ---------: |
+| es-5  |    6,914 |        800 |
+| es-6  |   15,521 |        800 |
+| en-5  |   12,972 |      2,310 |
+| en-6  |    8,233 |        800 |
+
+**Intentos**: en español se validan contra el diccionario hunspell **es-MX** (RAE más
+mexicanismos: elote, alberca, chamarra, cuate, jitomate, platicar…), así que lo que el juego
+acepta es el español que se habla en México.
+
+**Soluciones**: mucho más estrictas, porque el juego es familiar. Son solo las 800 palabras
+más frecuentes del idioma que además:
+
+- No son formas verbales conjugadas. Se descartan con el listado de lemas de
+  `michmech/lemmatization-lists` y el lemario de verbos de `olea/lemarios`, para que nunca
+  salga algo como CUNDA, ACUDA o ABRAN. Sí entran los infinitivos, los participios que
+  funcionan como adjetivo y los sustantivos que coinciden con un verbo (ABRIGO, ABRAZO).
+- No son nombres propios, topónimos, groserías ni palabras funcionales.
+- No son términos que solo se usan en España (zumo, patata, móvil, gafas) ni palabras que en
+  México son vulgares aunque en España no lo sean.
+
+El inglés de 5 letras usa la lista oficial del Wordle del New York Times. El de 6 sigue el
+mismo criterio que el español: sin plurales ni formas -ed/-ing, sin nombres propios y solo
+las más frecuentes.
+
+Para regenerarlas (requiere internet y `npm install`):
 
 ```powershell
 npm run words:wordle
 ```
 
-Fuentes: `an-array-of-spanish-words` y `an-array-of-english-words` (diccionarios),
-`hermitdave/FrequencyWords` (frecuencia de uso real en subtítulos) y las listas oficiales del
-Wordle del New York Times para el inglés de 5 letras.
+Fuentes: `words/an-array-of-spanish-words` y `words/an-array-of-english-words`
+(diccionarios base), `wooorm/dictionaries` (hunspell es-MX e inglés),
+`hermitdave/FrequencyWords` (frecuencia de uso real en subtítulos),
+`michmech/lemmatization-lists` y `olea/lemarios` (lemas y verbos),
+`Kinkelin/WordleCompetition` (listas oficiales del NYT) y `marcboquet/spanish-names` más
+`dominictarr/random-name` (nombres propios a descartar).
 
 La palabra diaria se calcula en el cliente: la lista de soluciones se baraja con una semilla
 fija por idioma y longitud, y el día del calendario elige el índice. Sale igual en todos los
-dispositivos y no se repite hasta agotar la lista (más de 6 años de palabras por modo).
+dispositivos y no se repite hasta agotar la lista (más de 2 años por modo).
 
 ## Juegos iniciales
 
