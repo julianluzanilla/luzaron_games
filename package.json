@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p functions/tsconfig.json",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "db:schema": "wrangler d1 execute luzaron-games --remote --file=db/schema.sql",
+    "db:schema:local": "wrangler d1 execute luzaron-games --local --file=db/schema.sql",
+    "pages:dev": "wrangler pages dev -- npm run dev",
     "pool:queens": "tsx scripts/generate-queens-pool.ts",
-    "words:wordle": "node scripts/generate-wordle-words.mjs",
-    "pool:sudoku": "tsx scripts/generate-sudoku-pool.ts"
+    "pool:sudoku": "tsx scripts/generate-sudoku-pool.ts",
+    "words:wordle": "node scripts/generate-wordle-words.mjs"
   },
   "devDependencies": {
     "nspell": "^2.1.5",
@@ -19,7 +23,8 @@
     "sharp": "^0.35.2",
     "tsx": "^4.23.13",
     "typescript": "~6.0.2",
-    "vite": "^8.1.0"
+    "vite": "^8.1.0",
+    "wrangler": "^4.130.0"
   },
   "dependencies": {
     "idb": "^8.0.3"

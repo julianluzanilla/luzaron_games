@@ -56,7 +56,11 @@ export function isEditable(state: SudokuBoardState, index: number): boolean {
 }
 
 /** Escribe (o borra, con 0) un número del jugador. */
-export function setSudokuValue(state: SudokuBoardState, index: number, value: number): SudokuBoardState {
+export function setSudokuValue(
+  state: SudokuBoardState,
+  index: number,
+  value: number
+): SudokuBoardState {
   if (!isEditable(state, index)) return state
   if (state.values[index] === value) return state
 

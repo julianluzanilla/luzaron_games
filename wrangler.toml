@@ -1,0 +1,20 @@
+# Configuración de Cloudflare Pages para Luzaron Games.
+#
+# El sitio se despliega desde GitHub, así que Pages ya sabe compilar; este
+# archivo existe sobre todo para dos cosas:
+#   1. declarar el binding de D1 que usan las funciones de functions/,
+#   2. poder correr el backend en local con `npx wrangler pages dev`.
+#
+# El binding también hay que darlo de alta en el panel de Cloudflare
+# (Workers & Pages → luzaron-games → Settings → Bindings), tanto en Production
+# como en Preview: lo de aquí no lo configura solo.
+
+name = "luzaron-games"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "luzaron-games"
+# De `npx wrangler d1 create luzaron-games` (9 sept 2026).
+database_id = "6ab64421-ad19-484f-8f78-632056404570"

@@ -10,8 +10,10 @@ Este backlog organiza el desarrollo por capítulos. Cada tarea debe marcarse com
 > packs descargables, sincronización, motores genéricos) describen el plan original y
 > siguen siendo la hoja de ruta a futuro, pero ese código ya no está en el proyecto —
 > se eliminó junto con el resto del scaffolding que nunca llegó a usarse. Los checks de
-> esos capítulos reflejan el plan aprobado, no el estado actual del repo. El Capítulo 8
-> sí refleja el estado real después del reinicio.
+> esos capítulos reflejan el plan aprobado, no el estado actual del repo. Los Capítulos 8
+> a 12 sí reflejan el estado real. **Septiembre 2026:** con la pantalla de inicio, los
+> ajustes y el backend de usuarios ya se recuperó buena parte de lo que describían los
+> Capítulos 3, 4, 5 y 11; los checks de esos capítulos se pusieron al día.
 
 ---
 
@@ -74,16 +76,16 @@ Crear la carcasa principal de navegación y pantallas base.
 
 - [x] Crear sistema base de navegación.
 - [x] Crear layout responsivo principal.
-- [x] Crear pantalla Home.
-- [x] Crear pantalla Usuarios.
-- [x] Crear pantalla Biblioteca.
-- [x] Crear pantalla Records.
-- [x] Crear pantalla Ajustes.
+- [x] Crear pantalla Home. (`src/shell/home-app.ts`: 4 miniaturas SVG)
+- [x] Crear pantalla Usuarios. (`#/admin`, solo rol admin)
+- [ ] Crear pantalla Biblioteca.
+- [ ] Crear pantalla Records. (los récords ya se guardan; falta la pantalla que los liste)
+- [x] Crear pantalla Ajustes. (`#/ajustes`: tema y cuenta)
 - [x] Crear placeholder de Queens.
 - [x] Crear placeholder de Sudoku.
 - [x] Crear placeholder de Wordle.
-- [x] Crear navegación entre pantallas.
-- [x] Crear estado global mínimo de app.
+- [x] Crear navegación entre pantallas. (router por hash en `src/main.ts`)
+- [x] Crear estado global mínimo de app. (`shell/session.ts` + `shell/records.ts`)
 
 ---
 
@@ -95,19 +97,19 @@ Crear experiencia base para usuarios familiares.
 
 ## Tareas
 
-- [x] Crear modo claro.
+- [x] Crear modo claro. (los 4 juegos + shell)
 - [x] Crear modo oscuro.
-- [x] Crear modo automático según sistema.
-- [x] Crear preferencias locales.
-- [x] Crear selección de usuario actual.
-- [x] Crear usuario Invitado.
-- [x] Crear selector visual de perfiles.
-- [x] Crear ajustes de sonido.
-- [x] Crear ajustes de vibración.
-- [x] Crear ajustes de accesibilidad básica.
-- [x] Probar diseño en desktop.
-- [x] Probar diseño en iPhone.
-- [x] Probar diseño en tablet.
+- [x] Crear modo automático según sistema. (reacciona en vivo al cambio del sistema)
+- [x] Crear preferencias locales. (`luzaron-theme-v1`)
+- [x] Crear selección de usuario actual. (login en `#/ajustes`)
+- [x] Crear usuario Invitado. (es el estado por defecto; no guarda récords)
+- [ ] Crear selector visual de perfiles. (hoy es login con usuario y contraseña)
+- [ ] Crear ajustes de sonido.
+- [ ] Crear ajustes de vibración.
+- [ ] Crear ajustes de accesibilidad básica.
+- [x] Probar diseño en desktop. (Chromium 1200×800 y 360–420 px)
+- [ ] Probar diseño en iPhone.
+- [ ] Probar diseño en tablet.
 
 ---
 
@@ -119,18 +121,18 @@ Crear almacenamiento local sólido para jugar offline.
 
 ## Tareas
 
-- [x] Crear módulo IndexedDB.
-- [x] Crear store de perfiles locales.
-- [x] Crear store de sesiones.
-- [x] Crear store de configuración.
-- [x] Crear store de packs descargados.
-- [x] Crear store de niveles.
-- [x] Crear store de progreso.
-- [x] Crear store de records.
-- [x] Crear store de cola de sincronización.
-- [x] Crear verificación real de conexión al iniciar.
-- [x] Crear flujo de actualización al iniciar.
-- [x] Crear flujo offline si no hay internet.
+- [x] Crear módulo IndexedDB. (`src/shell/db.ts`, con `idb`)
+- [x] Crear store de perfiles locales. (`meta.cached-user`: identifica sin red)
+- [ ] Crear store de sesiones. (la sesión vive en la cookie y en D1)
+- [ ] Crear store de configuración. (tema y ajustes de juego siguen en localStorage)
+- [ ] Crear store de packs descargados.
+- [ ] Crear store de niveles.
+- [ ] Crear store de progreso.
+- [x] Crear store de records. (`records` + `bests`, esquema del §9)
+- [x] Crear store de cola de sincronización. (`records.synced` + `clientId` idempotente)
+- [x] Crear verificación real de conexión al iniciar. (`/auth/me` distingue 401 de sin red)
+- [ ] Crear flujo de actualización al iniciar.
+- [x] Crear flujo offline si no hay internet. (se juega y se guarda igual; se sube al volver)
 - [x] Crear guardado automático de estado.
 
 ---
@@ -290,21 +292,21 @@ Crear usuarios reales y administración desde Cloudflare.
 
 ## Tareas
 
-- [ ] Crear base Cloudflare D1.
-- [ ] Crear Pages Functions.
-- [ ] Crear tabla users.
-- [ ] Crear tabla games.
-- [ ] Crear tabla level_packs.
-- [ ] Crear tabla records.
+- [x] Crear base Cloudflare D1. (`db/schema.sql`; falta correr `npm run db:schema`)
+- [x] Crear Pages Functions. (`functions/api/**`)
+- [x] Crear tabla users.
+- [ ] Crear tabla games. (el catálogo vive en `src/shell/games.ts`; no hace falta todavía)
+- [ ] Crear tabla level_packs. (los packs siguen siendo JSON estático)
+- [x] Crear tabla records.
 - [ ] Crear tabla user_progress.
-- [ ] Crear tabla hint_events.
-- [ ] Crear usuario admin inicial.
-- [ ] Crear login.
-- [ ] Crear logout.
-- [ ] Crear alta de usuarios por admin.
-- [ ] Crear desactivación de usuarios.
-- [ ] Crear sesión local para offline.
-- [ ] Mantener Invitado sin records remotos.
+- [ ] Crear tabla hint_events. (`hints_used` va en el record; falta el detalle por pista)
+- [x] Crear usuario admin inicial. (`/api/auth/setup`, se cierra tras el primero)
+- [x] Crear login.
+- [x] Crear logout.
+- [x] Crear alta de usuarios por admin.
+- [x] Crear desactivación de usuarios. (cierra sus sesiones al instante)
+- [x] Crear sesión local para offline. (perfil cacheado en IndexedDB)
+- [x] Mantener Invitado sin records remotos. (ni remotos ni locales)
 
 ---
 
@@ -316,12 +318,12 @@ Sincronizar records y crear rankings familiares.
 
 ## Tareas
 
-- [ ] Crear subida de records.
-- [ ] Crear cola de records pendientes.
-- [ ] Crear sync automático al recuperar internet.
+- [x] Crear subida de records. (`POST /api/records`, idempotente por `clientId`)
+- [x] Crear cola de records pendientes.
+- [x] Crear sync automático al recuperar internet. (evento `online`)
 - [ ] Crear ranking por juego.
-- [ ] Crear ranking por puzzle.
-- [ ] Crear top 3 por puzzle sin pistas.
+- [x] Crear ranking por puzzle. (`GET /api/rankings`; falta consumirlo en la UI)
+- [x] Crear top 3 por puzzle sin pistas.
 - [ ] Resaltar usuario actual si entra en top 3.
 - [ ] No mostrar usuario actual si no entra en top 3.
 - [ ] Preparar ranking en modal de completado.

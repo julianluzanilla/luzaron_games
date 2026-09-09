@@ -15,7 +15,8 @@ export function loadAvailableSizes(): Promise<PoolSizeEntry[]> {
   if (!indexPromise) {
     indexPromise = fetch('/levels/queens/index.json')
       .then((response) => {
-        if (!response.ok) throw new Error(`No se pudo cargar el índice de puzzles (${response.status})`)
+        if (!response.ok)
+          throw new Error(`No se pudo cargar el índice de puzzles (${response.status})`)
         return response.json() as Promise<{ sizes: PoolSizeEntry[] }>
       })
       .then((data) => data.sizes)

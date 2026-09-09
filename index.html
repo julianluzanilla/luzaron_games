@@ -2,15 +2,15 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <title>Queens · Luzaron Games</title>
+    <title>Luzaron Games</title>
 
     <meta
       name="description"
-      content="Queens: el juego de lógica familiar, sin anuncios. Coloca una reina por fila, columna y región de color."
+      content="Juegos mentales para toda la familia, sin anuncios y sin internet: Queens, Sudoku, Wordle y Mahjong Solitario."
     />
-    <meta name="theme-color" content="#14213D" />
+    <meta name="theme-color" content="#0b1220" />
 
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
@@ -21,6 +21,33 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
+    <!--
+      Tema antes de pintar. Sin esto la app abre en claro un instante y luego
+      salta a oscuro: un destello blanco en la cara a las once de la noche.
+      Tiene que ir en línea y antes del CSS; las llaves son las mismas que usa
+      src/shell/theme.ts.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('luzaron-theme-v1')
+          var theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark'
+
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+          document.querySelector('meta[name="theme-color"]').content =
+            theme === 'light' ? '#f4f6fb' : '#0b1220'
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark'
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

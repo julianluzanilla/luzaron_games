@@ -32,7 +32,8 @@ export function loadSudokuIndex(): Promise<SudokuPackEntry[]> {
   if (!indexPromise) {
     indexPromise = fetch('/levels/sudoku/index.json')
       .then((response) => {
-        if (!response.ok) throw new Error(`No se pudo cargar el índice de Sudoku (${response.status})`)
+        if (!response.ok)
+          throw new Error(`No se pudo cargar el índice de Sudoku (${response.status})`)
         return response.json() as Promise<SudokuPackIndex>
       })
       .then((data) => data.packs)

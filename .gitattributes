@@ -1,0 +1,15 @@
+# Fin de línea: LF en el repositorio y en la copia de trabajo, en todas las
+# plataformas. Sin esto, Git en Windows (core.autocrlf) convierte a CRLF al
+# hacer checkout y luego marca archivos como modificados sólo por el salto de
+# línea: es lo que hacía aparecer .gitignore siempre sucio y lo que llenaba
+# cada `git add` de avisos "LF will be replaced by CRLF".
+* text=auto eol=lf
+
+# Binarios: que Git no intente normalizarlos nunca.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.zip  binary
+*.woff binary
+*.woff2 binary

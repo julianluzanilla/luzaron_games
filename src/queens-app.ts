@@ -13,23 +13,11 @@ import {
   type PoolSizeEntry,
 } from './games/queens/queens-pool'
 import type { QueensBoardState } from './games/queens/queens-types'
+import { renderGameHeader } from './shell/app-header'
+import { getBestTime, submitRecord } from './shell/records'
 
-const BEST_TIME_PREFIX = 'luzaron-queens-best-v1:'
 const LAST_SIZE_KEY = 'luzaron-queens-last-size-v1'
 const MAX_HISTORY = 200
-
-interface GameEntry {
-  id: string
-  label: string
-  available: boolean
-}
-
-const GAMES: GameEntry[] = [
-  { id: 'queens', label: 'Queens', available: true },
-  { id: 'sudoku', label: 'Sudoku', available: true },
-  { id: 'wordle', label: 'Wordle', available: true },
-  { id: 'mahjong', label: 'Mahjong Solitaire', available: false },
-]
 
 interface AppState {
   availableSizes: PoolSizeEntry[]
@@ -124,7 +112,9 @@ async function initialize(): Promise<void> {
     state.availableSizes = sizes
 
     const storedSize = Number(window.localStorage.getItem(LAST_SIZE_KEY))
-    const preferredSize = sizes.find((entry) => entry.size === storedSize) ? storedSize : sizes[0]?.size
+    const preferredSize = sizes.find((entry) => entry.size === storedSize)
+      ? storedSize
+      : sizes[0]?.size
 
     if (preferredSize) {
       await startNewPuzzle(preferredSize)
@@ -243,20 +233,31 @@ function handleFocusChange(): void {
 
 // ---------- Best times ----------
 
-function readBestTime(size: number): number | null {
-  const raw = window.localStorage.getItem(BEST_TIME_PREFIX + size)
-  return raw ? Number(raw) : null
+/**
+ * Los mejores tiempos ya no viven sueltos en localStorage: los lleva
+ * `shell/records.ts`, que los guarda por usuario en IndexedDB y los sube al
+ * backend. La categoria de Queens es el tamano del tablero.
+ */
+function packIdForSize(size: number): string {
+  return `queens-${size}x${size}`
 }
 
+function readBestTime(size: number): number | null {
+  return getBestTime('queens', packIdForSize(size))
+}
+
+/**
+ * Registra la partida terminada. Solo cuenta como record si se hizo sin
+ * pistas; de eso se encarga `submitRecord`.
+ */
 function maybeSaveBestTime(size: number, ms: number): boolean {
-  const current = readBestTime(size)
-
-  if (current === null || ms < current) {
-    window.localStorage.setItem(BEST_TIME_PREFIX + size, String(ms))
-    return true
-  }
-
-  return false
+  return submitRecord({
+    gameId: 'queens',
+    packId: packIdForSize(size),
+    levelId: String(state.puzzleNumber),
+    rawTimeMs: ms,
+    hintsUsed: state.hintsUsed,
+  }).isNewBest
 }
 
 // ---------- Board interaction ----------
@@ -515,7 +516,7 @@ function renderTimerOnly(): void {
 function render(justWonWithBest = false): void {
   root.innerHTML = `
     <div class="app-shell">
-      ${renderTopNav()}
+      ${renderGameHeader('queens')}
       ${renderMain()}
     </div>
     ${state.pendingReset ? renderResetConfirm() : ''}
@@ -535,30 +536,6 @@ function applyHintHighlight(): void {
   const cell = root.querySelector(selector)
 
   cell?.classList.add('hint-target')
-}
-
-function renderTopNav(): string {
-  const tabs = GAMES.map(
-    (game) => `
-      <button
-        type="button"
-        class="game-tab ${game.id === 'queens' ? 'active' : ''}"
-        data-action="select-game"
-        data-game="${game.id}"
-        ${game.available ? '' : 'disabled'}
-      >
-        <span>${game.label}</span>
-        ${game.available ? '' : '<span class="game-tab-badge">Pronto</span>'}
-      </button>
-    `
-  ).join('')
-
-  return `
-    <header class="app-header">
-      <span class="brand-mark" aria-hidden="true">♛</span>
-      <nav class="game-nav" aria-label="Selector de juego">${tabs}</nav>
-    </header>
-  `
 }
 
 function renderMain(): string {

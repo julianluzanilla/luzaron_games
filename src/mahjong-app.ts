@@ -32,10 +32,10 @@ import {
   type MahjongBoardState,
   type MahjongLayoutId,
 } from './games/mahjong/mahjong-types'
-import { renderTopNav } from './shell/game-nav'
+import { renderGameHeader } from './shell/app-header'
+import { getBestTime, submitRecord } from './shell/records'
 
 const SETTINGS_KEY = 'luzaron-mahjong-settings-v1'
-const BEST_TIME_PREFIX = 'luzaron-mahjong-best-v1:'
 const MATCH_MS = 240
 const INVALID_MS = 320
 
@@ -182,28 +182,27 @@ function writeSettings(): void {
   }
 }
 
-function readBestTime(): number | null {
-  try {
-    const raw = window.localStorage.getItem(`${BEST_TIME_PREFIX}${state.layoutId}`)
-    const value = raw === null ? Number.NaN : Number(raw)
+/**
+ * Los mejores tiempos los lleva `shell/records.ts`. La categoria es el layout.
+ * Una partida solo cuenta como record si fue limpia: sin pista, sin barajar y
+ * sin deshacer; por eso las tres ayudas suman a `hintsUsed` al reportarla.
+ */
+function packId(): string {
+  return `mahjong-${state.layoutId}`
+}
 
-    return Number.isFinite(value) ? value : null
-  } catch {
-    return null
-  }
+function readBestTime(): number | null {
+  return getBestTime('mahjong', packId())
 }
 
 function maybeSaveBestTime(ms: number): boolean {
-  const best = readBestTime()
-
-  if (best !== null && best <= ms) return false
-
-  try {
-    window.localStorage.setItem(`${BEST_TIME_PREFIX}${state.layoutId}`, String(ms))
-    return true
-  } catch {
-    return false
-  }
+  return submitRecord({
+    gameId: 'mahjong',
+    packId: packId(),
+    levelId: state.layoutId,
+    rawTimeMs: ms,
+    hintsUsed: state.hintsUsed + state.shufflesUsed + state.undosUsed,
+  }).isNewBest
 }
 
 // ---------- Timer ----------
@@ -401,8 +400,7 @@ function completeGame(): void {
   state.hinted = new Set()
   pauseTimer()
 
-  const clean = state.hintsUsed === 0 && state.shufflesUsed === 0 && state.undosUsed === 0
-  const isNewBest = clean && maybeSaveBestTime(state.elapsedMs)
+  const isNewBest = maybeSaveBestTime(state.elapsedMs)
 
   render(isNewBest)
 }
@@ -662,7 +660,7 @@ function render(justWonWithBest = false): void {
 
   root.innerHTML = `
     <div class="app-shell">
-      ${renderTopNav('mahjong')}
+      ${renderGameHeader('mahjong')}
       ${renderMain()}
     </div>
     ${state.pendingReset ? renderResetConfirm() : ''}

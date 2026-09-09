@@ -34,10 +34,10 @@ import {
   type SudokuDifficulty,
   type SudokuVariant,
 } from './games/sudoku/sudoku-types'
-import { renderTopNav } from './shell/game-nav'
+import { renderGameHeader } from './shell/app-header'
+import { getBestTime, submitRecord } from './shell/records'
 
 const SETTINGS_KEY = 'luzaron-sudoku-settings-v1'
-const BEST_TIME_PREFIX = 'luzaron-sudoku-best-v1:'
 const FLASH_MS = 850
 
 interface AppState {
@@ -158,30 +158,27 @@ function writeSettings(): void {
   }
 }
 
-function bestTimeKey(): string {
-  return `${BEST_TIME_PREFIX}${state.variant}-${state.difficulty}`
+/**
+ * Los mejores tiempos los lleva `shell/records.ts` (por usuario, en IndexedDB
+ * y sincronizados con el backend). La categoria del Sudoku es variante +
+ * dificultad, igual que antes.
+ */
+function packId(): string {
+  return `sudoku-${state.variant}-${state.difficulty}`
 }
 
 function readBestTime(): number | null {
-  const raw = window.localStorage.getItem(bestTimeKey())
-  const value = raw ? Number(raw) : NaN
-
-  return Number.isFinite(value) ? value : null
+  return getBestTime('sudoku', packId())
 }
 
 function maybeSaveBestTime(ms: number): boolean {
-  const current = readBestTime()
-
-  if (current === null || ms < current) {
-    try {
-      window.localStorage.setItem(bestTimeKey(), String(ms))
-    } catch {
-      return false
-    }
-    return true
-  }
-
-  return false
+  return submitRecord({
+    gameId: 'sudoku',
+    packId: packId(),
+    levelId: String(state.puzzleNumber),
+    rawTimeMs: ms,
+    hintsUsed: state.hintsUsed,
+  }).isNewBest
 }
 
 // ---------- Carga de puzzles ----------
@@ -306,7 +303,9 @@ function writeValue(index: number, value: number): void {
 
   // El destello solo celebra zonas correctas: si la zona quedó llena pero
   // con repetidos, no es logro.
-  const celebrate = completedUnits.filter((unit) => unit.cells.every((cell) => !state.conflicts.has(cell)))
+  const celebrate = completedUnits.filter((unit) =>
+    unit.cells.every((cell) => !state.conflicts.has(cell))
+  )
 
   if (celebrate.length > 0) flashCells(celebrate.flatMap((unit) => unit.cells))
 
@@ -368,7 +367,9 @@ function useHint(): void {
   state.hintsUsed += 1
   state.conflicts = getSudokuConflicts(next)
 
-  const celebrate = completedUnits.filter((unit) => unit.cells.every((cell) => !state.conflicts.has(cell)))
+  const celebrate = completedUnits.filter((unit) =>
+    unit.cells.every((cell) => !state.conflicts.has(cell))
+  )
 
   if (celebrate.length > 0) flashCells(celebrate.flatMap((unit) => unit.cells))
 
@@ -502,7 +503,10 @@ function handleKeyDown(event: KeyboardEvent): void {
 
   if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
     event.preventDefault()
-    moveSelection(key === 'ArrowUp' ? -1 : key === 'ArrowDown' ? 1 : 0, key === 'ArrowLeft' ? -1 : key === 'ArrowRight' ? 1 : 0)
+    moveSelection(
+      key === 'ArrowUp' ? -1 : key === 'ArrowDown' ? 1 : 0,
+      key === 'ArrowLeft' ? -1 : key === 'ArrowRight' ? 1 : 0
+    )
     return
   }
 
@@ -534,7 +538,7 @@ function render(justWonWithBest = false): void {
 
   root.innerHTML = `
     <div class="app-shell">
-      ${renderTopNav('sudoku')}
+      ${renderGameHeader('sudoku')}
       ${renderMain()}
     </div>
     ${state.pendingReset ? renderResetConfirm() : ''}

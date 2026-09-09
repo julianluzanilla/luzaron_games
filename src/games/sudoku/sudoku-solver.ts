@@ -48,7 +48,11 @@ export function getUnits(geometry: SudokuGeometry): SudokuUnits {
   const peers: number[][] = []
 
   for (let index = 0; index < cellCount; index += 1) {
-    const own = [rows[rowOf(geometry, index)], columns[columnOf(geometry, index)], boxes[boxOf(geometry, index)]]
+    const own = [
+      rows[rowOf(geometry, index)],
+      columns[columnOf(geometry, index)],
+      boxes[boxOf(geometry, index)],
+    ]
     const peerSet = new Set<number>()
 
     for (const unit of own) {

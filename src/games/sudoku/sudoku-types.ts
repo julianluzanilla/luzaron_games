@@ -147,5 +147,8 @@ export function boxOf(geometry: SudokuGeometry, index: number): number {
   const row = rowOf(geometry, index)
   const column = columnOf(geometry, index)
 
-  return Math.floor(row / geometry.boxRows) * geometry.boxesAcross + Math.floor(column / geometry.boxCols)
+  return (
+    Math.floor(row / geometry.boxRows) * geometry.boxesAcross +
+    Math.floor(column / geometry.boxCols)
+  )
 }

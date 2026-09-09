@@ -18,7 +18,8 @@ import {
   type WordleMode,
   type WordleSettings,
 } from './games/wordle/wordle-types'
-import { renderTopNav } from './shell/game-nav'
+import { renderGameHeader } from './shell/app-header'
+import { getCurrentUser } from './shell/session'
 
 const SETTINGS_KEY = 'luzaron-wordle-settings-v1'
 const DAILY_KEY_PREFIX = 'luzaron-wordle-daily-v1:'
@@ -149,8 +150,15 @@ interface StoredDaily {
   guesses: string[]
 }
 
+/**
+ * El avance de la palabra diaria se guarda por usuario: si en la tablet juegan
+ * dos hermanos, cada quien tiene su intento del dia. El invitado usa su propio
+ * espacio, que se comparte entre todos los invitados de ese aparato.
+ */
 function dailyStorageKey(): string {
-  return `${DAILY_KEY_PREFIX}${state.settings.language}-${state.settings.length}`
+  const owner = getCurrentUser()?.id ?? 'guest'
+
+  return `${DAILY_KEY_PREFIX}${owner}:${state.settings.language}-${state.settings.length}`
 }
 
 function readDailyProgress(): StoredDaily | null {
@@ -489,7 +497,7 @@ function render(): void {
 
   root.innerHTML = `
     <div class="app-shell">
-      ${renderTopNav('wordle')}
+      ${renderGameHeader('wordle')}
       ${renderMain()}
     </div>
     ${state.settingsOpen ? renderSettings() : ''}
@@ -518,7 +526,7 @@ function renderMain(): string {
             ${state.mode === 'daily' ? `#${state.puzzleNumber} · ` : ''}${LANGUAGE_LABELS[state.settings.language]} · ${length} letras${difficulty === 'hard' ? ' · Difícil' : ''}
           </span>
         </div>
-        <button type="button" class="icon-button" data-action="open-settings" aria-label="Configuración de Wordle">⚙</button>
+        <button type="button" class="icon-button" data-action="open-settings" aria-label="Idioma, longitud y dificultad" title="Idioma, longitud y dificultad">Aa</button>
       </div>
 
       <div class="wordle-message-slot">

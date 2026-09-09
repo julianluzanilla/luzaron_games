@@ -2,9 +2,21 @@
 /* Tokens                                                                  */
 /* ---------------------------------------------------------------------- */
 
+/*
+ * :root trae el tema OSCURO completo y el bloque [data-theme='light'] de más
+ * abajo solo cambia lo que tiene que cambiar. shell/theme.ts pone
+ * data-theme="dark" o "light" en <html>; en modo automático lo resuelve desde
+ * prefers-color-scheme y lo vuelve a resolver si el sistema cambia solo.
+ *
+ * Regla: ningún color va escrito a mano fuera de estos dos bloques (y de las
+ * paletas propias de cada juego, que siguen el mismo patrón más abajo). Si algo
+ * se ve mal en modo día, se arregla aquí y no en la regla que lo usa.
+ */
 :root {
   --color-bg: #0b1220;
+  --color-bg-glow: #16223f;
   --color-panel: #182238;
+  --color-panel-soft: #131c2f;
   --color-panel-line: #2a3752;
   --color-ink: #eef2ff;
   --color-ink-dim: #9aa7c2;
@@ -13,11 +25,38 @@
 
   --color-ember: #ff7a1a;
   --color-ember-dark: #d9600a;
+  /* Variante legible como TEXTO sobre el fondo del tema. */
+  --color-ember-ink: #ffb37a;
   --color-crimson: #e5384d;
   --color-crimson-dark: #c22239;
+  --color-crimson-ink: #ff6b7f;
   --color-azure: #2f8fe0;
   --color-azure-dark: #1f6fb8;
   --color-pine: #2fbf71;
+  --color-pine-ink: #2fbf71;
+
+  /* Tinta que va ENCIMA de un botón de color de acento. */
+  --color-on-ember: #1a0e03;
+  --color-on-pine: #04180d;
+  --color-on-crimson: #ffffff;
+  --color-on-azure: #ffffff;
+
+  /* Velos y sombras */
+  --color-scrim: rgba(4, 7, 15, 0.72);
+  --color-scrim-strong: rgba(4, 7, 15, 0.94);
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow-inset-hairline: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  /* Banda de pista (Queens) */
+  --color-hint-bg: rgba(255, 122, 26, 0.14);
+  --color-hint-line: rgba(255, 122, 26, 0.4);
+
+  /* Miniaturas de la home: papel, reglas y tinta del dibujo. */
+  --thumb-paper: #101a2e;
+  --thumb-rule: #2a3752;
+  --thumb-rule-strong: #4a5b80;
+  --thumb-ink: #eef2ff;
 
   /* Vivid, evenly-distinguishable region palette. */
   --region-0: #f2c230;
@@ -42,6 +81,47 @@
   color-scheme: dark;
 }
 
+/*
+ * Modo día. Los colores de acento (ámbar, verde, azul, rojo) se conservan
+ * porque son la marca del juego; lo que cambia es el papel, la tinta y todo lo
+ * que dependa de que el fondo sea oscuro: velos, sombras y los acentos cuando
+ * se usan como TEXTO, que sobre blanco necesitan bajar de luminosidad.
+ */
+:root[data-theme='light'] {
+  --color-bg: #f4f6fb;
+  --color-bg-glow: #e4ebf8;
+  --color-panel: #ffffff;
+  --color-panel-soft: #eef1f8;
+  --color-panel-line: #d7dde9;
+  --color-ink: #10131a;
+  --color-ink-dim: #5c6679;
+  --color-board-line: #1c2333;
+  --color-board-frame: #e7ebf4;
+
+  --color-ember-ink: #b4530a;
+  --color-crimson-ink: #c22239;
+  --color-pine-ink: #17864b;
+
+  --color-scrim: rgba(16, 19, 26, 0.42);
+  --color-scrim-strong: rgba(244, 246, 251, 0.94);
+  --shadow-card: 0 8px 24px rgba(16, 19, 26, 0.1);
+  --shadow-modal: 0 20px 50px rgba(16, 19, 26, 0.22);
+  --shadow-inset-hairline: inset 0 0 0 1px rgba(16, 19, 26, 0.05);
+
+  --color-hint-bg: rgba(255, 122, 26, 0.16);
+  --color-hint-line: rgba(180, 83, 10, 0.45);
+
+  --thumb-paper: #ffffff;
+  --thumb-rule: #c3cbd9;
+  --thumb-rule-strong: #33405c;
+  --thumb-ink: #10131a;
+
+  /* El gris de las regiones desaparece sobre papel blanco: se oscurece. */
+  --region-8: #6f7682;
+
+  color-scheme: light;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -55,7 +135,11 @@ body {
 body {
   min-height: 100dvh;
   background: var(--color-bg);
-  background-image: radial-gradient(circle at 18% -10%, #16223f 0%, var(--color-bg) 55%);
+  background-image: radial-gradient(
+    circle at 18% -10%,
+    var(--color-bg-glow) 0%,
+    var(--color-bg) 55%
+  );
   font-family: var(--font-ui);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
@@ -84,68 +168,635 @@ button {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Top nav: game switcher                                                  */
+/* Header compartido                                                       */
 /* ---------------------------------------------------------------------- */
+
+/*
+ * Un solo header para todo: en la home es marca + identidad + engrane, y
+ * dentro de un juego es "volver" + nombre + engrane. Sustituye a la barra de
+ * pestañas anterior: en un teléfono cada píxel de alto que no se gasta aquí es
+ * tablero.
+ */
 
 .app-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
+  gap: 12px;
+  padding: 14px 16px;
+  min-height: 60px;
+}
+
+.app-header > .header-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-title-mark {
+  color: var(--color-ember);
+  margin-right: 6px;
+}
+
+/* Botón de volver. Ancho fijo para que el título quede centrado de verdad. */
+.header-back {
+  flex: 0 0 auto;
+  min-width: 76px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 999px;
+  color: var(--color-ink-dim);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.header-back:hover {
+  background: var(--color-panel);
+  color: var(--color-ink);
+}
+
+.header-back-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+}
+
+.header-back-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.header-actions {
+  flex: 0 0 auto;
+  min-width: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  color: var(--color-ink-dim);
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.header-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.header-icon:hover {
+  background: var(--color-panel);
+  border-color: var(--color-panel-line);
+  color: var(--color-ink);
+}
+
+.app-header-home {
+  justify-content: space-between;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
 }
 
 .brand-mark {
-  font-size: 24px;
+  font-size: 18px;
   line-height: 1;
   color: var(--color-ember);
   flex: 0 0 auto;
 }
 
-.game-nav {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.game-nav::-webkit-scrollbar {
-  display: none;
-}
-
-.game-tab {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  background: transparent;
-  color: var(--color-ink-dim);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 14px;
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 20px;
   font-weight: 700;
-  cursor: pointer;
+  color: var(--color-ink);
+  white-space: nowrap;
 }
 
-.game-tab.active {
+/* ---------------------------------------------------------------------- */
+/* Chip de identidad                                                       */
+/* ---------------------------------------------------------------------- */
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: 999px;
   background: var(--color-panel);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+.user-chip:hover {
+  border-color: var(--color-ember);
+}
+
+.user-chip-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--color-ember);
+  color: var(--color-on-ember);
+  font-size: 14px;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.user-chip-guest .user-chip-avatar {
+  background: var(--color-panel-soft);
+  color: var(--color-ink-dim);
+  border: 1px solid var(--color-panel-line);
+}
+
+.user-chip-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.user-chip-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.user-chip-hint {
+  font-size: 11px;
+  color: var(--color-ink-dim);
+  white-space: nowrap;
+}
+
+/* En pantallas chicas el chip se queda solo con la inicial. */
+@media (max-width: 430px) {
+  .user-chip-text {
+    display: none;
+  }
+
+  .user-chip {
+    padding: 5px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Home: rejilla de juegos                                                 */
+/* ---------------------------------------------------------------------- */
+
+.home-main {
+  flex: 1;
+  width: 100%;
+  padding: 8px 16px 32px;
+}
+
+.home-title {
+  margin: 4px 0 18px;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
   color: var(--color-ink);
 }
 
-.game-tab:disabled {
-  cursor: default;
-  opacity: 0.55;
+/*
+ * Dos columnas siempre: es lo que hace que los cuatro juegos quepan en una
+ * pantalla de teléfono sin scroll, que es como se abre la app el 90% de las
+ * veces.
+ */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
 }
 
-.game-tab-badge {
+.game-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-panel);
+  color: var(--color-ink);
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease;
+}
+
+.game-card:hover {
+  border-color: var(--color-ember);
+  transform: translateY(-2px);
+}
+
+.game-card:active {
+  transform: scale(0.985);
+}
+
+.game-card-soon {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* La miniatura es cuadrada de verdad: sin aspect-ratio se deforma en Safari. */
+.game-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--color-panel-soft);
+}
+
+.game-thumb-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.game-card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--color-ember);
+  color: var(--color-on-ember);
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: rgba(255, 122, 26, 0.18);
-  color: var(--color-ember);
-  padding: 2px 6px;
+}
+
+.game-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 4px;
+  min-width: 0;
+}
+
+.game-card-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.game-card-tagline,
+.game-card-best {
+  font-size: 12px;
+  color: var(--color-ink-dim);
+  line-height: 1.3;
+}
+
+.game-card-best {
+  font-weight: 700;
+  color: var(--color-pine-ink);
+}
+
+.home-note {
+  margin: 22px 0 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--color-panel-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-soft);
+  color: var(--color-ink-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.home-note a {
+  color: var(--color-ember-ink);
+  font-weight: 700;
+}
+
+@media (min-width: 620px) {
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .home-title {
+    font-size: 32px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Ajustes y administración                                                */
+/* ---------------------------------------------------------------------- */
+
+.settings-main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 16px 40px;
+}
+
+.settings-card {
+  padding: 20px 18px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-panel);
+}
+
+.settings-card h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.settings-help {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-ink-dim);
+}
+
+.settings-banner {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.45;
+  border: 1px solid transparent;
+}
+
+.settings-banner-error {
+  background: var(--color-hint-bg);
+  border-color: var(--color-crimson);
+  color: var(--color-crimson-ink);
+}
+
+.settings-banner-ok {
+  background: var(--color-panel-soft);
+  border-color: var(--color-pine);
+  color: var(--color-pine-ink);
+}
+
+.settings-banner-warn {
+  margin-bottom: 14px;
+  background: var(--color-hint-bg);
+  border-color: var(--color-hint-line);
+  color: var(--color-ember-ink);
+}
+
+/* Selector de tema: tres tarjetas con una muestra del color de cada modo. */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px 12px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-soft);
+  color: var(--color-ink);
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.theme-option:hover {
+  border-color: var(--color-ember);
+}
+
+.theme-option:active {
+  transform: scale(0.97);
+}
+
+.theme-option.active {
+  border-color: var(--color-ember);
+  box-shadow: inset 0 0 0 1px var(--color-ember);
+}
+
+.theme-option-swatch {
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
+  border: 1px solid var(--color-panel-line);
+}
+
+.theme-swatch-light {
+  background: #f4f6fb;
+}
+
+.theme-swatch-dark {
+  background: #0b1220;
+}
+
+.theme-swatch-auto {
+  background: linear-gradient(135deg, #f4f6fb 0 50%, #0b1220 50% 100%);
+}
+
+.theme-option-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.theme-option-hint {
+  font-size: 11px;
+  color: var(--color-ink-dim);
+  text-align: center;
+}
+
+/* Formularios */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--color-ink-dim);
+}
+
+.field input,
+.field select {
+  padding: 11px 12px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-soft);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
+  /* 16px o iOS hace zoom al enfocar el campo. */
+  font-size: 16px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 1px;
+}
+
+.settings-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.settings-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.settings-facts dt {
+  color: var(--color-ink-dim);
+}
+
+.settings-facts dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.settings-actions .control-button {
+  flex: 1 1 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Lista de usuarios del panel de admin */
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-soft);
+}
+
+.user-row-inactive {
+  opacity: 0.6;
+}
+
+.user-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.user-row-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.user-row-meta {
+  font-size: 12px;
+  color: var(--color-ink-dim);
+}
+
+.user-row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chip-button {
+  padding: 7px 12px;
+  border: 1px solid var(--color-panel-line);
+  border-radius: 999px;
+  background: var(--color-panel);
+  color: var(--color-ink-dim);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.chip-button:not(:disabled):hover {
+  border-color: var(--color-ember);
+  color: var(--color-ink);
+}
+
+.chip-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -169,7 +820,7 @@ button {
 }
 
 .state-error {
-  color: var(--color-crimson);
+  color: var(--color-crimson-ink);
 }
 
 .game-area-header {
@@ -188,7 +839,7 @@ button {
   gap: 8px;
   background: var(--color-panel);
   border: 1px solid var(--color-panel-line);
-  color: var(--color-ember);
+  color: var(--color-ember-ink);
   padding: 8px 16px;
   border-radius: 999px;
   font-family: var(--font-display);
@@ -213,7 +864,7 @@ button {
 
 .best-time {
   font-weight: 700;
-  color: var(--color-pine);
+  color: var(--color-pine-ink);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -227,9 +878,7 @@ button {
   padding: 18px;
   border-radius: var(--radius-lg);
   background: var(--color-board-frame);
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-card), var(--shadow-inset-hairline);
 }
 
 .board-stage {
@@ -409,7 +1058,7 @@ button {
 .size-chip.active {
   background: var(--color-ember);
   border-color: var(--color-ember);
-  color: #1a0e03;
+  color: var(--color-on-ember);
 }
 
 .size-chip:active {
@@ -425,11 +1074,11 @@ button {
   max-width: 640px;
   margin: 12px 0 0;
   padding: 10px 14px;
-  background: rgba(255, 122, 26, 0.14);
-  border: 1px solid rgba(255, 122, 26, 0.4);
+  background: var(--color-hint-bg);
+  border: 1px solid var(--color-hint-line);
   border-radius: var(--radius-md);
   font-size: 14px;
-  color: #ffb37a;
+  color: var(--color-ember-ink);
   text-align: center;
 }
 
@@ -472,17 +1121,17 @@ button {
 
 [data-action='undo'] {
   background: var(--color-ember);
-  color: #1a0e03;
+  color: var(--color-on-ember);
 }
 
 [data-action='request-reset'] {
   background: var(--color-crimson);
-  color: #fff;
+  color: var(--color-on-crimson);
 }
 
 [data-action='hint'] {
   background: var(--color-azure);
-  color: #fff;
+  color: var(--color-on-azure);
 }
 
 .puzzle-nav {
@@ -494,13 +1143,13 @@ button {
 }
 
 .control-button-accent {
-  background: #7c5cfc;
+  background: var(--region-1);
   color: #fff;
 }
 
 .control-button-primary {
   background: var(--color-pine);
-  color: #04180d;
+  color: var(--color-on-pine);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -510,7 +1159,7 @@ button {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 15, 0.72);
+  background: var(--color-scrim);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -531,7 +1180,7 @@ button {
   border: 1px solid var(--color-panel-line);
   border-radius: var(--radius-lg);
   padding: 26px 24px 22px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-modal);
 }
 
 .modal-card h2 {
@@ -555,7 +1204,7 @@ button {
   margin: 0;
   font-size: 12px;
   font-weight: 700;
-  color: var(--color-ember);
+  color: var(--color-ember-ink);
 }
 
 .modal-stats {
@@ -594,7 +1243,7 @@ button {
 .pause-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 15, 0.94);
+  background: var(--color-scrim-strong);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -615,7 +1264,7 @@ button {
 }
 
 .pause-card .eyebrow {
-  color: var(--color-ember);
+  color: var(--color-ember-ink);
 }
 
 .pause-card p:last-child {
@@ -629,12 +1278,13 @@ button {
 
 @media (max-width: 380px) {
   .app-header {
-    padding: 14px 16px;
+    padding: 12px 12px;
   }
 
-  .game-tab {
-    padding: 7px 11px;
-    font-size: 13px;
+  .home-main,
+  .settings-main {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
@@ -1287,4 +1937,360 @@ body.mahjong-expanded {
     padding: 5px 10px;
     font-size: 12px;
   }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Wordle                                                                  */
+/* ---------------------------------------------------------------------- */
+
+/*
+ * Igual que en Sudoku y Mahjong: toda la paleta del juego sale de estas
+ * variables, con :root en modo noche y [data-theme='light'] en modo día.
+ *
+ * Los tres colores de estado (ausente, presente, correcta) NO son los del
+ * Wordle del NYT tal cual: se ajustaron para que el verde y el amarillo se
+ * distingan también con daltonismo rojo-verde, que es el caso más común, y
+ * para que el texto blanco encima siga siendo legible en los dos temas.
+ */
+:root {
+  --wordle-tile-bg: transparent;
+  --wordle-tile-line: #2a3752;
+  --wordle-tile-line-filled: #4a5b80;
+  --wordle-tile-ink: #eef2ff;
+
+  --wordle-absent: #39435c;
+  --wordle-present: #d1a23a;
+  --wordle-correct: #2f9e5e;
+  --wordle-state-ink: #ffffff;
+
+  --wordle-key-bg: #2a3752;
+  --wordle-key-ink: #eef2ff;
+  --wordle-key-line: #36456a;
+}
+
+:root[data-theme='light'] {
+  --wordle-tile-line: #cbd3e1;
+  --wordle-tile-line-filled: #7a869e;
+  --wordle-tile-ink: #10131a;
+
+  --wordle-absent: #78829a;
+  --wordle-present: #c99321;
+  --wordle-correct: #1f8a52;
+  --wordle-state-ink: #ffffff;
+
+  --wordle-key-bg: #dde3ee;
+  --wordle-key-ink: #10131a;
+  --wordle-key-line: #c6cedd;
+}
+
+.wordle-area {
+  gap: 0;
+}
+
+.wordle-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wordle-mode-label {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.wordle-status-detail {
+  font-size: 12px;
+  color: var(--color-ink-dim);
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-panel-line);
+  border-radius: 999px;
+  background: var(--color-panel);
+  color: var(--color-ink-dim);
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.icon-button:hover {
+  border-color: var(--color-ember);
+  color: var(--color-ink);
+}
+
+/*
+ * El aviso ("no está en la lista", "¡bien!") tiene su propio hueco de alto fijo:
+ * si apareciera y desapareciera empujando el tablero, las letras bailarían
+ * justo cuando el jugador está mirando el resultado.
+ */
+.wordle-message-slot {
+  width: 100%;
+  max-width: 640px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wordle-message {
+  margin: 0;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.wordle-frame {
+  width: auto;
+  max-width: 100%;
+  padding: 14px;
+}
+
+.wordle-board {
+  display: grid;
+  grid-template-rows: repeat(var(--wordle-attempts), 1fr);
+  gap: 6px;
+  /* La celda manda: el tablero mide lo que midan sus letras, así que 6 letras
+     no lo hacen más ancho que la pantalla en un teléfono. */
+  --wordle-cell: min(58px, calc((min(92vw, 520px) - 28px) / var(--wordle-length) - 6px));
+}
+
+.wordle-row {
+  display: grid;
+  grid-template-columns: repeat(var(--wordle-length), var(--wordle-cell));
+  gap: 6px;
+}
+
+.wordle-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--wordle-cell);
+  height: var(--wordle-cell);
+  border: 2px solid var(--wordle-tile-line);
+  border-radius: 4px;
+  background: var(--wordle-tile-bg);
+  color: var(--wordle-tile-ink);
+  font-family: var(--font-ui);
+  font-size: calc(var(--wordle-cell) * 0.52);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Letra escrita pero todavía sin enviar: solo se marca el borde. */
+.tile-filled {
+  border-color: var(--wordle-tile-line-filled);
+  animation: wordle-pop 110ms ease;
+}
+
+.tile-absent,
+.tile-present,
+.tile-correct {
+  color: var(--wordle-state-ink);
+  border-color: transparent;
+}
+
+.tile-absent {
+  background: var(--wordle-absent);
+}
+
+.tile-present {
+  background: var(--wordle-present);
+}
+
+.tile-correct {
+  background: var(--wordle-correct);
+}
+
+/* Volteo escalonado al revelar un intento (el delay lo pone el renderer). */
+.tile-revealing {
+  animation: wordle-flip 520ms ease forwards;
+}
+
+@keyframes wordle-flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes wordle-pop {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.row-shake {
+  animation: wordle-shake 420ms ease;
+}
+
+@keyframes wordle-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-7px);
+  }
+  40% {
+    transform: translateX(7px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-revealing,
+  .row-shake,
+  .tile-filled {
+    animation-duration: 1ms;
+  }
+}
+
+/* Teclado virtual */
+.wordle-keyboard {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 18px auto 0;
+  padding: 0 2px;
+}
+
+.wordle-keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.wordle-key {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  border: 1px solid var(--wordle-key-line);
+  border-radius: 6px;
+  background: var(--wordle-key-bg);
+  color: var(--wordle-key-ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 120ms ease,
+    transform 80ms ease;
+}
+
+.wordle-key:active {
+  transform: translateY(1px);
+}
+
+/*
+ * ENTER y ⌫ son más anchas para no fallar el toque con el pulgar.
+ * La base es `auto`, no 0, a propósito: así la tecla nunca queda más angosta
+ * que la palabra que lleva dentro. Con base 0 el reparto del sobrante dejaba
+ * 'ENVIAR' cortado en pantallas de 400 px.
+ */
+.wordle-key-wide {
+  flex: 1.4 0 auto;
+  padding: 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
+.key-absent {
+  background: var(--wordle-absent);
+  border-color: var(--wordle-absent);
+  color: var(--wordle-state-ink);
+  opacity: 0.65;
+}
+
+.key-present {
+  background: var(--wordle-present);
+  border-color: var(--wordle-present);
+  color: var(--wordle-state-ink);
+}
+
+.key-correct {
+  background: var(--wordle-correct);
+  border-color: var(--wordle-correct);
+  color: var(--wordle-state-ink);
+}
+
+@media (max-width: 400px) {
+  .wordle-key {
+    height: 46px;
+    font-size: 14px;
+  }
+
+  .wordle-keyboard-row {
+    gap: 4px;
+  }
+}
+
+/* Modal de configuración del juego */
+.settings-group {
+  margin-bottom: 18px;
+}
+
+.settings-group h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-dim);
+}
+
+.settings-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-ink-dim);
+}
+
+/* La palabra del modal de fin es larga: no debe salir en cuerpo 26 como un tiempo. */
+.modal-stat-text {
+  font-size: 16px !important;
+  font-family: var(--font-ui) !important;
+  font-weight: 700 !important;
 }
