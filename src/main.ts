@@ -3,6 +3,7 @@ import { GAMES, type GameId } from './shell/game-nav'
 import { mountQueensApp, unmountQueensApp } from './queens-app'
 import { mountSudokuApp, unmountSudokuApp } from './sudoku-app'
 import { mountWordleApp, unmountWordleApp } from './wordle-app'
+import { mountMahjongApp, unmountMahjongApp } from './mahjong-app'
 
 const LAST_GAME_KEY = 'luzaron-last-game-v1'
 
@@ -15,6 +16,7 @@ const MODULES: Partial<Record<GameId, GameModule>> = {
   queens: { mount: mountQueensApp, unmount: unmountQueensApp },
   sudoku: { mount: mountSudokuApp, unmount: unmountSudokuApp },
   wordle: { mount: mountWordleApp, unmount: unmountWordleApp },
+  mahjong: { mount: mountMahjongApp, unmount: unmountMahjongApp },
 }
 
 let currentGame: GameId | null = null

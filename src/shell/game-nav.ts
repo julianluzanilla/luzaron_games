@@ -12,7 +12,7 @@ export const GAMES: GameEntry[] = [
   { id: 'queens', label: 'Queens', available: true, mark: '♛' },
   { id: 'sudoku', label: 'Sudoku', available: true, mark: '#' },
   { id: 'wordle', label: 'Wordle', available: true, mark: 'W' },
-  { id: 'mahjong', label: 'Mahjong Solitaire', available: false, mark: '🀄' },
+  { id: 'mahjong', label: 'Mahjong', available: true, mark: '🀄' },
 ]
 
 export function getGameEntry(id: GameId): GameEntry {
