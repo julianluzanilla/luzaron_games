@@ -114,7 +114,10 @@ PRODUCT_SPEC), así que el jugador escribe sin acentos.
 
 **Intentos**: en español se validan contra el diccionario hunspell **es-MX** (RAE más
 mexicanismos: elote, alberca, chamarra, cuate, jitomate, platicar…), así que lo que el juego
-acepta es el español que se habla en México.
+acepta es el español que se habla en México. Como el diccionario base viene sin tildes y el
+hunspell solo conoce la forma correcta, cada palabra se prueba también con sus variantes
+acentuadas (`varon` → `varón`, `camion` → `camión`); sin eso se perderían todas las palabras
+con acento.
 
 **Soluciones**: mucho más estrictas, porque el juego es familiar. Son solo las 800 palabras
 más frecuentes del idioma que además:

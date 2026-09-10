@@ -83,7 +83,7 @@ const BLOCKED_ROOTS = words(`
   CHING MARIC MAMAD PENDEJ ZORRA POLLA PICHA COJAN COJAS PEDOS TETAS TETON PENES
   FUCK SHIT BITCH CUNT WHOR SLUT DICK PUSS TITT NIGG FAGG RAPE WANK ARSE CRAP
   PISS HORNY PENIS BOOB
-  FOLL VIOLAR VIOLAN VIOLO RAMER BRAGA CARAJO PALIZA VAGIN ABORT SEMEN
+  FOLL VIOLAR VIOLAN VIOLO RAMER BRAGA CARAJO PALIZA VAGIN ABORT SEMEN CABRON
 `)
 
 /** Topónimos que se cuelan en las listas de frecuencia. */
@@ -107,7 +107,7 @@ const BLOCKED_FORMS = words(`
   INDICA MIENTE MUERAS ORDENO PIENSO PRESTA QUEDAS QUITAS SALGAS SALUDA SABIAS
   TENIAS TENIDO TRATAS VIENES METETE COMIDO VIVIDO
   COGER COGES COGEN COGIDA COGIDO COGIENDO
-  COREA BORDA CORRO DOBLA MANDA CIERRO PAGARE
+  COREA BORDA CORRO DOBLA MANDA CIERRO PAGARE PEDIA RESACA
 `)
 
 /** Términos que en México no se usan: se aceptan como intento, no como solución. */
@@ -146,6 +146,8 @@ const BLOCKED_EXTRA = words(`
   TANTAS TANTOS PRIMER TERCER PEORES ENTRE SEGUN SOBRE
   CRISTO PAMELA MILORD JERSEY BRANDY RUPIAS JUNIOR CAMPUS SEXUAL
   LIGHT BURDEL TARADO VOMITO PILLAR JOHNNY CARTER
+  MILAN JORDAN COLIN ESTES VENDI RECIBI VALIA
+  DEMAS ALGUN NINGUN QUIZA QUIZAS ATRAS DETRAS TRAVES RECIEN
 `)
 
 /** Mayúsculas, sin tildes, Ñ → N. */
@@ -158,6 +160,58 @@ function normalize(word) {
 }
 
 const ONLY_LETTERS = /^[A-Z]+$/
+
+/**
+ * Variantes con acento de una palabra ya normalizada. El diccionario base viene
+ * SIN tildes ("varon", "camion"), pero el diccionario hunspell solo conoce la
+ * forma correcta ("varón", "camión"), así que hay que probar las combinaciones.
+ */
+const ACCENTS = {
+  a: ['a', 'á'],
+  e: ['e', 'é'],
+  i: ['i', 'í'],
+  o: ['o', 'ó'],
+  u: ['u', 'ú', 'ü'],
+  n: ['n', 'ñ'],
+}
+
+/** Tope de combinaciones a probar por palabra, para no dispararse. */
+const MAX_VARIANTS = 96
+
+function accentVariants(word) {
+  let variants = ['']
+
+  for (const letter of word.toLowerCase()) {
+    const options = ACCENTS[letter] ?? [letter]
+    const next = []
+
+    for (const prefix of variants) {
+      for (const option of options) next.push(prefix + option)
+    }
+
+    // Palabras con muchas vocales dispararían las combinaciones: en ese caso
+    // basta con la forma sin acentos, que ya se probó antes.
+    if (next.length > MAX_VARIANTS) return []
+
+    variants = next
+  }
+
+  return variants
+}
+
+/**
+ * ¿La palabra existe en el diccionario del idioma, ignorando acentos? Se prueba
+ * la forma tal cual y, si no, cada variante acentuada.
+ */
+function existsInDictionary(spell, raw, normalized) {
+  if (spell.correct(raw)) return true
+
+  for (const variant of accentVariants(normalized)) {
+    if (spell.correct(variant)) return true
+  }
+
+  return false
+}
 
 async function fetchText(url) {
   const response = await fetch(url)
@@ -325,7 +379,7 @@ async function main() {
 
       const bucket = map.get(word.length)
       if (!bucket || bucket.has(word)) continue
-      if (!spell.correct(raw) && !extra.includes(word)) continue
+      if (!extra.includes(word) && !existsInDictionary(spell, raw, word)) continue
 
       bucket.add(word)
     }
