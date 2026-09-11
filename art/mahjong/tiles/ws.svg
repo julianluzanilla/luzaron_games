@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Viento sur">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><path d="M325.00 498.00 316.00 493.00C340.00 458.00 364.00 402.00 364.00 354.00C450.00 280.00 553.00 448.00 325.00 498.00ZM596.00 838.00 441.00 851.00V704.00H40.00L49.00 676.00H441.00V544.00H250.00L121.00 596.00V-90.00H140.00C190.00 -90.00 241.00 -62.00 241.00 -48.00V515.00H773.00V56.00C773.00 43.00 768.00 35.00 751.00 35.00C725.00 35.00 622.00 43.00 621.00 43.00V28.00C673.00 21.00 695.00 7.00 712.00 -11.00C728.00 -28.00 733.00 -55.00 737.00 -92.00C874.00 -80.00 893.00 -34.00 893.00 44.00V496.00C914.00 500.00 927.00 509.00 934.00 516.00L818.00 605.00L763.00 544.00H560.00V676.00H934.00C949.00 676.00 961.00 681.00 964.00 692.00C915.00 733.00 836.00 791.00 836.00 791.00L767.00 704.00H560.00V810.00C587.00 814.00 594.00 824.00 596.00 838.00ZM656.00 388.00 607.00 330.00H550.00C591.00 367.00 633.00 414.00 661.00 448.00C683.00 447.00 695.00 455.00 699.00 466.00L566.00 504.00C556.00 453.00 538.00 382.00 522.00 330.00H284.00L292.00 302.00H441.00V181.00H262.00L270.00 153.00H441.00V-59.00H461.00C520.00 -59.00 554.00 -39.00 555.00 -34.00V153.00H727.00C741.00 153.00 751.00 158.00 754.00 169.00C716.00 202.00 655.00 248.00 655.00 248.00L601.00 181.00H555.00V302.00H720.00C734.00 302.00 744.00 307.00 746.00 318.00C711.00 348.00 656.00 388.00 656.00 388.00Z" fill="#123C71" transform="translate(-1.17,90.88) scale(0.08,-0.08)"/></g>
+</svg>

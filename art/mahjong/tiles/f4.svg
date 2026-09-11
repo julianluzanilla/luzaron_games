@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Flor: bambú">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><rect x="28" y="16" width="13" height="86" rx="3" fill="#00702C"/><rect x="46" y="34" width="11" height="68" rx="3" fill="#004C1E"/><rect x="27" y="38" width="15" height="3.4" rx="1.7" fill="#004C1E"/><rect x="27" y="62" width="15" height="3.4" rx="1.7" fill="#004C1E"/><rect x="27" y="86" width="15" height="3.4" rx="1.7" fill="#004C1E"/><rect x="45" y="54" width="13" height="3" rx="1.5" fill="#00702C"/><rect x="45" y="78" width="13" height="3" rx="1.5" fill="#00702C"/><path d="M28,28 C16,22 8,26 4,32 C12,38 22,36 28,30 Z" fill="#00702C"/><path d="M28,46 C17,44 9,50 6,58 C16,60 25,54 28,48 Z" fill="#004C1E"/><path d="M57,44 C68,38 76,42 79,48 C71,54 61,52 57,46 Z" fill="#00702C"/><path d="M28,66 C18,68 12,76 11,84 C20,82 27,74 28,68 Z" fill="#00702C"/><g transform="translate(68,104) skewX(-12) translate(-68,-104)"><path d="M558.00 548.00H610.00L609.00 741.00H45.00V708.00L140.00 699.00C141.00 597.00 141.00 496.00 141.00 394.00V346.00C141.00 243.00 141.00 141.00 140.00 42.00L45.00 33.00V0.00H395.00V33.00L285.00 43.00C284.00 144.00 284.00 247.00 284.00 359.00H436.00L449.00 252.00H494.00V500.00H449.00L435.00 395.00H284.00C284.00 502.00 284.00 604.00 285.00 703.00H518.00Z" fill="#3A3A38" transform="translate(59.48,113.63) scale(0.03,-0.03)"/></g></g>
+</svg>

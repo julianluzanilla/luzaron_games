@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Fichas de Mahjong · Luzarón Games</title>
+<style>
+:root{--w:96px}
+body{margin:0;background:#123024;color:#eef2ff;font:15px/1.5 system-ui,sans-serif;padding:24px}
+h1{margin:0 0 4px;font-size:24px}
+p.lede{margin:0 0 20px;color:#a9c6b5}
+h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#8fd9b3;margin:26px 0 10px;
+   border-bottom:1px solid #24483a;padding-bottom:6px}
+.row{display:flex;flex-wrap:wrap;gap:18px 14px}
+figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+img{width:var(--w);height:auto;display:block;filter:drop-shadow(2px 3px 3px rgba(0,0,0,.45))}
+figcaption{display:flex;flex-direction:column;align-items:center;line-height:1.2}
+figcaption b{font:600 12px ui-monospace,monospace;color:#f2b705}
+figcaption span{font-size:11.5px;color:#a9c6b5}
+.sizes{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+button{font:600 13px system-ui;padding:7px 12px;border:1px solid #2f5a48;border-radius:8px;
+       background:#19402f;color:#eef2ff;cursor:pointer}
+button[aria-pressed=true]{background:#2fbf71;border-color:#2fbf71;color:#04180d}
+</style></head><body>
+<h1>Fichas de Mahjong</h1>
+<p class="lede">Cada imagen es <code>art/mahjong/tiles/&lt;id&gt;.svg</code>. Edita el
+<code>&lt;g id="face"&gt;</code> de la que quieras y corre <code>npm run art:mahjong</code>
+para rehacer el sprite del juego.</p>
+<div class="sizes"><b>Tamaño</b>
+<button data-w="46">Móvil 46</button>
+<button data-w="62">Juego 62</button>
+<button data-w="96" aria-pressed="true">96</button>
+<button data-w="180">Detalle 180</button></div>
+<section><h2>Círculos</h2><div class="row"><figure><img src="tiles/p1.svg" alt="Círculos 1"><figcaption><b>p1</b><span>Círculos 1</span></figcaption></figure><figure><img src="tiles/p2.svg" alt="Círculos 2"><figcaption><b>p2</b><span>Círculos 2</span></figcaption></figure><figure><img src="tiles/p3.svg" alt="Círculos 3"><figcaption><b>p3</b><span>Círculos 3</span></figcaption></figure><figure><img src="tiles/p4.svg" alt="Círculos 4"><figcaption><b>p4</b><span>Círculos 4</span></figcaption></figure><figure><img src="tiles/p5.svg" alt="Círculos 5"><figcaption><b>p5</b><span>Círculos 5</span></figcaption></figure><figure><img src="tiles/p6.svg" alt="Círculos 6"><figcaption><b>p6</b><span>Círculos 6</span></figcaption></figure><figure><img src="tiles/p7.svg" alt="Círculos 7"><figcaption><b>p7</b><span>Círculos 7</span></figcaption></figure><figure><img src="tiles/p8.svg" alt="Círculos 8"><figcaption><b>p8</b><span>Círculos 8</span></figcaption></figure><figure><img src="tiles/p9.svg" alt="Círculos 9"><figcaption><b>p9</b><span>Círculos 9</span></figcaption></figure></div></section>
+<section><h2>Bambúes</h2><div class="row"><figure><img src="tiles/s1.svg" alt="Bambú 1"><figcaption><b>s1</b><span>Bambú 1</span></figcaption></figure><figure><img src="tiles/s2.svg" alt="Bambú 2"><figcaption><b>s2</b><span>Bambú 2</span></figcaption></figure><figure><img src="tiles/s3.svg" alt="Bambú 3"><figcaption><b>s3</b><span>Bambú 3</span></figcaption></figure><figure><img src="tiles/s4.svg" alt="Bambú 4"><figcaption><b>s4</b><span>Bambú 4</span></figcaption></figure><figure><img src="tiles/s5.svg" alt="Bambú 5"><figcaption><b>s5</b><span>Bambú 5</span></figcaption></figure><figure><img src="tiles/s6.svg" alt="Bambú 6"><figcaption><b>s6</b><span>Bambú 6</span></figcaption></figure><figure><img src="tiles/s7.svg" alt="Bambú 7"><figcaption><b>s7</b><span>Bambú 7</span></figcaption></figure><figure><img src="tiles/s8.svg" alt="Bambú 8"><figcaption><b>s8</b><span>Bambú 8</span></figcaption></figure><figure><img src="tiles/s9.svg" alt="Bambú 9"><figcaption><b>s9</b><span>Bambú 9</span></figcaption></figure></div></section>
+<section><h2>Caracteres</h2><div class="row"><figure><img src="tiles/m1.svg" alt="Caracteres 1"><figcaption><b>m1</b><span>Caracteres 1</span></figcaption></figure><figure><img src="tiles/m2.svg" alt="Caracteres 2"><figcaption><b>m2</b><span>Caracteres 2</span></figcaption></figure><figure><img src="tiles/m3.svg" alt="Caracteres 3"><figcaption><b>m3</b><span>Caracteres 3</span></figcaption></figure><figure><img src="tiles/m4.svg" alt="Caracteres 4"><figcaption><b>m4</b><span>Caracteres 4</span></figcaption></figure><figure><img src="tiles/m5.svg" alt="Caracteres 5"><figcaption><b>m5</b><span>Caracteres 5</span></figcaption></figure><figure><img src="tiles/m6.svg" alt="Caracteres 6"><figcaption><b>m6</b><span>Caracteres 6</span></figcaption></figure><figure><img src="tiles/m7.svg" alt="Caracteres 7"><figcaption><b>m7</b><span>Caracteres 7</span></figcaption></figure><figure><img src="tiles/m8.svg" alt="Caracteres 8"><figcaption><b>m8</b><span>Caracteres 8</span></figcaption></figure><figure><img src="tiles/m9.svg" alt="Caracteres 9"><figcaption><b>m9</b><span>Caracteres 9</span></figcaption></figure></div></section>
+<section><h2>Vientos</h2><div class="row"><figure><img src="tiles/we.svg" alt="Viento este"><figcaption><b>we</b><span>Viento este</span></figcaption></figure><figure><img src="tiles/ws.svg" alt="Viento sur"><figcaption><b>ws</b><span>Viento sur</span></figcaption></figure><figure><img src="tiles/ww.svg" alt="Viento oeste"><figcaption><b>ww</b><span>Viento oeste</span></figcaption></figure><figure><img src="tiles/wn.svg" alt="Viento norte"><figcaption><b>wn</b><span>Viento norte</span></figcaption></figure></div></section>
+<section><h2>Dragones</h2><div class="row"><figure><img src="tiles/dr.svg" alt="Dragón rojo"><figcaption><b>dr</b><span>Dragón rojo</span></figcaption></figure><figure><img src="tiles/dg.svg" alt="Dragón verde"><figcaption><b>dg</b><span>Dragón verde</span></figcaption></figure><figure><img src="tiles/dw.svg" alt="Dragón blanco"><figcaption><b>dw</b><span>Dragón blanco</span></figcaption></figure></div></section>
+<section><h2>Flores</h2><div class="row"><figure><img src="tiles/f1.svg" alt="Flor: ciruelo"><figcaption><b>f1</b><span>Flor: ciruelo</span></figcaption></figure><figure><img src="tiles/f2.svg" alt="Flor: orquídea"><figcaption><b>f2</b><span>Flor: orquídea</span></figcaption></figure><figure><img src="tiles/f3.svg" alt="Flor: crisantemo"><figcaption><b>f3</b><span>Flor: crisantemo</span></figcaption></figure><figure><img src="tiles/f4.svg" alt="Flor: bambú"><figcaption><b>f4</b><span>Flor: bambú</span></figcaption></figure></div></section>
+<section><h2>Estaciones</h2><div class="row"><figure><img src="tiles/e1.svg" alt="Estación: primavera"><figcaption><b>e1</b><span>Estación: primavera</span></figcaption></figure><figure><img src="tiles/e2.svg" alt="Estación: verano"><figcaption><b>e2</b><span>Estación: verano</span></figcaption></figure><figure><img src="tiles/e3.svg" alt="Estación: otoño"><figcaption><b>e3</b><span>Estación: otoño</span></figcaption></figure><figure><img src="tiles/e4.svg" alt="Estación: invierno"><figcaption><b>e4</b><span>Estación: invierno</span></figcaption></figure></div></section>
+<script>
+document.querySelector('.sizes').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return
+  document.querySelectorAll('.sizes button').forEach((x) => x.setAttribute('aria-pressed', x === b))
+  document.documentElement.style.setProperty('--w', b.dataset.w + 'px')
+})
+</script>
+</body></html>

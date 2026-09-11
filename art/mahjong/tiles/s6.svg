@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Bambú 6">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><g><rect x="12.8" y="11" width="8.4" height="44" rx="4.2" fill="#0A4A12"/><rect x="10" y="11" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="10" y="27.06" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="10" y="43.12" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="15.46" y="19.36" width="3.08" height="27.28" rx="1.54" fill="#3FA83C"/></g><g><rect x="36.8" y="11" width="8.4" height="44" rx="4.2" fill="#0A4A12"/><rect x="34" y="11" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="34" y="27.06" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="34" y="43.12" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="39.46" y="19.36" width="3.08" height="27.28" rx="1.54" fill="#3FA83C"/></g><g><rect x="60.8" y="11" width="8.4" height="44" rx="4.2" fill="#0A4A12"/><rect x="58" y="11" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="58" y="27.06" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="58" y="43.12" width="14" height="11.88" rx="5.94" fill="#0A4A12"/><rect x="63.46" y="19.36" width="3.08" height="27.28" rx="1.54" fill="#3FA83C"/></g><g><rect x="12.8" y="63" width="8.4" height="44" rx="4.2" fill="#001C8C"/><rect x="10" y="63" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="10" y="79.06" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="10" y="95.12" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="15.46" y="71.36" width="3.08" height="27.28" rx="1.54" fill="#4A7EE0"/></g><g><rect x="36.8" y="63" width="8.4" height="44" rx="4.2" fill="#001C8C"/><rect x="34" y="63" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="34" y="79.06" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="34" y="95.12" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="39.46" y="71.36" width="3.08" height="27.28" rx="1.54" fill="#4A7EE0"/></g><g><rect x="60.8" y="63" width="8.4" height="44" rx="4.2" fill="#001C8C"/><rect x="58" y="63" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="58" y="79.06" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="58" y="95.12" width="14" height="11.88" rx="5.94" fill="#001C8C"/><rect x="63.46" y="71.36" width="3.08" height="27.28" rx="1.54" fill="#4A7EE0"/></g></g>
+</svg>

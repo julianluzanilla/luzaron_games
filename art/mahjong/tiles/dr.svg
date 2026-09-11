@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Dragón rojo">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><path d="M786.00 333.00H561.00V600.00H786.00ZM598.00 833.00 436.00 849.00V629.00H223.00L90.00 681.00V205.00H108.00C159.00 205.00 213.00 233.00 213.00 246.00V304.00H436.00V-89.00H460.00C507.00 -89.00 561.00 -59.00 561.00 -45.00V304.00H786.00V221.00H807.00C848.00 221.00 910.00 243.00 911.00 250.00V580.00C931.00 584.00 945.00 593.00 951.00 601.00L833.00 691.00L777.00 629.00H561.00V804.00C588.00 808.00 596.00 819.00 598.00 833.00ZM213.00 333.00V600.00H436.00V333.00Z" fill="#C0271F" transform="translate(-4.8,92.44) scale(0.09,-0.09)"/></g>
+</svg>

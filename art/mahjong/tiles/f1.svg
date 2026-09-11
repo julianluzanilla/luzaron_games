@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Flor: ciruelo">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><circle cx="38" cy="33" r="14" fill="#BE180A"/><circle cx="54.17" cy="44.75" r="14" fill="#BE180A"/><circle cx="47.99" cy="63.75" r="14" fill="#BE180A"/><circle cx="28.01" cy="63.75" r="14" fill="#BE180A"/><circle cx="21.83" cy="44.75" r="14" fill="#BE180A"/><circle cx="38" cy="50" r="15" fill="#BE180A"/><path d="M38,50 L38,30" stroke="#FBEFE6" stroke-width="2" stroke-linecap="round"/><path d="M38,50 L57.02,43.82" stroke="#FBEFE6" stroke-width="2" stroke-linecap="round"/><path d="M38,50 L49.76,66.18" stroke="#FBEFE6" stroke-width="2" stroke-linecap="round"/><path d="M38,50 L26.24,66.18" stroke="#FBEFE6" stroke-width="2" stroke-linecap="round"/><path d="M38,50 L18.98,43.82" stroke="#FBEFE6" stroke-width="2" stroke-linecap="round"/><circle cx="38" cy="50" r="6.5" fill="#E8A020"/><circle cx="38" cy="50" r="2.6" fill="#BE180A"/><g transform="translate(68,104) skewX(-12) translate(-68,-104)"><path d="M558.00 548.00H610.00L609.00 741.00H45.00V708.00L140.00 699.00C141.00 597.00 141.00 496.00 141.00 394.00V346.00C141.00 243.00 141.00 141.00 140.00 42.00L45.00 33.00V0.00H395.00V33.00L285.00 43.00C284.00 144.00 284.00 247.00 284.00 359.00H436.00L449.00 252.00H494.00V500.00H449.00L435.00 395.00H284.00C284.00 502.00 284.00 604.00 285.00 703.00H518.00Z" fill="#3A3A38" transform="translate(59.48,113.63) scale(0.03,-0.03)"/></g></g>
+</svg>

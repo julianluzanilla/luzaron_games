@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 152" width="112" height="152" role="img" aria-label="Viento este">
+<defs>
+<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
+  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
+</linearGradient>
+<linearGradient id="mjSide" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#E4D6AE"/><stop offset="0.55" stop-color="#C4AF7E"/><stop offset="1" stop-color="#9F8A5B"/>
+</linearGradient>
+<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
+  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
+</linearGradient>
+<radialGradient id="mjGloss" cx="0.3" cy="0.18" r="0.9">
+  <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<path d="M10,0 L90,0 A10,10 0 0 1 100,10 L112,22 L112,142 A10,10 0 0 1 102,152 L22,152 A10,10 0 0 1 12,142 L0,130 L0,10 A10,10 0 0 1 10,0 Z" fill="url(#mjSide)" stroke="#6B5C3C" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M98,138 L109,149" stroke="#6B5C3C" stroke-width="1.1" stroke-opacity="0.45"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
+<rect x="6" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/>
+<rect x="0.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjGloss)"/>
+<!-- Solo esto se lee al reconstruir el sprite: -->
+<g id="face" transform="translate(9,11)"><path d="M436.00 306.00H292.00V418.00H436.00ZM557.00 306.00V418.00H703.00V306.00ZM172.00 587.00V215.00H190.00C239.00 215.00 292.00 241.00 292.00 253.00V277.00H380.00C308.00 156.00 181.00 29.00 30.00 -50.00L37.00 -63.00C197.00 -12.00 334.00 62.00 436.00 156.00V-89.00H461.00C507.00 -89.00 557.00 -64.00 557.00 -53.00V268.00C623.00 116.00 730.00 8.00 876.00 -57.00C890.00 1.00 926.00 39.00 971.00 51.00L973.00 62.00C827.00 93.00 665.00 170.00 576.00 277.00H703.00V230.00H724.00C766.00 230.00 825.00 256.00 826.00 264.00V539.00C846.00 543.00 859.00 551.00 866.00 559.00L749.00 648.00L693.00 587.00H557.00V681.00H920.00C935.00 681.00 946.00 686.00 949.00 697.00C901.00 740.00 822.00 801.00 822.00 801.00L752.00 710.00H557.00V805.00C584.00 809.00 591.00 820.00 594.00 834.00L436.00 849.00V710.00H53.00L61.00 681.00H436.00V587.00H300.00L172.00 636.00ZM436.00 447.00H292.00V558.00H436.00ZM557.00 447.00V558.00H703.00V447.00Z" fill="#123C71" transform="translate(-1.13,90.92) scale(0.08,-0.08)"/></g>
+</svg>

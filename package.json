@@ -15,7 +15,9 @@
     "pages:dev": "wrangler pages dev -- npm run dev",
     "pool:queens": "tsx scripts/generate-queens-pool.ts",
     "pool:sudoku": "tsx scripts/generate-sudoku-pool.ts",
-    "words:wordle": "node scripts/generate-wordle-words.mjs"
+    "words:wordle": "node scripts/generate-wordle-words.mjs",
+    "art:mahjong": "node scripts/mahjong-art.mjs build",
+    "art:mahjong:split": "node scripts/mahjong-art.mjs split"
   },
   "devDependencies": {
     "nspell": "^2.1.5",
