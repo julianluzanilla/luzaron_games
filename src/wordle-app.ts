@@ -568,7 +568,7 @@ function renderSettings(): string {
   const { language, length, difficulty } = state.settings
 
   return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-overlay wordle-overlay" role="dialog" aria-modal="true">
       <div class="modal-card">
         <p class="eyebrow">Wordle</p>
         <h2>Configuración</h2>
@@ -613,7 +613,7 @@ function renderEndModal(): string {
   const attempts = attemptsForLength(state.settings.length)
 
   return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-overlay wordle-overlay" role="dialog" aria-modal="true">
       <div class="modal-card modal-card-celebration">
         <p class="eyebrow">${won ? '¡Adivinaste!' : 'Se acabaron los intentos'}</p>
         <h2>${state.answer}</h2>
