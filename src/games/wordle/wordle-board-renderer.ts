@@ -74,7 +74,7 @@ export function renderWordleBoard(view: WordleBoardView): string {
 export function renderWordleKeyboard(guesses: WordleGuess[]): string {
   const states = buildKeyboardStates(guesses)
 
-  const rows = KEYBOARD_ROWS.map((row) => {
+  const rows = KEYBOARD_ROWS.map((row, rowIndex) => {
     const keys = row
       .map((key) => {
         const isAction = key === 'ENTER' || key === 'BACKSPACE'
@@ -84,7 +84,13 @@ export function renderWordleKeyboard(guesses: WordleGuess[]): string {
         if (isAction) classes.push('wordle-key-wide')
         if (state !== 'unused') classes.push(`key-${state}`)
 
-        const label = key === 'BACKSPACE' ? '⌫' : key === 'ENTER' ? 'Enviar' : key
+        const label =
+          key === 'BACKSPACE'
+            ? '⌫'
+            : key === 'ENTER'
+              ? '<span class="wordle-key-label">Enviar</span>' +
+                '<span class="wordle-key-label-mini" aria-hidden="true">↵</span>'
+              : key
         const aria =
           key === 'BACKSPACE' ? 'Borrar' : key === 'ENTER' ? 'Enviar intento' : `Letra ${key}`
 
@@ -92,7 +98,12 @@ export function renderWordleKeyboard(guesses: WordleGuess[]): string {
       })
       .join('')
 
-    return `<div class="wordle-keyboard-row">${keys}</div>`
+    // La fila de en medio lleva media tecla de aire a cada lado: así las tres
+    // filas reparten las mismas 10 unidades y todas las letras miden igual.
+    const spacer = '<div class="wordle-key-spacer" aria-hidden="true"></div>'
+    const content = rowIndex === 1 ? spacer + keys + spacer : keys
+
+    return `<div class="wordle-keyboard-row">${content}</div>`
   })
 
   return `<div class="wordle-keyboard" aria-label="Teclado virtual">${rows.join('')}</div>`

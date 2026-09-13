@@ -2223,6 +2223,7 @@ body.mahjong-expanded {
   font-size: 15px;
   font-weight: 700;
   text-transform: uppercase;
+  padding: 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   /* Sin zoom por doble toque, sin selección de texto y sin lupa al tocar
@@ -2241,16 +2242,36 @@ body.mahjong-expanded {
 }
 
 /*
- * ENTER y ⌫ son más anchas para no fallar el toque con el pulgar.
- * La base es `auto`, no 0, a propósito: así la tecla nunca queda más angosta
- * que la palabra que lleva dentro. Con base 0 el reparto del sobrante dejaba
- * 'ENVIAR' cortado en pantallas de 400 px.
+ * El teclado reparte cada fila en 10 unidades iguales, igual que el Wordle
+ * original, para que TODAS las letras midan lo mismo en las tres filas:
+ *
+ *   fila 1:  10 letras                        = 10
+ *   fila 2:  ½ + 9 letras + ½ (espaciadores)  = 10
+ *   fila 3:  1½ + 7 letras + 1½              = 10
+ *
+ * Antes ENVIAR usaba `flex: 1.4 0 auto`, o sea que se quedaba con el ancho de
+ * su texto más el sobrante: en un iPhone dejaba las letras de la fila 3 un 30%
+ * más chicas que las de arriba. Con base 0 y el padding igualado, el reparto
+ * es exacto.
  */
 .wordle-key-wide {
-  flex: 1.4 0 auto;
-  padding: 0 10px;
+  flex: 1.5 1 0;
+  padding: 0 2px;
   font-size: 11px;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* Media tecla de aire a cada lado de la fila de en medio. */
+.wordle-key-spacer {
+  flex: 0.5 1 0;
+  min-width: 0;
+}
+
+/* En pantallas muy angostas ENVIAR no cabe y se cambia por la flecha ↵. */
+.wordle-key-label-mini {
+  display: none;
+  font-size: 17px;
 }
 
 .key-absent {
@@ -2280,6 +2301,21 @@ body.mahjong-expanded {
 
   .wordle-keyboard-row {
     gap: 4px;
+  }
+
+  .wordle-key-wide {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 350px) {
+  .wordle-key-label {
+    display: none;
+  }
+
+  .wordle-key-label-mini {
+    display: inline;
   }
 }
 
