@@ -19,11 +19,11 @@ selector de tamaño (46 px = móvil, 62 px = tamaño de juego, 180 px = detalle)
 4. `npm run dev` y a revisar.
 
 El sistema de coordenadas de la cara es **82 × 118**, con el origen ya desplazado por el
-`translate(9,11)` del grupo. El centro de la cara es `(41, 59)`.
+`translate(24,11)` del grupo. El centro de la cara es `(41, 59)`.
 
 ## Cambiar el cuerpo de la ficha
 
-El marfil, el canto del falso 3D y el brillo son comunes a las 42 y viven en
+El marfil y el canto verde del falso 3D son comunes a las 42 y viven en
 **`_tile-body.svg`**: los degradados van en su `<defs>` y el dibujo en `<g id="mj-body">`
 (el reverso, en `<g id="mj-body-back">`). Editar el cuerpo dentro de un `tiles/*.svg` no
 sirve de nada: se ignora.

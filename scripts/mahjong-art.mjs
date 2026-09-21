@@ -23,8 +23,8 @@ const ART = path.join(ROOT, 'art/mahjong')
 const TILES = path.join(ART, 'tiles')
 const BODY_FILE = path.join(ART, '_tile-body.svg')
 
-const VIEWBOX = '0 0 112 152'
-const FACE_OPEN = '<g transform="translate(9,11)">'
+const VIEWBOX = '0 0 115 155'
+const FACE_OPEN = '<g transform="translate(24,11)">'
 
 const NUM = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 const CATALOG = [
@@ -71,7 +71,7 @@ function split() {
   fs.writeFileSync(
     BODY_FILE,
     [
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + VIEWBOX + '" width="112" height="152">',
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + VIEWBOX + '" width="115" height="155">',
       '<defs>' + defs.inner + '</defs>',
       '<g id="mj-body">' + body.inner + '</g>',
       '<g id="mj-body-back" style="display:none">' + back.inner + '</g>',
@@ -99,11 +99,11 @@ function split() {
     fs.writeFileSync(
       path.join(TILES, `${id}.svg`),
       [
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="112" height="152" role="img" aria-label="${name}">`,
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="115" height="155" role="img" aria-label="${name}">`,
         '<defs>' + defs.inner + '</defs>',
         body.inner,
         '<!-- Solo esto se lee al reconstruir el sprite: -->',
-        '<g id="face" transform="translate(9,11)">' + face + '</g>',
+        '<g id="face" transform="translate(24,11)">' + face + '</g>',
         '</svg>',
       ].join('\n')
     )

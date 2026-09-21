@@ -1557,19 +1557,20 @@ button {
 :root {
   --mahjong-felt: #123024;
   --mahjong-felt-edge: #0b1f17;
-  --mahjong-select: #f2b705;
+  --mahjong-select: #1f6fe5;
+  --mahjong-select-fill: rgba(90, 168, 255, 0.38);
   --mahjong-hint: #35c46a;
-  --mahjong-invalid: #e5384d;
-  --mahjong-tile-shadow: rgba(0, 0, 0, 0.42);
+  --mahjong-hint-fill: rgba(94, 214, 138, 0.42);
+  --mahjong-denied: rgba(91, 100, 112, 0.6);
+  --mahjong-tile-shadow: rgba(0, 0, 0, 0.7);
 }
 
 :root[data-theme='light'] {
   --mahjong-felt: #1f6b4a;
   --mahjong-felt-edge: #145036;
-  --mahjong-select: #d99000;
+  --mahjong-select: #1a62d0;
   --mahjong-hint: #14a05a;
-  --mahjong-invalid: #c22239;
-  --mahjong-tile-shadow: rgba(0, 0, 0, 0.3);
+  --mahjong-tile-shadow: rgba(0, 0, 0, 0.55);
 }
 
 #mahjong-sprite {
@@ -1604,19 +1605,25 @@ button {
   transform-origin: center center;
 }
 
+/*
+  Ficha: viewBox 115×155. La cara ocupa x 15–115 e y 0–140; el canto verde
+  asoma a la izquierda y abajo. La sombra fuerte cae abajo-izquierda sobre el
+  piso inferior y es la única pista de profundidad: no hay brillo ni bordes de
+  color distintos entre fichas libres y bloqueadas.
+
+  El botón no recibe el puntero; lo reciben las partes pintadas del SVG. Así
+  las esquinas transparentes de una ficha no le roban el toque a la de abajo.
+*/
 .mahjong-tile {
   position: absolute;
-  width: 56px;
-  height: 76px;
+  width: 57.5px;
+  height: 77.5px;
   padding: 0;
   border: 0;
   background: none;
-  cursor: pointer;
   line-height: 0;
-  filter: drop-shadow(2px 3px 3px var(--mahjong-tile-shadow));
-  transition:
-    filter 0.14s ease,
-    transform 0.14s ease;
+  pointer-events: none;
+  filter: drop-shadow(-7px 10px 7px var(--mahjong-tile-shadow));
 }
 
 .mahjong-tile svg {
@@ -1627,44 +1634,86 @@ button {
   pointer-events: none;
 }
 
+/* Solo lo pintado de la ficha recibe el toque, no la caja del <svg>. */
+.mahjong-tile use {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+}
+
+/* Capa sobre la cara para selección, pista y toque inválido. */
+.mahjong-tile::after {
+  content: '';
+  position: absolute;
+  left: 13.04%;
+  top: 0;
+  width: 86.96%;
+  height: 90.32%;
+  border-radius: 5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .mahjong-tile:focus-visible {
   outline: 3px solid var(--mahjong-select);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-.mahjong-tile.is-selected {
-  filter: drop-shadow(0 0 4px var(--mahjong-select)) drop-shadow(0 0 11px var(--mahjong-select));
-  transform: translate(-1px, -2px);
+/* Seleccionada: se ilumina en azul por dentro de su cara. No se mueve. */
+.mahjong-tile.is-selected::after {
+  opacity: 1;
+  background: var(--mahjong-select-fill);
+  box-shadow: inset 0 0 0 3px var(--mahjong-select);
 }
 
-.mahjong-tile.is-hinted {
+.mahjong-tile.is-hinted::after {
+  background: var(--mahjong-hint-fill);
+  box-shadow: inset 0 0 0 3px var(--mahjong-hint);
   animation: mahjong-hint 1s ease-in-out infinite;
-  transform: translate(-1px, -2px);
+}
+
+/* Toque sobre una bloqueada: un parpadeo gris, una sola vez. */
+.mahjong-tile.is-invalid::after {
+  background: var(--mahjong-denied);
+  animation: mahjong-denied 0.32s ease-out;
 }
 
 /* Bloqueada: solo se ve cuando el jugador activa "Resaltar libres". */
 .mahjong-tile.is-blocked {
-  filter: grayscale(0.55) brightness(0.68);
+  filter: drop-shadow(-7px 10px 7px var(--mahjong-tile-shadow)) grayscale(0.55) brightness(0.68);
+}
+
+.mahjong-tile.is-blocked use {
   cursor: default;
 }
 
 .mahjong-tile.is-matched {
   animation: mahjong-pop 0.24s ease-out forwards;
-  pointer-events: none;
 }
 
-.mahjong-tile.is-invalid {
-  animation: mahjong-shake 0.3s ease;
+.mahjong-tile.is-matched use {
+  pointer-events: none;
 }
 
 @keyframes mahjong-hint {
   0%,
   100% {
-    filter: drop-shadow(0 0 3px var(--mahjong-hint)) drop-shadow(0 0 8px var(--mahjong-hint));
+    opacity: 0.55;
   }
   50% {
-    filter: drop-shadow(0 0 6px var(--mahjong-hint)) drop-shadow(0 0 18px var(--mahjong-hint));
+    opacity: 1;
+  }
+}
+
+@keyframes mahjong-denied {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -1679,21 +1728,6 @@ button {
   }
 }
 
-@keyframes mahjong-shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-3px);
-    filter: drop-shadow(0 0 5px var(--mahjong-invalid));
-  }
-  75% {
-    transform: translateX(3px);
-    filter: drop-shadow(0 0 5px var(--mahjong-invalid));
-  }
-}
-
 .mahjong-toggle.active {
   background: var(--color-azure);
   color: #fff;
@@ -1701,11 +1735,15 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .mahjong-tile,
-  .mahjong-tile.is-hinted,
   .mahjong-tile.is-matched,
-  .mahjong-tile.is-invalid {
+  .mahjong-tile::after {
     animation: none;
     transition: none;
+  }
+
+  .mahjong-tile.is-hinted::after,
+  .mahjong-tile.is-invalid::after {
+    opacity: 1;
   }
 }
 
