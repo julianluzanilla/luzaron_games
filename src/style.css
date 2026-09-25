@@ -503,12 +503,19 @@ button {
 
 @media (min-width: 620px) {
   .game-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 
   .home-title {
     font-size: 32px;
+  }
+}
+
+/* Cinco juegos: en escritorio van todos en un renglón. */
+@media (min-width: 900px) {
+  .game-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
@@ -2389,4 +2396,505 @@ body.mahjong-expanded {
   font-size: 16px !important;
   font-family: var(--font-ui) !important;
   font-weight: 700 !important;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Zip                                                                     */
+/* ---------------------------------------------------------------------- */
+
+/*
+ * Tokens del handoff (design_handoff_zip/zip-tokens.css). Los que coinciden
+ * con uno de la app no se repiten aquí: se usa el de la app directamente
+ * (ember, azure, pine, paneles, velos, sombras).
+ */
+:root {
+  --zip-paper: #101a2e;
+  --zip-grid: #2a3752;
+  --zip-frame: #4a5b80;
+  --zip-wall: #eef2ff;
+  --zip-num-fill: #eef2ff;
+  --zip-num-text: #101a2e;
+  --zip-path-start: #2f8fe0;
+  --zip-path-end: #7c5cfc;
+  --zip-solved-start: #ff7a1a;
+  --zip-solved-end: #e24aa0;
+  --zip-tip-ring: #eef2ff;
+  --zip-hint-fill: rgba(47, 191, 113, 0.24);
+  --zip-hint-stroke: #2fbf71;
+  --zip-pine-text: #2fbf71;
+  --zip-error: #e5384d;
+  --zip-error-text: #ff6b7f;
+}
+
+:root[data-theme='light'] {
+  --zip-paper: #ffffff;
+  --zip-grid: #c3cbd9;
+  --zip-frame: #33405c;
+  --zip-wall: #1c2333;
+  --zip-num-fill: #10131a;
+  --zip-num-text: #ffffff;
+  --zip-path-start: #1f6fb8;
+  --zip-path-end: #7c5cfc;
+  --zip-solved-start: #d9600a;
+  --zip-solved-end: #c93a8a;
+  --zip-tip-ring: #10131a;
+  --zip-hint-fill: rgba(47, 191, 113, 0.2);
+  --zip-hint-stroke: #17864b;
+  --zip-pine-text: #17864b;
+  --zip-error: #c22239;
+  --zip-error-text: #c22239;
+}
+
+/* Teléfono: una columna. La tarjeta y la barra lateral se "disuelven" con
+   display: contents para que sus piezas se ordenen alrededor del tablero. */
+.zip-layout {
+  --zip-board-size: min(calc(100vw - 32px), calc(100svh - 300px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 4px 16px 24px;
+}
+
+.zip-side,
+.zip-card {
+  display: contents;
+}
+
+.zip-chips {
+  order: 1;
+  padding: 0;
+  justify-content: flex-start;
+  width: var(--zip-board-size);
+  max-width: none;
+}
+
+.zip-chips .size-chip {
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.zip-meta {
+  order: 2;
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--zip-board-size);
+}
+
+.zip-board-col {
+  order: 3;
+}
+
+.zip-controls {
+  order: 4;
+  width: var(--zip-board-size);
+  max-width: none;
+  padding: 0;
+}
+
+.zip-results {
+  order: 5;
+  width: var(--zip-board-size);
+  flex: none;
+}
+
+.zip-howto {
+  order: 6;
+  width: var(--zip-board-size);
+}
+
+.zip-layout > .state-message {
+  order: 3;
+}
+
+.zip-meta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zip-puzzle-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-ink-dim);
+}
+
+.zip-card-title {
+  display: none;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.zip-timer {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+}
+
+.zip-solved-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--zip-pine-text);
+}
+
+/* Tablero */
+.zip-board {
+  position: relative;
+  width: var(--zip-board-size);
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1.5px var(--zip-frame);
+  background: var(--zip-paper);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+
+  --zip-trail-start: var(--zip-path-start);
+  --zip-trail-end: var(--zip-path-end);
+}
+
+.zip-board.is-solved {
+  --zip-trail-start: var(--zip-solved-start);
+  --zip-trail-end: var(--zip-solved-end);
+  cursor: default;
+}
+
+/* El marco va encima del dibujo para que el trazo no lo tape en las orillas. */
+.zip-board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1.5px var(--zip-frame);
+  pointer-events: none;
+}
+
+.zip-board-svg,
+.zip-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.zip-paper {
+  fill: var(--zip-paper);
+}
+
+.zip-grid {
+  fill: none;
+  stroke: var(--zip-grid);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.zip-hint {
+  fill: var(--zip-hint-fill);
+  stroke: var(--zip-hint-stroke);
+  stroke-width: 5;
+}
+
+.zip-trail line {
+  stroke-width: 50;
+  stroke-linecap: round;
+  transition: stroke 0.4s ease;
+}
+
+.zip-wall {
+  stroke: var(--zip-wall);
+  stroke-width: 22;
+  stroke-linecap: round;
+}
+
+.zip-wall.is-error {
+  stroke: var(--zip-error);
+  animation: zip-blink 0.18s ease-in-out 2;
+}
+
+.zip-wall-halo {
+  stroke: var(--zip-error);
+  stroke-opacity: 0.3;
+  stroke-width: 46;
+  stroke-linecap: round;
+}
+
+.zip-tip-halo {
+  opacity: 0.24;
+  animation: zip-halo 1.2s ease-in-out infinite alternate;
+}
+
+.zip-tip-dot {
+  stroke: var(--zip-tip-ring);
+  stroke-width: 7;
+}
+
+.zip-tip.is-error .zip-tip-halo {
+  fill: var(--zip-error) !important;
+}
+
+.zip-tip.is-error .zip-tip-dot {
+  fill: var(--zip-error) !important;
+  stroke: var(--zip-error);
+}
+
+.zip-tip.is-error {
+  animation:
+    zip-shake 0.24s ease-in-out,
+    zip-blink 0.18s ease-in-out 2;
+}
+
+.zip-number circle {
+  fill: var(--zip-num-fill);
+  stroke: var(--zip-paper);
+  stroke-width: 6;
+}
+
+.zip-number text {
+  fill: var(--zip-num-text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.zip-number.is-error circle {
+  fill: var(--zip-error);
+  animation: zip-blink 0.18s ease-in-out 2;
+}
+
+.zip-number.is-error text {
+  fill: #ffffff;
+}
+
+.zip-number.is-error .zip-number-halo {
+  fill: var(--zip-error);
+  opacity: 0.3;
+  stroke: none;
+  animation: none;
+}
+
+/* El eyebrow del modal va en ember, como en el handoff (`.modal-card p` lo
+   dejaría gris). */
+.zip-modal .eyebrow {
+  color: var(--color-ember-ink);
+}
+
+/* Aviso de error: píldora sobre la parte baja del tablero. */
+.zip-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--color-panel);
+  box-shadow:
+    inset 0 0 0 1.5px var(--zip-error),
+    var(--shadow-card);
+  color: var(--zip-error-text);
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.zip-toast[hidden] {
+  display: none;
+}
+
+@keyframes zip-halo {
+  from {
+    opacity: 0.24;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+
+@keyframes zip-blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes zip-shake {
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+/* Cómo se juega */
+.zip-howto {
+  border-radius: 20px;
+  background: var(--color-panel-soft);
+  box-shadow: inset 0 0 0 1px var(--color-panel-line);
+  overflow: hidden;
+}
+
+.zip-howto-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 18px;
+  border: none;
+  background: none;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.zip-howto-chevron {
+  color: var(--color-ink-dim);
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.zip-howto.is-open .zip-howto-chevron {
+  transform: rotate(180deg);
+}
+
+.zip-howto-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 4px 16px 18px;
+}
+
+.zip-howto-body figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.zip-howto-body figure > svg {
+  height: 64px;
+}
+
+.zip-howto-body figcaption {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.zip-howto-num circle {
+  fill: var(--zip-num-fill);
+  stroke: var(--color-panel-soft);
+  stroke-width: 2;
+}
+
+.zip-howto-num text {
+  fill: var(--zip-num-text);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* Tableta: tablero fijo de 480. */
+@media (min-width: 480px) {
+  .zip-layout {
+    --zip-board-size: 480px;
+  }
+}
+
+/* Escritorio: tablero de 600 a la izquierda y barra lateral de 380. */
+@media (min-width: 1024px) {
+  .app-shell.zip-shell {
+    max-width: 1100px;
+  }
+
+  .zip-layout {
+    --zip-board-size: 600px;
+    display: grid;
+    grid-template-columns: 600px 380px;
+    justify-content: center;
+    align-items: start;
+    gap: 56px;
+    padding-top: 56px;
+  }
+
+  .zip-board-col {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .zip-side,
+  .zip-layout > .zip-chips {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .zip-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .zip-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 20px;
+    background: var(--color-panel);
+    box-shadow: var(--shadow-card), var(--shadow-inset-hairline);
+  }
+
+  .zip-card .zip-chips,
+  .zip-card .zip-meta,
+  .zip-card .zip-controls,
+  .zip-card .zip-results,
+  .zip-side .zip-howto {
+    width: 100%;
+  }
+
+  .zip-meta {
+    align-items: flex-end;
+  }
+
+  .zip-card > * {
+    order: 0;
+  }
+
+  .zip-card-title {
+    display: block;
+  }
+
+  .zip-timer {
+    font-size: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zip-tip-halo,
+  .zip-tip.is-error,
+  .zip-wall.is-error,
+  .zip-number.is-error circle {
+    animation: none;
+  }
+
+  .zip-trail line {
+    transition: none;
+  }
 }

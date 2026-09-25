@@ -11,11 +11,12 @@ import { mountQueensApp, unmountQueensApp } from './queens-app'
 import { mountSudokuApp, unmountSudokuApp } from './sudoku-app'
 import { mountWordleApp, unmountWordleApp } from './wordle-app'
 import { mountMahjongApp, unmountMahjongApp } from './mahjong-app'
+import { mountZipApp, unmountZipApp } from './zip-app'
 
 /**
  * Router de la app.
  *
- * La raíz (`#/`) es la pantalla de inicio con las cuatro miniaturas; cada juego
+ * La raíz (`#/`) es la pantalla de inicio con las miniaturas; cada juego
  * y cada pantalla interna viven en su propia ruta de hash. El hash basta porque
  * Cloudflare Pages sirve un solo `index.html` y así no hace falta configurar
  * reescrituras del servidor.
@@ -36,6 +37,7 @@ const SCREENS: Record<Route, Screen> = {
   sudoku: { mount: mountSudokuApp, unmount: unmountSudokuApp },
   wordle: { mount: mountWordleApp, unmount: unmountWordleApp },
   mahjong: { mount: mountMahjongApp, unmount: unmountMahjongApp },
+  zip: { mount: mountZipApp, unmount: unmountZipApp },
 }
 
 /** Nombre de la ruta en la URL. Se traduce solo lo que el usuario puede leer. */
@@ -47,6 +49,7 @@ const HASH_OF: Record<Route, string> = {
   sudoku: '#/sudoku',
   wordle: '#/wordle',
   mahjong: '#/mahjong',
+  zip: '#/zip',
 }
 
 let currentRoute: Route | null = null

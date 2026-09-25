@@ -16,6 +16,7 @@ const HIGHLIGHT_PACK: Record<string, string> = {
   queens: 'queens-8x8',
   sudoku: 'sudoku-classic-normal',
   mahjong: 'mahjong-turtle',
+  zip: 'zip-6x6',
 }
 
 let root: HTMLDivElement | null = null

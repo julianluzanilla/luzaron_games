@@ -7,7 +7,7 @@
  * extra por juego y para que hereden los colores del tema.
  */
 
-export type GameId = 'queens' | 'sudoku' | 'wordle' | 'mahjong'
+export type GameId = 'queens' | 'sudoku' | 'wordle' | 'mahjong' | 'zip'
 
 export interface GameEntry {
   id: GameId
@@ -149,6 +149,56 @@ const MAHJONG_THUMB = `
   </g>
 </svg>`
 
+/**
+ * Zip: serpiente de 4×4 con el degradado de celebración, un muro y tres
+ * puntos (design_handoff_zip). Los colores son variables del tema, así que en
+ * modo claro el degradado baja de luminosidad solo.
+ */
+const ZIP_THUMB = (() => {
+  const points: [number, number][] = [
+    [12.5, 12.5],
+    [37.5, 12.5],
+    [62.5, 12.5],
+    [87.5, 12.5],
+    [87.5, 37.5],
+    [62.5, 37.5],
+    [37.5, 37.5],
+    [12.5, 37.5],
+    [12.5, 62.5],
+    [37.5, 62.5],
+    [62.5, 62.5],
+    [87.5, 62.5],
+    [87.5, 87.5],
+    [62.5, 87.5],
+    [37.5, 87.5],
+    [12.5, 87.5],
+  ]
+  let trail = ''
+  for (let i = 1; i < points.length; i += 1) {
+    const percent = Math.round((i / (points.length - 1)) * 100)
+    const [x1, y1] = points[i - 1]
+    const [x2, y2] = points[i]
+    trail +=
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ` +
+      `style="stroke:color-mix(in srgb, var(--zip-solved-end) ${percent}%, var(--zip-solved-start))"/>`
+  }
+
+  return `
+<svg viewBox="0 0 100 100" role="img" aria-hidden="true" class="game-thumb-art">
+  <rect x="0" y="0" width="100" height="100" fill="var(--thumb-paper)"/>
+  <path d="M25 0v100M50 0v100M75 0v100M0 25h100M0 50h100M0 75h100"
+        stroke="var(--thumb-rule)" stroke-width="1.1"/>
+  <g stroke-width="12.5" stroke-linecap="round">${trail}</g>
+  <line x1="25" y1="25" x2="75" y2="25" stroke="var(--zip-wall)" stroke-width="5.5"
+        stroke-linecap="round"/>
+  <g fill="var(--thumb-ink)" stroke="var(--thumb-paper)" stroke-width="1.8">
+    <circle cx="12.5" cy="12.5" r="7.5"/>
+    <circle cx="12.5" cy="37.5" r="7.5"/>
+    <circle cx="12.5" cy="87.5" r="7.5"/>
+  </g>
+</svg>`
+})()
+
 /* ---------------------------------------------------------------------- */
 /* Catálogo                                                                */
 /* ---------------------------------------------------------------------- */
@@ -185,6 +235,14 @@ export const GAMES: GameEntry[] = [
     available: true,
     mark: '🀄',
     thumbnail: MAHJONG_THUMB,
+  },
+  {
+    id: 'zip',
+    label: 'Zip',
+    tagline: 'Un solo trazo que llena el tablero',
+    available: true,
+    mark: 'Z',
+    thumbnail: ZIP_THUMB,
   },
 ]
 
