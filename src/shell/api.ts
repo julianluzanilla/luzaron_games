@@ -192,3 +192,30 @@ export function apiRanking(
   const query = new URLSearchParams({ game: gameId, pack: packId, level: levelId })
   return request(`/rankings?${query.toString()}`)
 }
+
+/* ---------------------------------------------------------------------- */
+/* Perfil propio                                                           */
+/* ---------------------------------------------------------------------- */
+
+/** El usuario edita su nombre visible y/o su contraseña (pide la actual). */
+export function apiUpdateMe(
+  input: Partial<{ fullName: string; currentPassword: string; newPassword: string }>
+): Promise<{ user: ApiUser }> {
+  return request('/auth/me', { method: 'PATCH', body: JSON.stringify(input) })
+}
+
+/* ---------------------------------------------------------------------- */
+/* Juegos activos (interruptor global del admin)                           */
+/* ---------------------------------------------------------------------- */
+
+/** Solo trae los juegos que el admin tocó; los que no vienen están activos. */
+export function apiGameSettings(): Promise<{ games: Record<string, boolean> }> {
+  return request('/games')
+}
+
+export function apiSetGameEnabled(
+  gameId: string,
+  enabled: boolean
+): Promise<{ gameId: string; enabled: boolean }> {
+  return request('/games', { method: 'PUT', body: JSON.stringify({ gameId, enabled }) })
+}

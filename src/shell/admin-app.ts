@@ -1,8 +1,13 @@
 /**
  * Panel de administración.
  *
- * Solo para el rol `admin`: dar de alta a la familia, activar o desactivar
- * cuentas y reponer contraseñas olvidadas. No hay auto-registro; nadie entra
+ * Solo para el rol `admin`. Tres bloques:
+ * - Usuarios: dar de alta a la familia, activar o desactivar cuentas y reponer
+ *   contraseñas olvidadas.
+ * - Juegos: interruptor global para ocultar un juego a todos (p. ej. uno en
+ *   desarrollo). Sigue en el build y el admin lo puede probar.
+ * - Versión: la que corre, la guardada en el aparato y la publicada.
+ * No hay auto-registro; nadie entra
  * si el admin no lo creó (PRODUCT_SPEC §5).
  *
  * Necesita internet: es la única pantalla que no funciona offline, porque
@@ -20,12 +25,87 @@ import {
 } from './api'
 import { getCurrentUser } from './session'
 import { icon } from './ui'
+import { GAMES, type GameId } from './games'
+import {
+  isGameEnabled,
+  onGameSettingsChange,
+  refreshGameSettings,
+  setGameEnabled,
+} from './game-settings'
+import { getOfflineState, onOfflineChange } from './offline'
+import { APP_VERSION, fetchPublishedVersion, type AppVersion } from './version'
 
 let root: HTMLDivElement | null = null
 let users: ApiUser[] = []
 let loading = true
 let busy = false
 let message: { kind: 'error' | 'ok'; text: string } | null = null
+let published: AppVersion | null | undefined = undefined
+let unsubscribers: (() => void)[] = []
+
+function renderGamesSection(): string {
+  const rows = GAMES.filter((game) => game.available)
+    .map((game) => {
+      const enabled = isGameEnabled(game.id)
+      return `
+        <li class="user-row ${enabled ? '' : 'user-row-inactive'}">
+          <div class="user-row-main">
+            <span class="user-row-name">
+              <span class="header-title-mark" aria-hidden="true" style="background:${game.color}"></span>
+              ${game.label}
+            </span>
+            <span class="user-row-meta">${enabled ? 'Visible para todos' : '<strong>Oculto</strong> · solo tú lo ves'}</span>
+          </div>
+          <div class="user-row-actions">
+            <button type="button" class="chip-button" data-action="toggle-game"
+                    data-game-id="${game.id}" data-next="${enabled ? 'false' : 'true'}"
+                    aria-pressed="${enabled}" ${busy ? 'disabled' : ''}>
+              ${enabled ? 'Ocultar' : 'Mostrar'}
+            </button>
+          </div>
+        </li>
+      `
+    })
+    .join('')
+
+  return `
+    <section class="settings-card">
+      <h2>Juegos</h2>
+      <p class="settings-help">
+        Un juego oculto desaparece de la pantalla de inicio para todos. Sus
+        récords no se borran y tú lo sigues viendo para probarlo.
+      </p>
+      <ul class="user-list">${rows}</ul>
+    </section>
+  `
+}
+
+function renderVersionSection(): string {
+  const { cachedVersion, ready } = getOfflineState()
+  const publishedLabel =
+    published === undefined ? 'Consultando…' : published ? published.label : 'Sin conexión'
+  const behind = published && published.label !== APP_VERSION.label
+
+  return `
+    <section class="settings-card">
+      <h2>Versión</h2>
+      <dl class="settings-facts">
+        <div><dt>En uso</dt><dd>${escapeHtml(APP_VERSION.label)}</dd></div>
+        <div><dt>Guardada en este aparato</dt><dd>${
+          cachedVersion ? escapeHtml(cachedVersion) + (ready ? '' : ' (incompleta)') : 'Todavía no'
+        }</dd></div>
+        <div><dt>Publicada</dt><dd>${escapeHtml(publishedLabel)}</dd></div>
+      </dl>
+      <p class="settings-help settings-help-small">
+        ${
+          behind
+            ? 'Hay una versión más nueva publicada: se descarga sola y entra la próxima vez que abras la app.'
+            : 'Fecha y hora del último cambio (hora de Hermosillo) y su código de commit.'
+        }
+      </p>
+    </section>
+  `
+}
 
 function renderUserRow(user: ApiUser): string {
   const isSelf = user.id === getCurrentUser()?.id
@@ -60,7 +140,7 @@ function render(): void {
 
   root.innerHTML = `
     <div class="app-shell">
-      ${renderScreenHeader('Usuarios', '#/ajustes')}
+      ${renderScreenHeader('Administración')}
       <main class="settings-main">
         ${
           message
@@ -70,7 +150,7 @@ function render(): void {
 
         <section class="settings-card">
           <div class="settings-card-head">
-            <h2>Familia</h2>
+            <h2>Usuarios</h2>
             <span class="settings-card-meta">${loading ? '' : `${users.length} ${users.length === 1 ? 'usuario' : 'usuarios'}`}</span>
           </div>
           ${
@@ -118,6 +198,9 @@ function render(): void {
             </button>
           </form>
         </section>
+
+        ${renderGamesSection()}
+        ${renderVersionSection()}
       </main>
     </div>
   `
@@ -147,6 +230,27 @@ async function refresh(): Promise<void> {
 
 async function handleClick(event: Event): Promise<void> {
   const target = event.target as HTMLElement | null
+  const gameButton = target?.closest<HTMLButtonElement>('[data-action="toggle-game"]')
+
+  if (gameButton && !busy) {
+    busy = true
+    message = null
+    render()
+
+    try {
+      const enabled = gameButton.dataset.next === 'true'
+      await setGameEnabled(gameButton.dataset.gameId as GameId, enabled)
+      message = { kind: 'ok', text: enabled ? 'Juego visible otra vez.' : 'Juego oculto.' }
+    } catch (error) {
+      message = { kind: 'error', text: describeError(error) }
+    } finally {
+      busy = false
+      render()
+    }
+
+    return
+  }
+
   const button = target?.closest<HTMLButtonElement>('[data-user-id]')
 
   if (!button || busy) return
@@ -247,13 +351,23 @@ export function mountAdminApp(): void {
   root.addEventListener('click', handleClick)
   root.addEventListener('submit', handleSubmit)
 
+  published = undefined
+  unsubscribers = [onGameSettingsChange(() => render()), onOfflineChange(() => render())]
+
   render()
   void refresh()
+  void refreshGameSettings()
+  void fetchPublishedVersion().then((version) => {
+    published = version
+    render()
+  })
 }
 
 export function unmountAdminApp(): void {
   root?.removeEventListener('click', handleClick)
   root?.removeEventListener('submit', handleSubmit)
+  unsubscribers.forEach((unsubscribe) => unsubscribe())
+  unsubscribers = []
 
   if (root) root.innerHTML = ''
   root = null

@@ -2,15 +2,16 @@
  * Header compartido.
  *
  * Reemplaza a la barra de pestañas: dentro de un juego el header es
- * `← Inicio · Nombre del juego · ⚙`. La navegación va por hash (`#/`,
- * `#/queens`, `#/ajustes`), así que funciona aunque el JS todavía no haya
- * enganchado los listeners.
+ * `← Inicio · Nombre del juego · tema · usuario`. El ícono de usuario abre el
+ * menú con Ajustes, Editar usuario, Administrar y Cerrar sesión (user-menu.ts).
+ * La navegación va por hash (`#/`, `#/queens`, `#/ajustes`), así que funciona
+ * aunque el JS todavía no haya enganchado los listeners.
  */
 
 import { getGameEntry, type GameId } from './games'
-import { displayName, getCurrentUser } from './session'
 import { getResolvedTheme } from './theme'
 import { icon } from './ui'
+import { renderUserButton } from './user-menu'
 
 /**
  * Cambio rápido claro ↔ oscuro, sin salir de la partida. Enseña el tema al
@@ -34,44 +35,7 @@ function renderThemeToggle(): string {
   `
 }
 
-/** Botón de ajustes, igual en todas las pantallas. */
-function renderSettingsButton(): string {
-  return `
-    <a class="header-icon" href="#/ajustes" data-action="open-settings"
-       aria-label="Ajustes" title="Ajustes">${icon('settings')}</a>
-  `
-}
-
-/** Chip de identidad. Para invitado invita a entrar; con sesión da el nombre. */
-export function renderUserChip(): string {
-  const user = getCurrentUser()
-
-  if (!user) {
-    return `
-      <a class="user-chip user-chip-guest" href="#/ajustes">
-        <span class="user-chip-avatar" aria-hidden="true">?</span>
-        <span class="user-chip-text">
-          <span class="user-chip-name">Invitado</span>
-          <span class="user-chip-hint">Iniciar sesión</span>
-        </span>
-      </a>
-    `
-  }
-
-  const initial = (user.fullName.trim()[0] ?? user.username[0] ?? '?').toUpperCase()
-
-  return `
-    <a class="user-chip" href="#/ajustes">
-      <span class="user-chip-avatar" aria-hidden="true">${initial}</span>
-      <span class="user-chip-text">
-        <span class="user-chip-name">${escapeHtml(displayName())}</span>
-        <span class="user-chip-hint">Tus récords se guardan</span>
-      </span>
-    </a>
-  `
-}
-
-/** Header de la pantalla de inicio: marca + identidad + ajustes. */
+/** Header de la pantalla de inicio: marca + tema + ícono de usuario. */
 export function renderHomeHeader(): string {
   return `
     <header class="app-header app-header-home">
@@ -80,15 +44,14 @@ export function renderHomeHeader(): string {
         <img class="brand-logo brand-logo-dark" src="/brand/horizontal-oscuro.png" alt="" aria-hidden="true" />
       </a>
       <div class="header-actions">
-        ${renderUserChip()}
         ${renderThemeToggle()}
-        ${renderSettingsButton()}
+        ${renderUserButton()}
       </div>
     </header>
   `
 }
 
-/** Header de un juego: volver a inicio, nombre del juego y ajustes. */
+/** Header de un juego: volver a inicio, nombre del juego, tema y usuario. */
 export function renderGameHeader(active: GameId): string {
   const game = getGameEntry(active)
 
@@ -102,7 +65,7 @@ export function renderGameHeader(active: GameId): string {
         <span class="header-title-mark" aria-hidden="true" style="background:${game.color}"></span>
         ${game.label}
       </span>
-      <div class="header-actions">${renderThemeToggle()}${renderSettingsButton()}</div>
+      <div class="header-actions">${renderThemeToggle()}${renderUserButton()}</div>
     </header>
   `
 }

@@ -12,6 +12,8 @@
     "format:check": "prettier . --check",
     "db:schema": "wrangler d1 execute luzaron-games --remote --file=db/schema.sql",
     "db:schema:local": "wrangler d1 execute luzaron-games --local --file=db/schema.sql",
+    "db:games": "wrangler d1 execute luzaron-games --remote --file=db/002-game-settings.sql",
+    "db:games:local": "wrangler d1 execute luzaron-games --local --file=db/002-game-settings.sql",
     "pages:dev": "wrangler pages dev -- npm run dev",
     "pool:queens": "tsx scripts/generate-queens-pool.ts",
     "pool:sudoku": "tsx scripts/generate-sudoku-pool.ts",

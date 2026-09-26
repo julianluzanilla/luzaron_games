@@ -16,11 +16,20 @@
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Archivo va autohospedada (src/style.css → public/fonts): funciona sin internet. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/archivo-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/archivo-latin-800-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
 
     <!--

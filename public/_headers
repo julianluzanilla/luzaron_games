@@ -1,0 +1,21 @@
+# Cabeceras de Cloudflare Pages.
+#
+# sw.js, la página y version.json se piden siempre de nuevo: es lo que permite
+# que una versión nueva llegue a los iPhone/iPad. Los assets con hash en el
+# nombre nunca cambian, así que se cachean para siempre.
+
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
+/
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/version.json
+  Cache-Control: no-store
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

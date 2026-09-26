@@ -12,7 +12,15 @@
  * significa "esta cookie ya no vale", cierra la sesión local.
  */
 
-import { apiLogin, apiLogout, apiMe, apiSetup, OfflineError, type ApiUser } from './api'
+import {
+  apiLogin,
+  apiLogout,
+  apiMe,
+  apiSetup,
+  apiUpdateMe,
+  OfflineError,
+  type ApiUser,
+} from './api'
 import { readCachedUser, writeCachedUser } from './db'
 
 export interface SessionState {
@@ -157,4 +165,16 @@ export async function refreshSession(): Promise<void> {
       emit()
     }
   }
+}
+
+/** "Editar usuario": nombre visible y/o contraseña. Necesita internet. */
+export async function updateProfile(
+  input: Partial<{ fullName: string; currentPassword: string; newPassword: string }>
+): Promise<void> {
+  const { user } = await apiUpdateMe(input)
+
+  state.user = user
+  state.serverReachable = true
+  await writeCachedUser(user)
+  emit()
 }

@@ -9,7 +9,8 @@
 import { GAMES } from './games'
 import { renderHomeHeader } from './app-header'
 import { getBestTime } from './records'
-import { getCurrentUser, onSessionChange } from './session'
+import { getCurrentUser, isAdmin, onSessionChange } from './session'
+import { isGameEnabled, onGameSettingsChange } from './game-settings'
 
 /** Categoría cuyo mejor tiempo se enseña bajo cada tarjeta, si existe. */
 const HIGHLIGHT_PACK: Record<string, string> = {
@@ -21,7 +22,7 @@ const HIGHLIGHT_PACK: Record<string, string> = {
 }
 
 let root: HTMLDivElement | null = null
-let unsubscribe: (() => void) | null = null
+let unsubscribers: (() => void)[] = []
 
 function formatTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000)
@@ -33,6 +34,8 @@ function formatTime(ms: number): string {
 
 function renderCard(game: (typeof GAMES)[number]): string {
   const pack = HIGHLIGHT_PACK[game.id]
+  // Solo el admin llega a ver un juego oculto: lo ve marcado para probarlo.
+  const hidden = !isGameEnabled(game.id)
   const best = pack ? getBestTime(game.id, pack) : null
 
   const footer =
@@ -40,12 +43,13 @@ function renderCard(game: (typeof GAMES)[number]): string {
     (best ? `<span class="game-card-best">Mejor: ${formatTime(best)}</span>` : '')
 
   return `
-    <a class="game-card ${game.available ? '' : 'game-card-soon'}"
+    <a class="game-card ${game.available ? '' : 'game-card-soon'} ${hidden ? 'game-card-hidden' : ''}"
        href="${game.available ? `#/${game.id}` : '#/'}"
        ${game.available ? '' : 'aria-disabled="true"'}>
       <span class="game-thumb game-thumb-${game.id}">
         ${game.thumbnail}
         ${game.available ? '' : '<span class="game-card-badge">Pronto</span>'}
+        ${game.available && hidden ? '<span class="game-card-badge">Oculto</span>' : ''}
       </span>
       <span class="game-card-body">
         <span class="game-card-name">${game.label}</span>
@@ -59,13 +63,14 @@ function render(): void {
   if (!root) return
 
   const isGuest = getCurrentUser() === null
+  const visible = GAMES.filter((game) => isAdmin() || isGameEnabled(game.id))
 
   root.innerHTML = `
     <div class="app-shell">
       ${renderHomeHeader()}
       <main class="home-main">
         <h1 class="home-title">¿Qué jugamos?</h1>
-        <div class="game-grid">${GAMES.map(renderCard).join('')}</div>
+        <div class="game-grid">${visible.map(renderCard).join('')}</div>
         ${
           isGuest
             ? `<p class="home-note">
@@ -85,13 +90,13 @@ export function mountHomeApp(): void {
   if (!found) throw new Error('No se encontró el elemento #app')
 
   root = found
-  unsubscribe = onSessionChange(() => render())
+  unsubscribers = [onSessionChange(() => render()), onGameSettingsChange(() => render())]
   render()
 }
 
 export function unmountHomeApp(): void {
-  unsubscribe?.()
-  unsubscribe = null
+  unsubscribers.forEach((unsubscribe) => unsubscribe())
+  unsubscribers = []
 
   if (root) root.innerHTML = ''
   root = null

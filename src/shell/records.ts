@@ -300,4 +300,16 @@ export function initRecords(): void {
   })
 
   window.addEventListener('online', () => void flushQueue())
+
+  // iOS no tiene Background Sync: se intenta cada vez que la app vuelve al frente.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void flushQueue()
+  })
+}
+
+/** Récords guardados en el aparato que todavía no llegan al servidor. */
+export async function countPendingRecords(): Promise<number> {
+  const user = getCurrentUser()
+  if (!user) return 0
+  return (await readPendingRecords(user.id)).length
 }

@@ -1,4 +1,30 @@
 /* ---------------------------------------------------------------------- */
+/* Fuente — Archivo autohospedada (public/fonts, OFL) para que funcione     */
+/* sin internet. Solo el subconjunto latino: cubre español e inglés.        */
+/* ---------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-800-normal.woff2') format('woff2');
+}
+
+/* ---------------------------------------------------------------------- */
 /* Tokens — rediseño Modernist (design_handoff_luzaron/luzaron-tokens.css) */
 /* ---------------------------------------------------------------------- */
 
@@ -280,69 +306,154 @@ button.header-icon:hover {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Chip de identidad                                                       */
+/* Ícono de usuario y su menú (shell/user-menu.ts)                         */
 /* ---------------------------------------------------------------------- */
 
-.user-chip {
-  height: 44px;
+/*
+ * El color dice el estado de un vistazo:
+ *   gris  → Invitado
+ *   verde → con sesión, todavía bajando la app / una versión nueva
+ *   azul  → con sesión y todo descargado: lista para el modo avión
+ */
+:root {
+  --user-guest: #8f8b8b;
+  --user-online: var(--brand-green);
+  --user-ready: var(--brand-blue);
+}
+
+:root[data-theme='light'] {
+  --user-guest: #7a7676;
+}
+
+.user-button-guest {
+  color: var(--user-guest);
+}
+
+.user-button-online {
+  color: var(--user-online);
+}
+
+.user-button-ready {
+  color: var(--user-ready);
+}
+
+.user-button .user-glyph {
+  display: block;
+  transition: color 0.2s;
+}
+
+.user-button[aria-expanded='true'] {
+  background: var(--color-surface);
+}
+
+.user-menu {
+  position: fixed;
+  z-index: 60;
+  background: var(--color-bg);
+  border: var(--rule) solid var(--color-text);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text);
+}
+
+.user-menu-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px 12px;
+  border-bottom: var(--rule) solid var(--color-divider);
+}
+
+.user-menu-name {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-status {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0 10px 0 4px;
-  border: var(--rule) solid var(--color-divider);
-  color: var(--color-text);
-  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
 }
 
-.user-chip:hover {
-  border-color: var(--color-text);
-}
-
-.user-chip-avatar {
+.user-menu-dot {
+  width: 10px;
+  height: 10px;
   flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  background: var(--color-text);
-  color: var(--color-bg);
-  font-size: 14px;
-  font-weight: 800;
 }
 
-.user-chip-text {
+.user-menu-status-updated .user-menu-dot {
+  background: var(--user-ready);
+}
+
+.user-menu-status-updating .user-menu-dot {
+  background: var(--user-online);
+}
+
+.user-menu-status-offline .user-menu-dot {
+  background: var(--user-guest);
+}
+
+.user-menu-items {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
-  min-width: 0;
+  padding: 6px 0;
 }
 
-.user-chip-name {
-  font-size: 13px;
-  font-weight: 800;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.user-chip-hint {
+.user-menu-item:hover,
+.user-menu-item:focus-visible {
+  background: var(--color-surface);
+  outline: none;
+}
+
+.user-menu-item.is-disabled {
+  color: var(--color-muted);
+  opacity: 0.6;
+  cursor: default;
+}
+
+.user-menu-item.is-disabled:hover {
+  background: none;
+}
+
+.user-menu-label {
+  flex: 1;
+}
+
+.user-menu-hint {
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-accent-ink);
-  white-space: nowrap;
 }
 
-/* En teléfonos muy angostos el chip se queda solo con la inicial. */
-@media (max-width: 340px) {
-  .user-chip-text {
-    display: none;
-  }
-
-  .user-chip {
-    padding: 0 4px;
-  }
+.user-menu-foot {
+  padding: 10px 16px 12px;
+  border-top: var(--rule) solid var(--color-divider);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -418,6 +529,11 @@ button.header-icon:hover {
 .game-card-soon {
   opacity: 0.45;
   pointer-events: none;
+}
+
+/* Juego desactivado por el admin: solo él lo ve, atenuado pero jugable. */
+.game-card-hidden .game-thumb > :not(.game-card-badge) {
+  opacity: 0.45;
 }
 
 /* La miniatura es cuadrada de verdad: sin aspect-ratio se deforma en Safari. */
@@ -523,26 +639,6 @@ button.header-icon:hover {
 
   .app-header-home .brand-logo {
     height: 44px;
-  }
-
-  .app-header-home .user-chip {
-    height: 48px;
-    gap: 10px;
-    padding: 0 14px 0 6px;
-  }
-
-  .app-header-home .user-chip-avatar {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
-  }
-
-  .app-header-home .user-chip-name {
-    font-size: 14px;
-  }
-
-  .app-header-home .user-chip-hint {
-    font-size: 12px;
   }
 
   .app-header-home .header-icon {
@@ -3142,4 +3238,11 @@ body.mahjong-expanded {
   .memoria-card-inner {
     transition: none;
   }
+}
+
+/* Cuadro de color del juego en la lista de Administración → Juegos. */
+.user-row-name .header-title-mark {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: 0;
 }

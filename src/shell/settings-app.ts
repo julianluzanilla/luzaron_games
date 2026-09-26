@@ -161,7 +161,7 @@ function renderAccount(): string {
       <div class="settings-actions">
         ${
           user.role === 'admin'
-            ? `<a class="control-button" href="#/admin">${icon('users')}<span class="control-button-label">Usuarios</span></a>`
+            ? `<a class="control-button" href="#/admin">${icon('users')}<span class="control-button-label">Administrar</span></a>`
             : ''
         }
         <button type="button" class="control-button" data-action="logout" ${busy ? 'disabled' : ''}>

@@ -5,6 +5,10 @@ import { getResolvedTheme, initTheme, onThemeChange, setThemePreference } from '
 import { renderThemeToggleContent, themeToggleLabel } from './shell/app-header'
 import { initSession, isAdmin, getSession, onSessionChange } from './shell/session'
 import { initRecords } from './shell/records'
+import { initOffline } from './shell/offline'
+import { initUserMenu } from './shell/user-menu'
+import { initGameSettings, isGameEnabled, onGameSettingsChange } from './shell/game-settings'
+import { mountAccountApp, unmountAccountApp } from './shell/account-app'
 import { mountHomeApp, unmountHomeApp } from './shell/home-app'
 import { mountSettingsApp, unmountSettingsApp } from './shell/settings-app'
 import { mountAdminApp, unmountAdminApp } from './shell/admin-app'
@@ -24,7 +28,7 @@ import { mountMemoriaApp, unmountMemoriaApp } from './memoria-app'
  * reescrituras del servidor.
  */
 
-type Route = 'home' | 'settings' | 'admin' | GameId
+type Route = 'home' | 'settings' | 'account' | 'admin' | GameId
 
 interface Screen {
   mount: () => void
@@ -34,6 +38,7 @@ interface Screen {
 const SCREENS: Record<Route, Screen> = {
   home: { mount: mountHomeApp, unmount: unmountHomeApp },
   settings: { mount: mountSettingsApp, unmount: unmountSettingsApp },
+  account: { mount: mountAccountApp, unmount: unmountAccountApp },
   admin: { mount: mountAdminApp, unmount: unmountAdminApp },
   queens: { mount: mountQueensApp, unmount: unmountQueensApp },
   sudoku: { mount: mountSudokuApp, unmount: unmountSudokuApp },
@@ -47,6 +52,7 @@ const SCREENS: Record<Route, Screen> = {
 const HASH_OF: Record<Route, string> = {
   home: '#/',
   settings: '#/ajustes',
+  account: '#/cuenta',
   admin: '#/admin',
   queens: '#/queens',
   sudoku: '#/sudoku',
@@ -63,6 +69,7 @@ function parseHash(): Route {
 
   if (raw === '' || raw === 'inicio') return 'home'
   if (raw === 'ajustes' || raw === 'settings') return 'settings'
+  if (raw === 'cuenta') return 'account'
   if (raw === 'admin') return 'admin'
   if (isPlayableGameId(raw)) return raw
 
@@ -70,18 +77,28 @@ function parseHash(): Route {
 }
 
 /**
- * El panel de admin es la única ruta protegida. Mientras la sesión se resuelve
- * no se expulsa a nadie: se espera, porque al recargar en `#/admin` el perfil
- * todavía no está cargado y sería una expulsión falsa.
+ * Rutas protegidas:
+ * - `#/admin`, solo admin.
+ * - Un juego desactivado por el admin (interruptor global): los jugadores
+ *   vuelven a inicio; el admin sí entra, para probarlo.
+ *
+ * Mientras la sesión se resuelve no se expulsa a nadie: se espera, porque al
+ * recargar el perfil todavía no está cargado y sería una expulsión falsa.
  */
 function guard(route: Route): Route {
-  if (route !== 'admin') return route
-
   const { loading } = getSession()
 
-  if (loading) return route
+  if (route === 'admin') {
+    if (loading) return route
+    return isAdmin() ? route : 'settings'
+  }
 
-  return isAdmin() ? route : 'settings'
+  if (isPlayableGameId(route) && !isGameEnabled(route)) {
+    if (loading || isAdmin()) return route
+    return 'home'
+  }
+
+  return route
 }
 
 function show(route: Route): void {
@@ -106,11 +123,11 @@ function navigate(): void {
 
 window.addEventListener('hashchange', navigate)
 
-// Al resolverse la sesión se vuelve a evaluar la ruta: si alguien recargó en
-// `#/admin` sin ser admin, aquí es donde sale.
-onSessionChange(() => {
-  if (currentRoute === 'admin') navigate()
-})
+// Al resolverse la sesión (o cambiar los juegos activos) se vuelve a evaluar
+// la ruta: si alguien recargó en `#/admin` sin ser admin, o en un juego que el
+// admin acaba de ocultar, aquí es donde sale.
+onSessionChange(() => navigate())
+onGameSettingsChange(() => navigate())
 
 /**
  * Botón de tema del header (sol / luna). Se atiende aquí, a nivel documento,
@@ -139,5 +156,8 @@ onThemeChange(() => {
 
 initTheme()
 initRecords()
+initOffline()
+initUserMenu()
+initGameSettings()
 navigate()
 void initSession()
