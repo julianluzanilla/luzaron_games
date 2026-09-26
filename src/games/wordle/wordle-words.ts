@@ -12,10 +12,27 @@ export interface WordleDictionary {
   valid: Set<string>
 }
 
+/**
+ * Definición de una solución, para mostrarla al terminar la partida. Están
+ * escritas para que las entienda un niño de 10 años: sin tecnicismos, sin usar
+ * la propia palabra dentro de la definición y con un ejemplo de uso real.
+ */
+export interface WordleDefinition {
+  /** La palabra bien escrita, con tildes y Ñ (ÉTICA, NIÑOS). */
+  w?: string
+  /** Definición corta. */
+  d: string
+  /** Frase de ejemplo. */
+  e: string
+}
+
+export type WordleDefinitions = Record<string, WordleDefinition>
+
 /** Día 1 del calendario de palabras diarias. */
 const EPOCH_UTC = Date.UTC(2026, 0, 1)
 
 const cache = new Map<string, Promise<WordleDictionary>>()
+const definitionCache = new Map<string, Promise<WordleDefinitions>>()
 
 function listKey(language: WordleLanguage, length: WordleLength): string {
   return `${language}-${length}`
@@ -32,6 +49,29 @@ async function fetchList(name: string): Promise<string[]> {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
+}
+
+/**
+ * Carga las definiciones de un idioma y longitud. Es un extra: si el archivo
+ * todavía no existe para esa lista, o falla la descarga, el juego sigue igual
+ * y el modal simplemente no muestra la definición.
+ */
+export function loadDefinitions(
+  language: WordleLanguage,
+  length: WordleLength
+): Promise<WordleDefinitions> {
+  const key = listKey(language, length)
+  let promise = definitionCache.get(key)
+
+  if (!promise) {
+    promise = fetch(`/words/wordle/${key}-defs.json`)
+      .then((response) => (response.ok ? (response.json() as Promise<WordleDefinitions>) : {}))
+      .catch(() => ({}))
+
+    definitionCache.set(key, promise)
+  }
+
+  return promise
 }
 
 export function loadDictionary(

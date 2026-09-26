@@ -5,7 +5,10 @@ import {
   dailyNumber,
   getDailyWord,
   getPracticeWord,
+  loadDefinitions,
   loadDictionary,
+  type WordleDefinition,
+  type WordleDefinitions,
   type WordleDictionary,
 } from './games/wordle/wordle-words'
 import {
@@ -35,6 +38,8 @@ interface AppState {
   settings: WordleSettings
   mode: WordleMode
   dictionary: WordleDictionary | null
+  /** Definiciones del idioma y longitud en curso (se cargan en segundo plano). */
+  definitions: WordleDefinitions | null
   answer: string
   puzzleNumber: number
   guesses: WordleGuess[]
@@ -53,6 +58,7 @@ const state: AppState = {
   settings: { ...DEFAULT_WORDLE_SETTINGS },
   mode: 'daily',
   dictionary: null,
+  definitions: null,
   answer: '',
   puzzleNumber: 0,
   guesses: [],
@@ -203,7 +209,17 @@ async function startGame(): Promise<void> {
     const dictionary = await loadDictionary(language, length)
 
     state.dictionary = dictionary
+    state.definitions = null
     state.guesses = []
+
+    // Las definiciones no hacen falta para jugar, así que se piden aparte y
+    // sin bloquear: para cuando termine la partida ya están en memoria.
+    void loadDefinitions(language, length).then((definitions) => {
+      if (state.settings.language === language && state.settings.length === length) {
+        state.definitions = definitions
+      }
+    })
+
     state.current = ''
     state.status = 'playing'
     state.message = null
@@ -337,21 +353,31 @@ function submitGuess(): void {
   revealHandle = window.setTimeout(
     () => {
       state.revealingRow = null
-      finishTurn(guess)
+      void finishTurn(guess)
     },
     state.settings.length * 120 + 420
   )
 }
 
-function finishTurn(guess: string): void {
-  if (guess === state.answer) {
-    state.status = 'won'
-    state.modalOpen = true
-  } else if (state.guesses.length >= attemptsForLength(state.settings.length)) {
-    state.status = 'lost'
-    state.modalOpen = true
+async function finishTurn(guess: string): Promise<void> {
+  const finished =
+    guess === state.answer || state.guesses.length >= attemptsForLength(state.settings.length)
+
+  if (!finished) {
+    render()
+    return
   }
 
+  state.status = guess === state.answer ? 'won' : 'lost'
+
+  // Si la descarga de definiciones todavía no terminó, se espera aquí: es el
+  // único momento en que hacen falta.
+  if (!state.definitions) {
+    const { language, length } = state.settings
+    state.definitions = await loadDefinitions(language, length)
+  }
+
+  state.modalOpen = true
   render()
 }
 
@@ -611,13 +637,32 @@ function renderSettings(): string {
   `
 }
 
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+/** Qué significa la palabra y cómo se usa, en lenguaje de niño. */
+function renderDefinition(entry: WordleDefinition): string {
+  return `
+    <div class="wordle-definition">
+      <p class="wordle-definition-label">Qué significa</p>
+      <p class="wordle-definition-text">${escapeHtml(entry.d)}</p>
+      <p class="wordle-definition-example">${escapeHtml(entry.e)}</p>
+    </div>
+  `
+}
+
 function renderEndModal(): string {
   const won = state.status === 'won'
   const attempts = attemptsForLength(state.settings.length)
 
+  const entry = state.definitions?.[state.answer]
+
   return celebration({
     eyebrow: won ? '¡Adivinaste!' : 'Se acabaron los intentos',
-    title: state.answer,
+    // En el tablero la palabra va sin tildes, pero aquí se muestra bien
+    // escrita: es la forma que conviene que se les quede.
+    title: entry?.w ?? state.answer,
     className: 'wordle-end',
     stats: [
       { label: 'Intentos', value: `${won ? state.guesses.length : '—'}/${attempts}` },
@@ -627,6 +672,7 @@ function renderEndModal(): string {
         text: true,
       },
     ],
+    extra: entry ? renderDefinition(entry) : undefined,
     note:
       state.mode === 'daily'
         ? 'La palabra diaria cambia a la medianoche. Mientras tanto puedes seguir en modo práctica.'

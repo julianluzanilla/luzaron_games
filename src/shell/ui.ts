@@ -159,6 +159,8 @@ export interface CelebrationSpec {
   eyebrow: string
   title: string
   stats: CelebrationStat[]
+  /** Bloque libre entre las cifras y la nota (Wordle lo usa para la definición). */
+  extra?: string
   note?: string
   /** Acción principal a todo el ancho, con flecha al final. */
   primary?: ButtonSpec
@@ -192,6 +194,7 @@ export function celebration(spec: CelebrationSpec): string {
           <h2 ${spec.titleId ? `id="${spec.titleId}"` : ''}>${spec.title}</h2>
         </div>
         <dl class="modal-stats" style="--cols:${spec.stats.length}">${stats}</dl>
+        ${spec.extra ?? ''}
         ${spec.note ? `<p class="modal-note">${spec.note}</p>` : ''}
         <div class="modal-actions">
           ${spec.primary ? button({ ...spec.primary, variant: 'primary', trailingArrow: true, className: 'control-button-hero' }) : ''}

@@ -2525,6 +2525,45 @@ body.mahjong-expanded {
   margin-top: 4px;
 }
 
+/*
+ * Definición de la palabra al terminar la partida: el juego también sirve para
+ * aprender vocabulario, así que se explica qué significa en lenguaje de niño y
+ * se da una frase de ejemplo. El modal ya separa sus bloques con gap, así que
+ * aquí solo se ordenan las tres líneas.
+ */
+.wordle-definition {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wordle-definition-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.wordle-definition-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.wordle-definition-example {
+  margin: 0;
+  padding-left: 10px;
+  border-left: var(--rule) solid var(--color-accent);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
 /* ---------------------------------------------------------------------- */
 /* Zip                                                                     */
 /* ---------------------------------------------------------------------- */
