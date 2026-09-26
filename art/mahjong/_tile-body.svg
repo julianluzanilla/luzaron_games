@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 115 155" width="115" height="155">
 <defs>
 </defs>
-<g id="mj-body"><rect x="16.5" y="1.5" width="97" height="137" fill="#F6EFDD" stroke="#3A2F1F" stroke-width="3"/></g>
-<g id="mj-body-back" style="display:none"><rect x="16.5" y="1.5" width="97" height="137" fill="#1F9E52" stroke="#3A2F1F" stroke-width="3"/></g>
+<g id="mj-body"><path d="M15 0 L1 14 V154 L15 140 Z" style="fill:var(--mahjong-side-left,#1F9E52)" stroke="#0F3D22" stroke-width="2" stroke-linejoin="miter"/><path d="M15 140 L1 154 H101 L115 140 Z" style="fill:var(--mahjong-side-bottom,#F29D12)" stroke="#0F3D22" stroke-width="2" stroke-linejoin="miter"/><rect x="16.5" y="1.5" width="97" height="137" fill="#F6EFDD" stroke="#3A2F1F" stroke-width="3"/></g>
+<g id="mj-body-back" style="display:none"><path d="M15 0 L1 14 V154 L15 140 Z" style="fill:var(--mahjong-side-left,#1F9E52)" stroke="#0F3D22" stroke-width="2" stroke-linejoin="miter"/><path d="M15 140 L1 154 H101 L115 140 Z" style="fill:var(--mahjong-side-bottom,#F29D12)" stroke="#0F3D22" stroke-width="2" stroke-linejoin="miter"/><rect x="16.5" y="1.5" width="97" height="137" fill="#1F9E52" stroke="#3A2F1F" stroke-width="3"/></g>
 </svg>

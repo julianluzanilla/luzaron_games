@@ -1803,21 +1803,24 @@ button.header-icon:hover {
 /* ---------------------------------------------------------------------- */
 
 /*
- * Fichas planas: rectángulo #f6efdd con borde de 1.5px #3a2f1f, sin bisel ni
- * degradado (el cuerpo vive en el sprite). Las capas superiores se desplazan
- * hacia arriba-izquierda y proyectan una sombra dura abajo-derecha. La
- * seleccionada lleva borde azul de 3.5px y la pista, verde.
+ * Niveles legibles (design_handoff_mahjong_3a): cara #f6efdd con canto verde a
+ * la izquierda y naranja abajo (en el sprite). Cada nivel sube a la derecha lo
+ * que mide el canto y su sombra cae arriba-derecha. La seleccionada lleva
+ * borde azul y la pista, verde.
  */
 :root {
-  --mahjong-felt: #123024;
+  --mahjong-felt: #0f2a1f;
+  --mahjong-side-left: #1f9e52;
+  --mahjong-side-bottom: #f29d12;
+  --mahjong-shadow-near: rgba(0, 0, 0, 0.24);
+  --mahjong-shadow-far: rgba(0, 0, 0, 0.16);
   --mahjong-select: #1f6fe5;
   --mahjong-hint: #35c46a;
   --mahjong-denied: rgba(91, 100, 112, 0.6);
-  --mahjong-tile-shadow: rgba(0, 0, 0, 0.35);
 }
 
 :root[data-theme='light'] {
-  --mahjong-felt: #1f6b4a;
+  --mahjong-felt: #174f37;
 }
 
 #mahjong-sprite {
@@ -1865,9 +1868,24 @@ button.header-icon:hover {
 }
 
 .mahjong-tile.is-raised {
-  filter: drop-shadow(4.5px 4.5px 0 var(--mahjong-tile-shadow));
+  filter: none;
 }
 
+/*
+ * Sombra de las fichas levantadas: un elemento propio del tamaño exacto de la
+ * cara, con dos box-shadow (cercana y lejana) hacia arriba-derecha. El
+ * renderer pinta todas las sombras de un nivel ANTES que sus fichas, así solo
+ * oscurecen los niveles de abajo y nunca a las vecinas del mismo nivel.
+ */
+.mahjong-shadow {
+  position: absolute;
+  width: 50px;
+  height: 70px;
+  box-shadow:
+    5px -5px 0 var(--mahjong-shadow-near),
+    12px -12px 0 var(--mahjong-shadow-far);
+  pointer-events: none;
+}
 .mahjong-tile svg {
   width: 100%;
   height: 100%;
@@ -1919,7 +1937,7 @@ button.header-icon:hover {
 }
 
 .mahjong-tile.is-raised.is-blocked {
-  filter: drop-shadow(4.5px 4.5px 0 var(--mahjong-tile-shadow)) grayscale(0.55) brightness(0.68);
+  filter: grayscale(0.55) brightness(0.68);
 }
 
 .mahjong-tile.is-blocked use {
