@@ -7,11 +7,15 @@
  * Las contraseñas de esta app son simples a propósito (4+ caracteres, letras y
  * números, PRODUCT_SPEC §5): son para que un niño pueda entrar solo. Por eso el
  * hash importa MÁS, no menos: una contraseña corta se rompe por fuerza bruta en
- * segundos si el hash es débil. PBKDF2 con 210 000 vueltas (recomendación OWASP
- * 2023 para SHA-256) hace que probarlas cueste.
+ * segundos si el hash es débil. PBKDF2 con muchas vueltas hace que probarlas
+ * cueste.
+ *
+ * Son 100 000 y no las 210 000 de OWASP porque el runtime de Workers **rechaza**
+ * PBKDF2 por encima de 100 000 vueltas (NotSupportedError): con 210 000 el alta
+ * del admin reventaba con un 500. No subir este número.
  */
 
-const ITERATIONS = 210_000
+const ITERATIONS = 100_000
 const KEY_BITS = 256
 const SALT_BYTES = 16
 
