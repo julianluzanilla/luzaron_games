@@ -9,25 +9,36 @@
 
 import { getGameEntry, type GameId } from './games'
 import { displayName, getCurrentUser } from './session'
+import { getResolvedTheme } from './theme'
+import { icon } from './ui'
 
-const GEAR_ICON = `
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
-     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <circle cx="12" cy="12" r="3.2"/>
-  <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 8.9 19.3a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.7 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.7a1.7 1.7 0 0 0 1.03-1.56V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.7a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.3 9v.03a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>
-</svg>`
+/**
+ * Cambio rápido claro ↔ oscuro, sin salir de la partida. Enseña el tema al
+ * que se va a cambiar (luna en claro, sol en oscuro). El clic lo atiende
+ * main.ts a nivel documento para que sirva en cualquier pantalla.
+ */
+export function renderThemeToggleContent(): string {
+  const toDark = getResolvedTheme() === 'light'
+  return icon(toDark ? 'moon' : 'sun')
+}
 
-const BACK_ICON = `
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="M15 5l-7 7 7 7"/>
-</svg>`
+export function themeToggleLabel(): string {
+  return getResolvedTheme() === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'
+}
+
+function renderThemeToggle(): string {
+  const label = themeToggleLabel()
+  return `
+    <button type="button" class="header-icon" data-action="toggle-theme"
+            aria-label="${label}" title="${label}">${renderThemeToggleContent()}</button>
+  `
+}
 
 /** Botón de ajustes, igual en todas las pantallas. */
 function renderSettingsButton(): string {
   return `
     <a class="header-icon" href="#/ajustes" data-action="open-settings"
-       aria-label="Ajustes" title="Ajustes">${GEAR_ICON}</a>
+       aria-label="Ajustes" title="Ajustes">${icon('settings')}</a>
   `
 }
 
@@ -64,12 +75,13 @@ export function renderUserChip(): string {
 export function renderHomeHeader(): string {
   return `
     <header class="app-header app-header-home">
-      <span class="brand">
-        <span class="brand-mark" aria-hidden="true">◆</span>
-        <span class="brand-name">Luzaron Games</span>
-      </span>
+      <a class="brand" href="#/" aria-label="Luzaron Games">
+        <img class="brand-logo brand-logo-light" src="/brand/horizontal.png" alt="Luzaron Games" />
+        <img class="brand-logo brand-logo-dark" src="/brand/horizontal-oscuro.png" alt="" aria-hidden="true" />
+      </a>
       <div class="header-actions">
         ${renderUserChip()}
+        ${renderThemeToggle()}
         ${renderSettingsButton()}
       </div>
     </header>
@@ -83,14 +95,14 @@ export function renderGameHeader(active: GameId): string {
   return `
     <header class="app-header">
       <a class="header-back" href="#/" data-action="go-home">
-        <span class="header-back-icon" aria-hidden="true">${BACK_ICON}</span>
+        <span class="header-back-icon" aria-hidden="true">${icon('chevron-left')}</span>
         <span class="header-back-label">Inicio</span>
       </a>
       <span class="header-title">
-        <span class="header-title-mark" aria-hidden="true">${game.mark}</span>
+        <span class="header-title-mark" aria-hidden="true" style="background:${game.color}"></span>
         ${game.label}
       </span>
-      <div class="header-actions">${renderSettingsButton()}</div>
+      <div class="header-actions">${renderThemeToggle()}${renderSettingsButton()}</div>
     </header>
   `
 }
@@ -100,11 +112,11 @@ export function renderScreenHeader(title: string, backHref = '#/'): string {
   return `
     <header class="app-header">
       <a class="header-back" href="${backHref}">
-        <span class="header-back-icon" aria-hidden="true">${BACK_ICON}</span>
+        <span class="header-back-icon" aria-hidden="true">${icon('chevron-left')}</span>
         <span class="header-back-label">Atrás</span>
       </a>
       <span class="header-title">${escapeHtml(title)}</span>
-      <div class="header-actions"></div>
+      <div class="header-actions" aria-hidden="true"></div>
     </header>
   `
 }

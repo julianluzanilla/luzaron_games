@@ -1,7 +1,8 @@
 import './style.css'
 
 import { isPlayableGameId, type GameId } from './shell/games'
-import { initTheme } from './shell/theme'
+import { getResolvedTheme, initTheme, onThemeChange, setThemePreference } from './shell/theme'
+import { renderThemeToggleContent, themeToggleLabel } from './shell/app-header'
 import { initSession, isAdmin, getSession, onSessionChange } from './shell/session'
 import { initRecords } from './shell/records'
 import { mountHomeApp, unmountHomeApp } from './shell/home-app'
@@ -106,6 +107,31 @@ window.addEventListener('hashchange', navigate)
 // `#/admin` sin ser admin, aquí es donde sale.
 onSessionChange(() => {
   if (currentRoute === 'admin') navigate()
+})
+
+/**
+ * Botón de tema del header (sol / luna). Se atiende aquí, a nivel documento,
+ * porque vive en todas las pantallas y NO debe re-renderizar la pantalla
+ * actual: la partida en curso sigue igual, solo cambian los colores.
+ */
+document.addEventListener('click', (event) => {
+  const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+    '[data-action="toggle-theme"]'
+  )
+  if (!button) return
+
+  setThemePreference(getResolvedTheme() === 'light' ? 'dark' : 'light')
+  // Que un Enter posterior (Wordle) no vuelva a "pulsar" el botón.
+  button.blur()
+})
+
+onThemeChange(() => {
+  document.querySelectorAll<HTMLButtonElement>('[data-action="toggle-theme"]').forEach((button) => {
+    const label = themeToggleLabel()
+    button.innerHTML = renderThemeToggleContent()
+    button.setAttribute('aria-label', label)
+    button.title = label
+  })
 })
 
 initTheme()

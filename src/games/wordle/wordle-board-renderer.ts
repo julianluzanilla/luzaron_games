@@ -1,5 +1,6 @@
 import { buildKeyboardStates } from './wordle-engine'
 import type { WordleGuess, WordleLetterState } from './wordle-types'
+import { icon } from '../../shell/ui'
 
 export interface WordleBoardView {
   length: number
@@ -86,7 +87,7 @@ export function renderWordleKeyboard(guesses: WordleGuess[]): string {
 
         const label =
           key === 'BACKSPACE'
-            ? '⌫'
+            ? icon('delete')
             : key === 'ENTER'
               ? '<span class="wordle-key-label">Enviar</span>' +
                 '<span class="wordle-key-label-mini" aria-hidden="true">↵</span>'

@@ -1,7 +1,7 @@
 /**
  * Pantalla de inicio.
  *
- * Es la raíz de la app (`#/`): cuatro miniaturas cuadradas para elegir juego,
+ * Es la raíz de la app (`#/`): cinco miniaturas cuadradas para elegir juego,
  * el chip de identidad y el acceso a Ajustes. Nada más — se entra a jugar en
  * un toque.
  */
@@ -34,9 +34,9 @@ function renderCard(game: (typeof GAMES)[number]): string {
   const pack = HIGHLIGHT_PACK[game.id]
   const best = pack ? getBestTime(game.id, pack) : null
 
-  const footer = best
-    ? `<span class="game-card-best">Mejor ${formatTime(best)}</span>`
-    : `<span class="game-card-tagline">${game.tagline}</span>`
+  const footer =
+    `<span class="game-card-tagline">${game.tagline}</span>` +
+    (best ? `<span class="game-card-best">Mejor: ${formatTime(best)}</span>` : '')
 
   return `
     <a class="game-card ${game.available ? '' : 'game-card-soon'}"

@@ -19,6 +19,7 @@ import {
   type WordleSettings,
 } from './games/wordle/wordle-types'
 import { renderGameHeader } from './shell/app-header'
+import { button, celebration, segmented } from './shell/ui'
 import { getCurrentUser } from './shell/session'
 
 const SETTINGS_KEY = 'luzaron-wordle-settings-v1'
@@ -519,7 +520,7 @@ function renderMain(): string {
 
   return `
     <div class="game-area wordle-area">
-      <div class="game-area-header">
+      <div class="wordle-status-row">
         <div class="wordle-status">
           <span class="wordle-mode-label">${state.mode === 'daily' ? 'Palabra diaria' : 'Práctica'}</span>
           <span class="wordle-status-detail">
@@ -546,10 +547,10 @@ function renderMain(): string {
 
       ${renderWordleKeyboard(state.guesses)}
 
-      <nav class="size-selector" aria-label="Modo de juego">
-        <button type="button" class="size-chip ${state.mode === 'daily' ? 'active' : ''}" data-action="wordle-mode" data-mode="daily">Diaria</button>
-        <button type="button" class="size-chip ${state.mode === 'practice' ? 'active' : ''}" data-action="wordle-mode" data-mode="practice">Práctica</button>
-      </nav>
+      ${segmented('Modo de juego', 'wordle-mode', [
+        { label: 'Diaria', active: state.mode === 'daily', attrs: 'data-mode="daily"' },
+        { label: 'Práctica', active: state.mode === 'practice', attrs: 'data-mode="practice"' },
+      ])}
     </div>
   `
 }
@@ -561,7 +562,7 @@ function chip(
   label: string,
   active: boolean
 ): string {
-  return `<button type="button" class="size-chip ${active ? 'active' : ''}" data-action="${action}" data-${dataName}="${value}">${label}</button>`
+  return `<button type="button" class="size-chip ${active ? 'active' : ''}" data-action="${action}" data-${dataName}="${value}" aria-pressed="${active}">${label}</button>`
 }
 
 function renderSettings(): string {
@@ -570,12 +571,14 @@ function renderSettings(): string {
   return `
     <div class="modal-overlay wordle-overlay" role="dialog" aria-modal="true">
       <div class="modal-card">
-        <p class="eyebrow">Wordle</p>
-        <h2>Configuración</h2>
+        <div class="modal-heading">
+          <p class="eyebrow">Wordle</p>
+          <h2>Configuración</h2>
+        </div>
 
         <div class="settings-group">
           <h3>Idioma</h3>
-          <div class="settings-chips">
+          <div class="size-selector">
             ${chip('wordle-language', 'language', 'es', LANGUAGE_LABELS.es, language === 'es')}
             ${chip('wordle-language', 'language', 'en', LANGUAGE_LABELS.en, language === 'en')}
           </div>
@@ -583,7 +586,7 @@ function renderSettings(): string {
 
         <div class="settings-group">
           <h3>Longitud</h3>
-          <div class="settings-chips">
+          <div class="size-selector">
             ${chip('wordle-length', 'length', '5', '5 letras', length === 5)}
             ${chip('wordle-length', 'length', '6', '6 letras', length === 6)}
           </div>
@@ -591,7 +594,7 @@ function renderSettings(): string {
 
         <div class="settings-group">
           <h3>Dificultad</h3>
-          <div class="settings-chips">
+          <div class="size-selector">
             ${chip('wordle-difficulty', 'difficulty', 'normal', DIFFICULTY_LABELS.normal, difficulty === 'normal')}
             ${chip('wordle-difficulty', 'difficulty', 'hard', DIFFICULTY_LABELS.hard, difficulty === 'hard')}
           </div>
@@ -601,7 +604,7 @@ function renderSettings(): string {
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="control-button control-button-primary" data-action="close-settings">Listo</button>
+          ${button({ action: 'close-settings', label: 'Listo', icon: 'check', variant: 'primary', className: 'control-button-hero' })}
         </div>
       </div>
     </div>
@@ -612,36 +615,27 @@ function renderEndModal(): string {
   const won = state.status === 'won'
   const attempts = attemptsForLength(state.settings.length)
 
-  return `
-    <div class="modal-overlay wordle-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card modal-card-celebration">
-        <p class="eyebrow">${won ? '¡Adivinaste!' : 'Se acabaron los intentos'}</p>
-        <h2>${state.answer}</h2>
-
-        <dl class="modal-stats">
-          <div>
-            <dt>Intentos</dt>
-            <dd>${won ? state.guesses.length : '—'}/${attempts}</dd>
-          </div>
-          <div>
-            <dt>Modo</dt>
-            <dd class="modal-stat-text">${state.mode === 'daily' ? `Diaria #${state.puzzleNumber}` : 'Práctica'}</dd>
-          </div>
-        </dl>
-
-        ${
-          state.mode === 'daily'
-            ? '<p>La palabra diaria cambia a la medianoche. Mientras tanto puedes seguir en modo práctica.</p>'
-            : ''
-        }
-
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="close-modal">Cerrar</button>
-          <button type="button" class="control-button control-button-primary" data-action="new-word">
-            ${state.mode === 'daily' ? 'Jugar práctica' : 'Nueva palabra'}
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return celebration({
+    eyebrow: won ? '¡Adivinaste!' : 'Se acabaron los intentos',
+    title: state.answer,
+    className: 'wordle-end',
+    stats: [
+      { label: 'Intentos', value: `${won ? state.guesses.length : '—'}/${attempts}` },
+      {
+        label: 'Modo',
+        value: state.mode === 'daily' ? `Diaria #${state.puzzleNumber}` : 'Práctica',
+        text: true,
+      },
+    ],
+    note:
+      state.mode === 'daily'
+        ? 'La palabra diaria cambia a la medianoche. Mientras tanto puedes seguir en modo práctica.'
+        : undefined,
+    primary: {
+      action: 'new-word',
+      label: state.mode === 'daily' ? 'Jugar práctica' : 'Nueva palabra',
+      icon: 'play',
+    },
+    secondary: [{ action: 'close-modal', label: 'Cerrar' }],
+  }).replace('class="modal-overlay"', 'class="modal-overlay wordle-overlay"')
 }

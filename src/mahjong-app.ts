@@ -34,6 +34,18 @@ import {
 } from './games/mahjong/mahjong-types'
 import { renderGameHeader } from './shell/app-header'
 import { getBestTime, submitRecord } from './shell/records'
+import {
+  button,
+  buttonRow,
+  celebration,
+  confirmDialog,
+  formatClock,
+  gameStatus,
+  icon,
+  pauseOverlay,
+  segmented,
+  timer,
+} from './shell/ui'
 
 const SETTINGS_KEY = 'luzaron-mahjong-settings-v1'
 const MATCH_MS = 240
@@ -263,11 +275,7 @@ function handleFocusChange(): void {
 }
 
 function formatTime(ms: number): string {
-  const total = Math.floor(ms / 1000)
-  const minutes = Math.floor(total / 60)
-  const seconds = total % 60
-
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  return formatClock(ms)
 }
 
 // ---------- Partida ----------
@@ -685,32 +693,25 @@ function renderMain(): string {
   const left = remainingTiles(board)
   const pairs = countAvailablePairs(board)
 
-  const layoutChips = MAHJONG_LAYOUT_IDS.map(
-    (layoutId) => `
-      <button
-        type="button"
-        class="size-chip ${layoutId === state.layoutId ? 'active' : ''}"
-        data-action="mahjong-layout"
-        data-layout="${layoutId}"
-        title="${LAYOUT_HINTS[layoutId]}"
-      >${LAYOUT_LABELS[layoutId]}</button>
-    `
-  ).join('')
+  const layoutChips = segmented(
+    'Tablero',
+    'mahjong-layout',
+    MAHJONG_LAYOUT_IDS.map((layoutId) => ({
+      label: LAYOUT_LABELS[layoutId],
+      active: layoutId === state.layoutId,
+      attrs: `data-layout="${layoutId}"`,
+      title: LAYOUT_HINTS[layoutId],
+    }))
+  )
 
   return `
     <div class="game-area">
-      <div class="game-area-header">
-        <div class="timer" aria-label="Tiempo transcurrido">
-          <span aria-hidden="true">🀄</span>
-          <span class="timer-value" data-timer>${formatTime(state.elapsedMs)}</span>
-        </div>
-        <div class="puzzle-meta">
-          <span>${left} fichas · ${pairs} ${pairs === 1 ? 'pareja' : 'parejas'} a la vista</span>
-          ${renderBestTime()}
-        </div>
-      </div>
+      ${gameStatus(timer(state.elapsedMs), [
+        `<span>${left} fichas · ${pairs} ${pairs === 1 ? 'pareja' : 'parejas'}</span>`,
+        renderBestTime(),
+      ])}
 
-      <nav class="size-selector" aria-label="Tablero">${layoutChips}</nav>
+      ${layoutChips}
 
       <div class="board-frame mahjong-frame ${state.expanded ? 'is-expanded' : ''}">
         ${renderBoardBar(left, pairs, board.history.length > 0)}
@@ -724,28 +725,27 @@ function renderMain(): string {
         <span class="mahjong-readout" data-tile-label>${tileLabelText()}</span>
       </div>
 
-      <div class="puzzle-nav">
-        <button type="button" class="control-button control-button-primary" data-action="request-reset">
-          🔀 Nueva partida
-        </button>
-        <button
-          type="button"
-          class="control-button mahjong-toggle ${state.highlightFree ? 'active' : ''}"
-          data-action="mahjong-free"
-          aria-pressed="${state.highlightFree}"
-        >👁 Resaltar libres</button>
-      </div>
+      <button
+        type="button"
+        class="control-button mahjong-toggle ${state.highlightFree ? 'is-on' : ''}"
+        data-action="mahjong-free"
+        aria-pressed="${state.highlightFree}"
+      >${icon('eye')}<span class="control-button-label">Resaltar libres</span>${
+        state.highlightFree ? '<span class="control-button-state">Activado</span>' : ''
+      }</button>
 
-      <div class="controls">
-        <button
-          type="button"
-          class="control-button"
-          data-action="mahjong-undo"
-          ${board.history.length === 0 ? 'disabled' : ''}
-        >↶ Deshacer</button>
-        <button type="button" class="control-button" data-action="mahjong-shuffle">🔁 Barajar</button>
-        <button type="button" class="control-button" data-action="hint">💡 Pista</button>
-      </div>
+      ${buttonRow([
+        button({
+          action: 'mahjong-undo',
+          label: 'Deshacer',
+          icon: 'undo-2',
+          disabled: board.history.length === 0,
+        }),
+        button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle' }),
+        button({ action: 'hint', label: 'Pista', icon: 'lightbulb' }),
+      ])}
+
+      ${button({ action: 'request-reset', label: 'Nueva partida', icon: 'rotate-ccw' })}
     </div>
   `
 }
@@ -765,20 +765,16 @@ function renderBoardBar(left: number, pairs: number, canUndo: boolean): string {
         <span>${left} fichas · ${pairs} ${pairs === 1 ? 'pareja' : 'parejas'}</span>
       </div>
       <div class="mahjong-board-tools">
-        <button type="button" class="mahjong-tool" data-action="hint">💡 Pista</button>
-        <button
-          type="button"
-          class="mahjong-tool"
-          data-action="mahjong-undo"
-          ${canUndo ? '' : 'disabled'}
-        >↶ Deshacer</button>
-        <button type="button" class="mahjong-tool" data-action="mahjong-shuffle">🔁 Barajar</button>
-        <button
-          type="button"
-          class="mahjong-tool ${state.highlightFree ? 'active' : ''}"
-          data-action="mahjong-free"
-          aria-pressed="${state.highlightFree}"
-        >👁 Libres</button>
+        ${button({ action: 'hint', label: 'Pista', icon: 'lightbulb', className: 'mahjong-tool' })}
+        ${button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2', disabled: !canUndo, className: 'mahjong-tool' })}
+        ${button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', className: 'mahjong-tool' })}
+        ${button({
+          action: 'mahjong-free',
+          label: 'Libres',
+          icon: 'eye',
+          className: `mahjong-tool ${state.highlightFree ? 'is-on' : ''}`,
+          attrs: `aria-pressed="${state.highlightFree}"`,
+        })}
       </div>
     `
     : ''
@@ -793,7 +789,7 @@ function renderBoardBar(left: number, pairs: number, canUndo: boolean): string {
         aria-pressed="${state.expanded}"
         aria-label="${label}"
         title="${label}"
-      >${state.expanded ? '⤡' : '⤢'}</button>
+      >${icon(state.expanded ? 'minimize' : 'maximize')}</button>
     </div>
   `
 }
@@ -807,37 +803,31 @@ function renderBestTime(): string {
 }
 
 function renderResetConfirm(): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card">
-        <h2>¿Empezar una partida nueva?</h2>
-        <p>Se reparten las fichas otra vez y el tiempo vuelve a cero.</p>
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="cancel-reset">Cancelar</button>
-          <button type="button" class="control-button control-button-primary" data-action="confirm-reset">
-            Sí, repartir
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return confirmDialog({
+    title: '¿Empezar una partida nueva?',
+    body: 'Se reparten las fichas otra vez y el tiempo vuelve a cero.',
+    actions: [
+      { action: 'confirm-reset', label: 'Sí, repartir', icon: 'shuffle', variant: 'primary' },
+      { action: 'cancel-reset', label: 'Cancelar' },
+    ],
+  })
 }
 
 function renderStuckModal(): string {
   return `
     <div class="modal-overlay" role="dialog" aria-modal="true">
       <div class="modal-card">
-        <p class="eyebrow">Sin movimientos</p>
-        <h2>No quedan parejas a la vista</h2>
-        <p>Puedes barajar las fichas que siguen en el tablero, deshacer tu última jugada o empezar de nuevo.</p>
+        <div class="modal-heading">
+          <p class="eyebrow">Sin movimientos</p>
+          <h2>No quedan parejas a la vista</h2>
+        </div>
+        <p class="modal-body">Puedes barajar las fichas que siguen en el tablero, deshacer tu última jugada o empezar de nuevo.</p>
         <div class="modal-actions">
-          <button type="button" class="control-button" data-action="mahjong-undo">↶ Deshacer</button>
-          <button type="button" class="control-button control-button-accent" data-action="mahjong-shuffle">
-            🔁 Barajar
-          </button>
-          <button type="button" class="control-button control-button-primary" data-action="confirm-reset">
-            🔀 Nueva partida
-          </button>
+          ${button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', variant: 'primary', trailingArrow: true, className: 'control-button-hero' })}
+          ${buttonRow([
+            button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2' }),
+            button({ action: 'confirm-reset', label: 'Nueva partida', icon: 'rotate-ccw' }),
+          ])}
         </div>
       </div>
     </div>
@@ -845,46 +835,20 @@ function renderStuckModal(): string {
 }
 
 function renderCompletionModal(justWonWithBest: boolean): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card modal-card-celebration">
-        <p class="eyebrow">¡Tablero limpio!</p>
-        <h2>${LAYOUT_LABELS[state.layoutId]}</h2>
-
-        <dl class="modal-stats">
-          <div>
-            <dt>Tiempo</dt>
-            <dd>${formatTime(state.elapsedMs)}${justWonWithBest ? ' 🏆' : ''}</dd>
-          </div>
-          <div>
-            <dt>Pistas</dt>
-            <dd>${state.hintsUsed}</dd>
-          </div>
-          <div>
-            <dt>Barajadas</dt>
-            <dd>${state.shufflesUsed}</dd>
-          </div>
-        </dl>
-
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="close-modal">Cerrar</button>
-          <button type="button" class="control-button control-button-primary" data-action="confirm-reset">
-            🔀 Otra partida
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return celebration({
+    eyebrow: '¡Tablero limpio!',
+    title: LAYOUT_LABELS[state.layoutId],
+    stats: [
+      { label: 'Tiempo', value: formatTime(state.elapsedMs), trophy: justWonWithBest },
+      { label: 'Pistas', value: String(state.hintsUsed) },
+      { label: 'Barajadas', value: String(state.shufflesUsed) },
+    ],
+    note: justWonWithBest ? `Nuevo mejor tiempo en ${LAYOUT_LABELS[state.layoutId]}` : undefined,
+    primary: { action: 'confirm-reset', label: 'Otra partida', icon: 'shuffle' },
+    secondary: [{ action: 'close-modal', label: 'Cerrar' }],
+  })
 }
 
 function renderPauseOverlay(): string {
-  return `
-    <div class="pause-overlay" aria-live="polite">
-      <div class="pause-card">
-        <p class="eyebrow">Pausa automática</p>
-        <h2>Juego pausado</h2>
-        <p>El tablero se oscureció porque la app perdió el foco. Al volver, se reanuda solo.</p>
-      </div>
-    </div>
-  `
+  return pauseOverlay()
 }

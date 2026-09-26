@@ -19,6 +19,7 @@ import {
   type ApiUser,
 } from './api'
 import { getCurrentUser } from './session'
+import { icon } from './ui'
 
 let root: HTMLDivElement | null = null
 let users: ApiUser[] = []
@@ -68,7 +69,10 @@ function render(): void {
         }
 
         <section class="settings-card">
-          <h2>Familia</h2>
+          <div class="settings-card-head">
+            <h2>Familia</h2>
+            <span class="settings-card-meta">${loading ? '' : `${users.length} ${users.length === 1 ? 'usuario' : 'usuarios'}`}</span>
+          </div>
           ${
             loading
               ? '<p class="settings-help">Cargando…</p>'
@@ -110,7 +114,7 @@ function render(): void {
               </select>
             </label>
             <button type="submit" class="control-button control-button-primary" ${busy ? 'disabled' : ''}>
-              ${busy ? 'Guardando…' : 'Crear usuario'}
+              ${icon('plus')}<span class="control-button-label">${busy ? 'Guardando…' : 'Agregar usuario'}</span>
             </button>
           </form>
         </section>

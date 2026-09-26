@@ -16,6 +16,7 @@ import {
 } from './theme'
 import { getSession, login, logout, onSessionChange, setupFirstAdmin } from './session'
 import { ApiError, OfflineError } from './api'
+import { icon } from './ui'
 
 let root: HTMLDivElement | null = null
 let unsubscribe: (() => void) | null = null
@@ -66,13 +67,6 @@ function renderLoginForm(serverReachable: boolean): string {
         Sin sesión puedes jugar todo, pero los récords no se guardan ni entran a
         los rankings de la familia.
       </p>
-      ${
-        serverReachable
-          ? ''
-          : `<p class="settings-banner settings-banner-warn">
-               Sin conexión: no se puede iniciar sesión hasta que vuelva el internet.
-             </p>`
-      }
       <form class="settings-form" data-form="login">
         <label class="field">
           <span class="field-label">Usuario</span>
@@ -84,12 +78,26 @@ function renderLoginForm(serverReachable: boolean): string {
           <input name="password" type="password" autocomplete="current-password"
                  required minlength="4" />
         </label>
-        <button type="submit" class="control-button control-button-primary"
-                ${busy || !serverReachable ? 'disabled' : ''}>
-          ${busy ? 'Entrando…' : 'Entrar'}
-        </button>
+        ${submitButton(busy ? 'Entrando…' : 'Entrar', busy || !serverReachable)}
       </form>
+      ${
+        serverReachable
+          ? ''
+          : `<p class="settings-banner settings-banner-warn">
+               Sin conexión: no se puede iniciar sesión hasta que vuelva el internet.
+             </p>`
+      }
     </section>
+  `
+}
+
+/** Acción principal de un formulario: 52px, etiqueta a la izquierda y flecha al final. */
+function submitButton(label: string, disabled: boolean): string {
+  return `
+    <button type="submit" class="control-button control-button-primary" ${disabled ? 'disabled' : ''}>
+      <span class="control-button-label">${label}</span>
+      <span class="control-button-trail">${icon('arrow-right')}</span>
+    </button>
   `
 }
 
@@ -122,9 +130,7 @@ function renderSetupForm(): string {
                  pattern="[A-Za-z0-9]{4,}" autocomplete="new-password" />
           <span class="field-hint">4 o más, solo letras y números.</span>
         </label>
-        <button type="submit" class="control-button control-button-primary" ${busy ? 'disabled' : ''}>
-          ${busy ? 'Creando…' : 'Crear administrador'}
-        </button>
+        ${submitButton(busy ? 'Creando…' : 'Crear administrador', busy)}
       </form>
     </section>
   `
@@ -155,14 +161,14 @@ function renderAccount(): string {
       <div class="settings-actions">
         ${
           user.role === 'admin'
-            ? `<a class="control-button" href="#/admin">Administrar usuarios</a>`
+            ? `<a class="control-button" href="#/admin">${icon('users')}<span class="control-button-label">Usuarios</span></a>`
             : ''
         }
         <button type="button" class="control-button" data-action="logout" ${busy ? 'disabled' : ''}>
-          Cerrar sesión
+          ${icon('log-out')}<span class="control-button-label">Cerrar sesión</span>
         </button>
       </div>
-      <p class="settings-help">
+      <p class="settings-help settings-help-small">
         La sesión no caduca: este aparato te recuerda hasta que cierres sesión.
       </p>
     </section>

@@ -59,24 +59,26 @@ function regionBoundaryClasses(cell: QueensCell, board: QueensBoardState): strin
 
   if (rightNeighbor && rightNeighbor.regionId !== regionId) classes.push('edge-region-right')
   if (bottomNeighbor && bottomNeighbor.regionId !== regionId) classes.push('edge-region-bottom')
+  if (!rightNeighbor) classes.push('last-col')
+  if (!bottomNeighbor) classes.push('last-row')
 
   return classes
 }
 
+/** Corona de esquinas rectas (rediseño Modernist). */
 const QUEEN_ICON = `
-  <svg class="cell-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <rect x="3" y="13" width="18" height="6" rx="1" />
-    <polygon points="3,13 5.5,5 8.5,11 12,3 15.5,11 18.5,5 21,13" />
-    <circle cx="5.5" cy="5" r="1.6" />
-    <circle cx="12" cy="3" r="1.8" />
-    <circle cx="18.5" cy="5" r="1.6" />
+  <svg class="cell-icon" viewBox="-1 -2 22 24" fill="currentColor" aria-hidden="true">
+    <path d="M0 15.5L1.6 2.5 7.5 9.5 10 0.8 12.5 9.5 18.4 2.5 20 15.5Z" />
+    <rect x="0.6" y="17" width="18.8" height="3.4" />
+    <circle cx="1.6" cy="2.5" r="1.8" />
+    <circle cx="10" cy="0.8" r="2" />
+    <circle cx="18.4" cy="2.5" r="1.8" />
   </svg>
 `
 
 const X_ICON = `
-  <svg class="cell-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" />
-    <line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" />
+  <svg class="cell-icon" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+    <path d="M0 0l10 10M10 0L0 10" stroke="currentColor" stroke-width="2" />
   </svg>
 `
 

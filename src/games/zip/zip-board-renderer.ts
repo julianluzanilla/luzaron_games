@@ -2,8 +2,11 @@
  * Dibujo del tablero de Zip en SVG (design_handoff_zip/README.md).
  *
  * Todo se dibuja en unidades de celda: cada celda mide 100 en el viewBox, así
- * que los grosores del handoff (trazo 0.50c, muro 0.22c, número Ø0.64c…) son
+ * que los grosores del handoff (trazo 0.50c, muro 0.22c, número 0.64c…) son
  * números fijos y el tablero escala solo a 5×5, 6×6 y 7×7.
+ *
+ * Rediseño Modernist: remates cuadrados en trazo y muros, números en cuadros
+ * de 0.64c en tinta y la punta es un cuadro de 0.60c.
  *
  * Capas, de abajo arriba: papel → rejilla → celda de pista → trazo → muros →
  * punta → números.
@@ -69,7 +72,7 @@ export function renderZipBoardSvg(puzzle: ZipPuzzle, view: ZipBoardView): string
     const x = columnOf(size, view.hintCell) * C
     const y = rowOf(size, view.hintCell) * C
     parts.push(
-      `<rect class="zip-hint" x="${x + 6}" y="${y + 6}" width="${C - 12}" height="${C - 12}" rx="14"/>`
+      `<rect class="zip-hint" x="${x + 6}" y="${y + 6}" width="${C - 12}" height="${C - 12}"/>`
     )
   }
 
@@ -83,7 +86,7 @@ export function renderZipBoardSvg(puzzle: ZipPuzzle, view: ZipBoardView): string
   }
   if (path.length === 1) {
     const [x, y] = center(size, path[0])
-    trail += `<circle cx="${x}" cy="${y}" r="25" style="fill:${mix(0)}"/>`
+    trail += `<rect x="${x - 25}" y="${y - 25}" width="50" height="50" style="fill:${mix(0)}"/>`
   }
   parts.push(`<g class="zip-trail">${trail}</g>`)
 
@@ -108,13 +111,13 @@ export function renderZipBoardSvg(puzzle: ZipPuzzle, view: ZipBoardView): string
     const error = view.tipError ? ' is-error' : ''
     parts.push(
       `<g class="zip-tip${error}">` +
-        `<circle class="zip-tip-halo" cx="${x}" cy="${y}" r="44" style="fill:${color}"/>` +
-        `<circle class="zip-tip-dot" cx="${x}" cy="${y}" r="30" style="fill:${color}"/>` +
+        `<rect class="zip-tip-halo" x="${x - 44}" y="${y - 44}" width="88" height="88" style="fill:${color}"/>` +
+        `<rect class="zip-tip-dot" x="${x - 30}" y="${y - 30}" width="60" height="60" style="fill:${color}"/>` +
         `</g>`
     )
   }
 
-  const radius = kids ? 36 : 32
+  const half = kids ? 36 : 32
   const font = kids ? 42 : 36
   let numbersSvg = ''
   numbers.forEach((cell, index) => {
@@ -122,8 +125,10 @@ export function renderZipBoardSvg(puzzle: ZipPuzzle, view: ZipBoardView): string
     const error = cell === view.errorNumber ? ' is-error' : ''
     numbersSvg +=
       `<g class="zip-number${error}">` +
-      (error ? `<circle class="zip-number-halo" cx="${x}" cy="${y}" r="${radius + 10}"/>` : '') +
-      `<circle cx="${x}" cy="${y}" r="${radius}"/>` +
+      (error
+        ? `<rect class="zip-number-halo" x="${x - half - 10}" y="${y - half - 10}" width="${2 * (half + 10)}" height="${2 * (half + 10)}"/>`
+        : '') +
+      `<rect x="${x - half}" y="${y - half}" width="${2 * half}" height="${2 * half}"/>` +
       `<text x="${x}" y="${y + 1}" font-size="${font}">${index + 1}</text></g>`
   })
   parts.push(`<g>${numbersSvg}</g>`)
@@ -141,14 +146,14 @@ export function renderZipBoardSvg(puzzle: ZipPuzzle, view: ZipBoardView): string
 /** "Conecta los puntos en orden": 1-2-3 unidos. */
 export const HOWTO_ORDER_SVG = `
 <svg viewBox="0 0 104 36" width="104" height="36" aria-hidden="true" class="zip-howto-art">
-  <line x1="18" y1="18" x2="52" y2="18" stroke-width="12" stroke-linecap="round"
+  <line x1="18" y1="18" x2="52" y2="18" stroke-width="12" stroke-linecap="square"
         style="stroke:var(--zip-path-start)"/>
-  <line x1="52" y1="18" x2="86" y2="18" stroke-width="12" stroke-linecap="round"
+  <line x1="52" y1="18" x2="86" y2="18" stroke-width="12" stroke-linecap="square"
         style="stroke:var(--zip-path-end)"/>
   <g class="zip-howto-num">
-    <circle cx="18" cy="18" r="12"/><text x="18" y="19">1</text>
-    <circle cx="52" cy="18" r="12"/><text x="52" y="19">2</text>
-    <circle cx="86" cy="18" r="12"/><text x="86" y="19">3</text>
+    <rect x="6" y="6" width="24" height="24"/><text x="18" y="19">1</text>
+    <rect x="40" y="6" width="24" height="24"/><text x="52" y="19">2</text>
+    <rect x="74" y="6" width="24" height="24"/><text x="86" y="19">3</text>
   </g>
 </svg>`
 
@@ -171,13 +176,13 @@ export const HOWTO_FILL_SVG = (() => {
     const [x1, y1] = points[i - 1]
     const [x2, y2] = points[i]
     lines +=
-      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="10" stroke-linecap="round" ` +
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="10" stroke-linecap="square" ` +
       `style="stroke:color-mix(in srgb, var(--zip-path-end) ${percent}%, var(--zip-path-start))"/>`
   }
 
   return `
 <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" class="zip-howto-art">
-  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="8" style="fill:var(--zip-paper);stroke:var(--zip-frame)" stroke-width="1.5"/>
+  <rect x="1" y="1" width="62" height="62" style="fill:var(--zip-paper);stroke:var(--board-frame)" stroke-width="2"/>
   <path d="M22 2V62M42 2V62M2 22H62M2 42H62" style="stroke:var(--zip-grid)"/>
   ${lines}
 </svg>`

@@ -1,20 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 115 155" width="115" height="155">
 <defs>
-<linearGradient id="mjFace" x1="0" y1="0" x2="0.35" y2="1">
-  <stop offset="0" stop-color="#FEFCF3"/><stop offset="1" stop-color="#EBE0C4"/>
-</linearGradient>
-<linearGradient id="mjBack" x1="0" y1="0" x2="0.4" y2="1">
-  <stop offset="0" stop-color="#3E7F63"/><stop offset="1" stop-color="#1E4D3B"/>
-</linearGradient>
 </defs>
-<g id="mj-body"><path d="M25,0 L105,0 A10,10 0 0 1 115,10 L115,130 A10,10 0 0 1 105,140 L90,155 L10,155 A10,10 0 0 1 0,145 L0,25 L15,10 A10,10 0 0 1 25,0 Z" fill="#1C5638"/>
-<path d="M15,8 L0,23 L0,147 L15,132 Z" fill="#2C7550"/>
-<path d="M25,0 L105,0 A10,10 0 0 1 115,10 L115,130 A10,10 0 0 1 105,140 L90,155 L10,155 A10,10 0 0 1 0,145 L0,25 L15,10 A10,10 0 0 1 25,0 Z" fill="none" stroke="#143D28" stroke-width="1.6" stroke-linejoin="round"/>
-<path d="M17,138 L2,153" stroke="#143D28" stroke-width="1.1" stroke-opacity="0.5"/>
-<rect x="15.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjFace)" stroke="#6B5C3C" stroke-width="1.6"/>
-<rect x="21" y="7" width="88" height="126" rx="7" fill="none" stroke="#D9CCA8" stroke-width="1.6"/></g>
-<g id="mj-body-back" style="display:none"><path d="M25,0 L105,0 A10,10 0 0 1 115,10 L115,130 A10,10 0 0 1 105,140 L90,155 L10,155 A10,10 0 0 1 0,145 L0,25 L15,10 A10,10 0 0 1 25,0 Z" fill="#1C5638"/>
-<path d="M15,8 L0,23 L0,147 L15,132 Z" fill="#2C7550"/>
-<path d="M25,0 L105,0 A10,10 0 0 1 115,10 L115,130 A10,10 0 0 1 105,140 L90,155 L10,155 A10,10 0 0 1 0,145 L0,25 L15,10 A10,10 0 0 1 25,0 Z" fill="none" stroke="#143D28" stroke-width="1.6" stroke-linejoin="round"/>
-<rect x="15.8" y="0.8" width="98.4" height="138.4" rx="9.2" fill="url(#mjBack)" stroke="#143D28" stroke-width="1.6"/></g>
+<g id="mj-body"><rect x="16.5" y="1.5" width="97" height="137" fill="#F6EFDD" stroke="#3A2F1F" stroke-width="3"/></g>
+<g id="mj-body-back" style="display:none"><rect x="16.5" y="1.5" width="97" height="137" fill="#1F9E52" stroke="#3A2F1F" stroke-width="3"/></g>
 </svg>

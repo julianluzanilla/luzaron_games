@@ -36,6 +36,17 @@ import {
 } from './games/sudoku/sudoku-types'
 import { renderGameHeader } from './shell/app-header'
 import { getBestTime, submitRecord } from './shell/records'
+import {
+  button,
+  buttonRow,
+  celebration,
+  confirmDialog,
+  formatClock,
+  gameStatus,
+  pauseOverlay,
+  segmented,
+  timer,
+} from './shell/ui'
 
 const SETTINGS_KEY = 'luzaron-sudoku-settings-v1'
 const FLASH_MS = 850
@@ -256,11 +267,7 @@ function resetTimer(): void {
 }
 
 function formatTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000)
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  return formatClock(ms)
 }
 
 function handleFocusChange(): void {
@@ -537,7 +544,7 @@ function render(justWonWithBest = false): void {
   if (!root) return
 
   root.innerHTML = `
-    <div class="app-shell">
+    <div class="app-shell sudoku-game">
       ${renderGameHeader('sudoku')}
       ${renderMain()}
     </div>
@@ -558,70 +565,53 @@ function renderMain(): string {
 
   const board = state.board
 
-  const variantChips = SUDOKU_VARIANTS.map(
-    (variant) => `
-      <button
-        type="button"
-        class="size-chip ${variant === state.variant ? 'active' : ''}"
-        data-action="sudoku-variant"
-        data-variant="${variant}"
-      >${VARIANT_LABELS[variant]}</button>
-    `
-  ).join('')
+  const variantChips = segmented(
+    'Tipo de Sudoku',
+    'sudoku-variant',
+    SUDOKU_VARIANTS.map((variant) => ({
+      label: VARIANT_LABELS[variant],
+      active: variant === state.variant,
+      attrs: `data-variant="${variant}"`,
+    }))
+  )
 
-  const difficultyChips = SUDOKU_DIFFICULTIES.map(
-    (difficulty) => `
-      <button
-        type="button"
-        class="size-chip ${difficulty === state.difficulty ? 'active' : ''}"
-        data-action="sudoku-difficulty"
-        data-difficulty="${difficulty}"
-      >${DIFFICULTY_LABELS[difficulty]}</button>
-    `
-  ).join('')
+  const difficultyChips = segmented(
+    'Dificultad',
+    'sudoku-difficulty',
+    SUDOKU_DIFFICULTIES.map((difficulty) => ({
+      label: DIFFICULTY_LABELS[difficulty],
+      active: difficulty === state.difficulty,
+      attrs: `data-difficulty="${difficulty}"`,
+    }))
+  )
 
   return `
     <div class="game-area">
-      <div class="game-area-header">
-        <div class="timer" aria-label="Tiempo transcurrido">
-          <span aria-hidden="true">#</span>
-          <span class="timer-value" data-timer>${formatTime(state.elapsedMs)}</span>
-        </div>
-        <div class="puzzle-meta">
-          <span>${renderPuzzleLabel()}</span>
-          ${renderBestTime()}
-        </div>
-      </div>
+      ${gameStatus(timer(state.elapsedMs), [`<span>${renderPuzzleLabel()}</span>`, renderBestTime()])}
 
-      <nav class="size-selector" aria-label="Tipo de Sudoku">${variantChips}</nav>
-      <nav class="size-selector" aria-label="Dificultad">${difficultyChips}</nav>
+      ${variantChips}
+      ${difficultyChips}
 
       <div class="board-frame">
-        <div class="board-stage">
-          ${renderSudokuBoard(board, {
-            selected: state.selected,
-            conflicts: state.conflicts,
-            flashing: state.flashing,
-            hinted: state.hinted,
-          })}
-        </div>
+        ${renderSudokuBoard(board, {
+          selected: state.selected,
+          conflicts: state.conflicts,
+          flashing: state.flashing,
+          hinted: state.hinted,
+        })}
       </div>
 
       ${renderSudokuPad(board)}
 
-      <div class="puzzle-nav">
-        <button type="button" class="control-button control-button-primary" data-action="next-sequential">
-          ▶ Siguiente
-        </button>
-        <button type="button" class="control-button control-button-accent" data-action="next-random">
-          🔀 Aleatorio
-        </button>
-      </div>
+      ${buttonRow([
+        button({ action: 'next-sequential', label: 'Siguiente', icon: 'play', variant: 'primary' }),
+        button({ action: 'next-random', label: 'Aleatorio', icon: 'shuffle' }),
+      ])}
 
-      <div class="controls">
-        <button type="button" class="control-button" data-action="request-reset">⟲ Reiniciar</button>
-        <button type="button" class="control-button" data-action="hint">💡 Pista</button>
-      </div>
+      ${buttonRow([
+        button({ action: 'request-reset', label: 'Reiniciar', icon: 'rotate-ccw' }),
+        button({ action: 'hint', label: 'Pista', icon: 'lightbulb' }),
+      ])}
     </div>
   `
 }
@@ -643,62 +633,33 @@ function renderBestTime(): string {
 }
 
 function renderResetConfirm(): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card">
-        <h2>¿Reiniciar este puzzle?</h2>
-        <p>Se borrarán tus números y el tiempo volverá a cero.</p>
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="cancel-reset">Cancelar</button>
-          <button type="button" class="control-button control-button-primary" data-action="confirm-reset">
-            Sí, reiniciar
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return confirmDialog({
+    title: '¿Reiniciar este puzzle?',
+    body: 'Se borrarán tus números y el tiempo volverá a cero.',
+    actions: [
+      { action: 'confirm-reset', label: 'Sí, reiniciar', icon: 'rotate-ccw', variant: 'primary' },
+      { action: 'cancel-reset', label: 'Cancelar' },
+    ],
+  })
 }
 
 function renderCompletionModal(justWonWithBest: boolean): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card modal-card-celebration">
-        <p class="eyebrow">¡Puzzle completado!</p>
-        <h2>${VARIANT_LABELS[state.variant]} · ${DIFFICULTY_LABELS[state.difficulty]}</h2>
-
-        <dl class="modal-stats">
-          <div>
-            <dt>Tiempo</dt>
-            <dd>${formatTime(state.elapsedMs)}${justWonWithBest ? ' 🏆' : ''}</dd>
-          </div>
-          <div>
-            <dt>Pistas usadas</dt>
-            <dd>${state.hintsUsed}</dd>
-          </div>
-        </dl>
-
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="close-modal">Cerrar</button>
-          <button type="button" class="control-button control-button-primary" data-action="next-sequential">
-            ▶ Siguiente
-          </button>
-          <button type="button" class="control-button control-button-accent" data-action="next-random">
-            🔀 Aleatorio
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return celebration({
+    eyebrow: '¡Puzzle completado!',
+    title: `${VARIANT_LABELS[state.variant]} · ${DIFFICULTY_LABELS[state.difficulty]}`,
+    stats: [
+      { label: 'Tiempo', value: formatTime(state.elapsedMs), trophy: justWonWithBest },
+      { label: 'Pistas usadas', value: String(state.hintsUsed) },
+    ],
+    note: justWonWithBest ? 'Nuevo mejor tiempo' : undefined,
+    primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
+    secondary: [
+      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
+      { action: 'close-modal', label: 'Cerrar' },
+    ],
+  })
 }
 
 function renderPauseOverlay(): string {
-  return `
-    <div class="pause-overlay" aria-live="polite">
-      <div class="pause-card">
-        <p class="eyebrow">Pausa automática</p>
-        <h2>Juego pausado</h2>
-        <p>El tablero se oscureció porque la app perdió el foco. Al volver, se reanuda solo.</p>
-      </div>
-    </div>
-  `
+  return pauseOverlay()
 }

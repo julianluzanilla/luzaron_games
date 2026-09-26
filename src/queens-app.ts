@@ -15,6 +15,18 @@ import {
 import type { QueensBoardState } from './games/queens/queens-types'
 import { renderGameHeader } from './shell/app-header'
 import { getBestTime, submitRecord } from './shell/records'
+import {
+  button,
+  buttonRow,
+  celebration,
+  confirmDialog,
+  formatClock,
+  gameStatus,
+  icon,
+  pauseOverlay,
+  segmented,
+  timer,
+} from './shell/ui'
 
 const LAST_SIZE_KEY = 'luzaron-queens-last-size-v1'
 const MAX_HISTORY = 200
@@ -201,11 +213,7 @@ function resetTimer(): void {
 }
 
 function formatTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000)
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  return formatClock(ms)
 }
 
 // ---------- Focus / pause overlay ----------
@@ -547,64 +555,51 @@ function renderMain(): string {
     return `<div class="state-message">Generando tablero…</div>`
   }
 
-  const sizeChips = state.availableSizes
-    .map(
-      (entry) => `
-        <button
-          type="button"
-          class="size-chip ${entry.size === state.size ? 'active' : ''}"
-          data-action="select-size"
-          data-size="${entry.size}"
-        >${entry.size}×${entry.size}</button>
-      `
-    )
-    .join('')
+  const sizeChips = segmented(
+    'Tamaño del tablero',
+    'select-size',
+    state.availableSizes.map((entry) => ({
+      label: `${entry.size}×${entry.size}`,
+      active: entry.size === state.size,
+      attrs: `data-size="${entry.size}"`,
+    })),
+    state.availableSizes.length > 5 ? 'size-selector-dense' : ''
+  )
 
   return `
     <div class="game-area">
-      <div class="game-area-header">
-        <div class="timer" aria-label="Tiempo transcurrido">
-          <span aria-hidden="true">♛</span>
-          <span class="timer-value" data-timer>${formatTime(state.elapsedMs)}</span>
-        </div>
-        <div class="puzzle-meta">
-          <span>Puzzle ${state.puzzleNumber} de ${state.puzzleCount}</span>
-          ${renderBestTime()}
-        </div>
-      </div>
+      ${gameStatus(timer(state.elapsedMs), [
+        `<span>Puzzle ${state.puzzleNumber} de ${state.puzzleCount}</span>`,
+        renderBestTime(),
+      ])}
 
       <div class="board-frame">
-        <div class="board-stage">
-          ${renderQueensBoard(state.board)}
-        </div>
+        ${renderQueensBoard(state.board)}
       </div>
 
-      <nav class="size-selector" aria-label="Tamaño del tablero">
-        ${sizeChips}
-      </nav>
+      ${sizeChips}
 
-      <div class="puzzle-nav">
-        <button type="button" class="control-button control-button-primary" data-action="next-sequential">
-          ▶ Siguiente
-        </button>
-        <button type="button" class="control-button control-button-accent" data-action="next-random">
-          🔀 Aleatorio
-        </button>
-      </div>
+      ${buttonRow([
+        button({ action: 'next-sequential', label: 'Siguiente', icon: 'play', variant: 'primary' }),
+        button({ action: 'next-random', label: 'Aleatorio', icon: 'shuffle' }),
+      ])}
 
-      ${state.activeHint ? `<p class="hint-banner">💡 ${state.activeHint.message}</p>` : ''}
+      ${
+        state.activeHint
+          ? `<p class="hint-banner">${icon('lightbulb')}<span>${state.activeHint.message}</span></p>`
+          : ''
+      }
 
-      <div class="controls">
-        <button type="button" class="control-button" data-action="undo" ${state.history.length === 0 ? 'disabled' : ''}>
-          ↺ Deshacer
-        </button>
-        <button type="button" class="control-button" data-action="request-reset">
-          ⟲ Reset
-        </button>
-        <button type="button" class="control-button" data-action="hint">
-          💡 Hint
-        </button>
-      </div>
+      ${buttonRow([
+        button({
+          action: 'undo',
+          label: 'Deshacer',
+          icon: 'undo-2',
+          disabled: state.history.length === 0,
+        }),
+        button({ action: 'request-reset', label: 'Reset', icon: 'rotate-ccw' }),
+        button({ action: 'hint', label: 'Pista', icon: 'lightbulb' }),
+      ])}
     </div>
   `
 }
@@ -616,62 +611,33 @@ function renderBestTime(): string {
 }
 
 function renderResetConfirm(): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card">
-        <h2>¿Reiniciar este puzzle?</h2>
-        <p>Se borrará todo lo que llevas y el tiempo volverá a cero.</p>
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="cancel-reset">Cancelar</button>
-          <button type="button" class="control-button control-button-primary" data-action="confirm-reset">
-            Sí, reiniciar
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return confirmDialog({
+    title: '¿Reiniciar este puzzle?',
+    body: 'Se borrará todo lo que llevas y el tiempo volverá a cero.',
+    actions: [
+      { action: 'confirm-reset', label: 'Sí, reiniciar', icon: 'rotate-ccw', variant: 'primary' },
+      { action: 'cancel-reset', label: 'Cancelar' },
+    ],
+  })
 }
 
 function renderCompletionModal(justWonWithBest: boolean): string {
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true">
-      <div class="modal-card modal-card-celebration">
-        <p class="eyebrow">¡Puzzle completado!</p>
-        <h2>Puzzle ${state.puzzleNumber}</h2>
-
-        <dl class="modal-stats">
-          <div>
-            <dt>Tiempo</dt>
-            <dd>${formatTime(state.elapsedMs)}${justWonWithBest ? ' 🏆' : ''}</dd>
-          </div>
-          <div>
-            <dt>Pistas usadas</dt>
-            <dd>${state.hintsUsed}</dd>
-          </div>
-        </dl>
-
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="close-modal">Cerrar</button>
-          <button type="button" class="control-button control-button-primary" data-action="next-sequential">
-            ▶ Siguiente
-          </button>
-          <button type="button" class="control-button control-button-accent" data-action="next-random">
-            🔀 Aleatorio
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return celebration({
+    eyebrow: '¡Puzzle completado!',
+    title: `Puzzle ${state.puzzleNumber}`,
+    stats: [
+      { label: 'Tiempo', value: formatTime(state.elapsedMs), trophy: justWonWithBest },
+      { label: 'Pistas usadas', value: String(state.hintsUsed) },
+    ],
+    note: justWonWithBest ? `Nuevo mejor tiempo en ${state.size}×${state.size}` : undefined,
+    primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
+    secondary: [
+      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
+      { action: 'close-modal', label: 'Cerrar' },
+    ],
+  })
 }
 
 function renderPauseOverlay(): string {
-  return `
-    <div class="pause-overlay" aria-live="polite">
-      <div class="pause-card">
-        <p class="eyebrow">Pausa automática</p>
-        <h2>Juego pausado</h2>
-        <p>El tablero se oscureció porque la app perdió el foco. Al volver, se reanuda solo.</p>
-      </div>
-    </div>
-  `
+  return pauseOverlay()
 }

@@ -23,7 +23,7 @@ El sistema de coordenadas de la cara es **82 × 118**, con el origen ya desplaza
 
 ## Cambiar el cuerpo de la ficha
 
-El marfil y el canto verde del falso 3D son comunes a las 42 y viven en
+El cuerpo plano de la ficha (rectángulo #f6efdd con borde #3a2f1f, rediseño Modernist) es común a las 42 y viven en
 **`_tile-body.svg`**: los degradados van en su `<defs>` y el dibujo en `<g id="mj-body">`
 (el reverso, en `<g id="mj-body-back">`). Editar el cuerpo dentro de un `tiles/*.svg` no
 sirve de nada: se ignora.

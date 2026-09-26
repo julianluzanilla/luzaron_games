@@ -8,17 +8,18 @@
 
     <meta
       name="description"
-      content="Juegos mentales para toda la familia, sin anuncios y sin internet: Queens, Sudoku, Wordle y Mahjong Solitario."
+      content="Juegos mentales para toda la familia, sin anuncios y sin internet: Queens, Sudoku, Wordle, Mahjong Solitario y Zip."
     />
-    <meta name="theme-color" content="#0b1220" />
+    <meta name="theme-color" content="#201e1d" />
 
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
 
@@ -42,7 +43,7 @@
           document.documentElement.dataset.theme = theme
           document.documentElement.style.colorScheme = theme
           document.querySelector('meta[name="theme-color"]').content =
-            theme === 'light' ? '#f4f6fb' : '#0b1220'
+            theme === 'light' ? '#f3f2f2' : '#201e1d'
         } catch (error) {
           document.documentElement.dataset.theme = 'dark'
         }

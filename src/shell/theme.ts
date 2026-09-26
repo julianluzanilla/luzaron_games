@@ -18,8 +18,8 @@ const STORAGE_KEY = 'luzaron-theme-v1'
 
 /** Colores de la barra del navegador/PWA, uno por tema resuelto. */
 const THEME_COLOR: Record<ResolvedTheme, string> = {
-  dark: '#0b1220',
-  light: '#f4f6fb',
+  dark: '#201e1d',
+  light: '#f3f2f2',
 }
 
 const listeners = new Set<(resolved: ResolvedTheme) => void>()

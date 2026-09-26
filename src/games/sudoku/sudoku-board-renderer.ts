@@ -107,18 +107,17 @@ export function renderSudokuPad(state: SudokuBoardState): string {
           aria-label="Escribir ${digit}"
         >
           <span class="sudoku-key-digit">${digit}</span>
-          <span class="sudoku-key-left">${remaining}</span>
+          <span class="sudoku-key-left" aria-hidden="true">${remaining}</span>
         </button>
       `
     })
     .join('')
 
   return `
-    <div class="sudoku-pad" role="group" aria-label="Teclado numérico">
+    <div class="sudoku-pad sudoku-pad-${state.geometry.size}" role="group" aria-label="Teclado numérico">
       ${buttons}
       <button type="button" class="sudoku-key sudoku-key-erase" data-action="sudoku-erase" aria-label="Borrar">
-        <span class="sudoku-key-digit">⌫</span>
-        <span class="sudoku-key-left">Borrar</span>
+        <span class="sudoku-key-digit">Borrar</span>
       </button>
     </div>
   `

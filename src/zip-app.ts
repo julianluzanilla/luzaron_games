@@ -35,6 +35,7 @@ import {
 } from './games/zip/zip-types'
 import { renderGameHeader } from './shell/app-header'
 import { getBestTime, submitRecord } from './shell/records'
+import { button, buttonRow, celebration, icon, pauseOverlay, segmented } from './shell/ui'
 
 const SETTINGS_KEY = 'luzaron-zip-settings-v1'
 const ERROR_MS = 1400
@@ -698,12 +699,13 @@ function updateControls(): void {
   const hintButton = root?.querySelector<HTMLButtonElement>('[data-action="hint"]')
   if (hintButton) {
     hintButton.disabled = state.solved
-    hintButton.textContent = hintLabel()
+    const label = hintButton.querySelector('.control-button-label')
+    if (label) label.textContent = hintLabel()
   }
 }
 
 function hintLabel(): string {
-  return state.hintsUsed > 0 ? `💡 Pista · ${state.hintsUsed}` : '💡 Pista'
+  return state.hintsUsed > 0 ? `Pista · ${state.hintsUsed}` : 'Pista'
 }
 
 function boardSvg(): string {
@@ -747,9 +749,14 @@ function renderPuzzleLabel(): string {
 
 function renderStatus(): string {
   if (state.solved) {
-    return `<span class="zip-solved-label">✓ Resuelto · ${formatTime(state.elapsedMs)}</span>`
+    return `<span class="solved-label">${icon('check')}Resuelto · ${formatTime(state.elapsedMs)}</span>`
   }
-  return `<span class="zip-timer" data-timer aria-label="Tiempo">${formatTime(state.elapsedMs)}</span>`
+  return `<span class="timer" data-timer aria-label="Tiempo">${formatTime(state.elapsedMs)}</span>`
+}
+
+function renderBestLine(): string {
+  const best = getBestTime('zip', packId())
+  return best !== null ? `<span class="best-time">Mejor: ${formatTime(best)}</span>` : ''
 }
 
 function renderMain(): string {
@@ -757,18 +764,17 @@ function renderMain(): string {
     return `<div class="state-message state-error">${state.errorMessage}</div>`
   }
 
-  const chips = ZIP_SIZES.map(
-    (size) => `
-      <button type="button" class="size-chip ${size === state.size ? 'active' : ''}"
-              data-action="zip-size" data-size="${size}"
-              aria-pressed="${size === state.size}">${SIZE_LABELS[size]}</button>
-    `
-  ).join('')
+  const chips = ZIP_SIZES.map((size) => ({
+    label: SIZE_LABELS[size],
+    active: size === state.size,
+    attrs: `data-size="${size}"`,
+  }))
+  const chipNav = segmented('Tamaño del tablero', 'zip-size', chips, 'zip-chips')
 
   if (state.isLoading || !state.game) {
     return `
       <div class="zip-layout">
-        <nav class="size-selector zip-chips" aria-label="Tamaño del tablero">${chips}</nav>
+        ${chipNav}
         <div class="state-message">Generando tablero…</div>
       </div>
     `
@@ -789,26 +795,44 @@ function renderMain(): string {
 
       <aside class="zip-side">
         <div class="zip-card">
-          <div class="zip-meta">
-            <div class="zip-meta-text">
-              <span class="zip-puzzle-label">${renderPuzzleLabel()}</span>
-              <span class="zip-card-title">Zip</span>
-            </div>
+          <span class="zip-card-title">Zip</span>
+          <div class="game-status zip-meta">
             ${renderStatus()}
+            <div class="puzzle-meta">
+              <span>${renderPuzzleLabel()}</span>
+              ${renderBestLine()}
+            </div>
           </div>
 
-          <nav class="size-selector zip-chips" aria-label="Tamaño del tablero">${chips}</nav>
+          ${chipNav}
 
-          <div class="controls zip-controls">
-            <button type="button" class="control-button" data-action="undo"
-                    ${state.solved || state.history.length === 0 ? 'disabled' : ''}>↶ Deshacer</button>
-            <button type="button" class="control-button" data-action="hint" ${disabled}>${hintLabel()}</button>
-          </div>
+          ${buttonRow(
+            [
+              button({
+                action: 'undo',
+                label: 'Deshacer',
+                icon: 'undo-2',
+                disabled: state.solved || state.history.length === 0,
+              }),
+              button({
+                action: 'hint',
+                label: hintLabel(),
+                icon: 'lightbulb',
+                disabled: !!disabled,
+              }),
+            ],
+            'zip-controls'
+          )}
 
           ${
             state.solved
-              ? `<button type="button" class="control-button control-button-primary zip-results"
-                         data-action="show-results">Ver resultados</button>`
+              ? button({
+                  action: 'show-results',
+                  label: 'Ver resultados',
+                  icon: 'trophy',
+                  variant: 'primary',
+                  className: 'zip-results',
+                })
               : ''
           }
         </div>
@@ -816,7 +840,7 @@ function renderMain(): string {
         <section class="zip-howto ${open ? 'is-open' : ''}">
           <button type="button" class="zip-howto-head" data-action="zip-howto" aria-expanded="${open}">
             <span>Cómo se juega</span>
-            <span class="zip-howto-chevron" aria-hidden="true">⌄</span>
+            <span class="zip-howto-chevron" aria-hidden="true">${icon('chevron-down')}</span>
           </button>
           ${
             open
@@ -836,49 +860,25 @@ function renderCompletionModal(): string {
   const best = getBestTime('zip', packId())
   const label = state.puzzleNumber > 0 ? `Zip #${state.puzzleNumber}` : 'Zip aleatorio'
 
-  return `
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="zip-modal-title">
-      <div class="modal-card modal-card-celebration zip-modal">
-        <p class="eyebrow">${label} · ${SIZE_LABELS[state.size]}</p>
-        <h2 id="zip-modal-title">¡Resuelto!</h2>
-
-        <dl class="modal-stats">
-          <div>
-            <dt>Tiempo</dt>
-            <dd>${formatTime(state.elapsedMs)}${state.newBest ? ' 🏆' : ''}</dd>
-          </div>
-          <div>
-            <dt>Mejor tiempo</dt>
-            <dd>${best !== null ? formatTime(best) : '—'}</dd>
-          </div>
-          <div>
-            <dt>Pistas usadas</dt>
-            <dd>${state.hintsUsed}</dd>
-          </div>
-        </dl>
-
-        <div class="modal-actions">
-          <button type="button" class="control-button" data-action="close-modal">Cerrar</button>
-          <button type="button" class="control-button control-button-primary" data-action="next-sequential">
-            Siguiente →
-          </button>
-          <button type="button" class="control-button control-button-accent" data-action="next-random">
-            🎲 Aleatorio
-          </button>
-        </div>
-      </div>
-    </div>
-  `
+  return celebration({
+    eyebrow: `${label} · ${SIZE_LABELS[state.size]}`,
+    title: '¡Resuelto!',
+    titleId: 'zip-modal-title',
+    className: 'zip-modal',
+    stats: [
+      { label: 'Tiempo', value: formatTime(state.elapsedMs), trophy: state.newBest },
+      { label: 'Mejor', value: best !== null ? formatTime(best) : '—' },
+      { label: 'Pistas', value: String(state.hintsUsed) },
+    ],
+    note: state.newBest ? `Nuevo mejor tiempo en ${SIZE_LABELS[state.size]}` : undefined,
+    primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
+    secondary: [
+      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
+      { action: 'close-modal', label: 'Cerrar' },
+    ],
+  })
 }
 
 function renderPauseOverlay(): string {
-  return `
-    <div class="pause-overlay" aria-live="polite">
-      <div class="pause-card">
-        <p class="eyebrow">Pausa automática</p>
-        <h2>Juego pausado</h2>
-        <p>El tablero se oscureció porque la app perdió el foco. Al volver, se reanuda solo.</p>
-      </div>
-    </div>
-  `
+  return pauseOverlay()
 }

@@ -4,10 +4,9 @@
  * Las fichas van posicionadas en píxeles sobre un lienzo de tamaño fijo; la
  * pantalla se encarga de escalarlo con un transform para que quepa.
  *
- * El volumen de la ficha asoma hacia la izquierda y hacia abajo (15 de 100 en
- * el viewBox), así que cada nivel se desplaza arriba y a la DERECHA tanto como
- * ese grosor. La profundidad se lee por la sombra que cada ficha proyecta
- * abajo-izquierda sobre el piso inferior (ver .mahjong-tile en style.css).
+ * Fichas planas (rediseño Modernist): la ficha es solo su cara. Cada nivel
+ * superior se desplaza hacia arriba y a la IZQUIERDA y proyecta una sombra
+ * dura abajo-derecha (ver .mahjong-tile.is-raised en style.css).
  */
 
 import { isFree } from './mahjong-engine'
@@ -16,8 +15,12 @@ import type { MahjongBoardState, MahjongTile } from './mahjong-types'
 /** Ancho de la cara en píxeles del lienzo interno. */
 export const FACE_W = 50
 export const FACE_H = 70
-/** Grosor del falso 3D: 15 unidades de viewBox sobre una cara de 100. */
-export const TILE_Z = 7.5
+/** Desplazamiento de cada nivel (−4px sobre una ficha de 32 en el handoff). */
+export const LAYER_SHIFT = 6
+/** Aire del sprite a la izquierda de la cara: 15 de 115 unidades de viewBox. */
+const SPRITE_LEFT = 7.5
+/** Margen para la sombra dura de las fichas levantadas. */
+const SHADOW = 5
 
 const VIEWBOX = '0 0 115 155'
 
@@ -27,11 +30,11 @@ export interface BoardMetrics {
 }
 
 export function measureBoard(board: MahjongBoardState): BoardMetrics {
-  const lift = Math.max(0, board.depth - 1) * TILE_Z
+  const lift = Math.max(0, board.depth - 1) * LAYER_SHIFT
 
   return {
-    width: (board.width * FACE_W) / 2 + TILE_Z + lift,
-    height: (board.height * FACE_H) / 2 + TILE_Z + lift,
+    width: (board.width * FACE_W) / 2 + lift + SHADOW,
+    height: (board.height * FACE_H) / 2 + lift + SHADOW,
   }
 }
 
@@ -44,32 +47,31 @@ export interface BoardView {
 }
 
 /**
- * Orden de pintado: por nivel, y dentro del nivel de arriba-derecha hacia
- * abajo-izquierda. Así la cara de cada ficha tapa el canto izquierdo de su
- * vecina de la derecha y el canto inferior de la de arriba, también en las
- * filas montadas a media ficha de la tortuga.
+ * Orden de pintado: por nivel, y dentro del nivel de arriba-izquierda hacia
+ * abajo-derecha. Así la sombra de cada ficha cae sobre el piso de abajo y la
+ * vecina de la derecha, pintada después, la tapa.
  */
 function paintOrder(a: MahjongTile, b: MahjongTile): number {
   if (a.slot.z !== b.slot.z) return a.slot.z - b.slot.z
-  const da = a.slot.y - a.slot.x
-  const db = b.slot.y - b.slot.x
-  if (da !== db) return da - db
-  return a.slot.y - b.slot.y
+  if (a.slot.y !== b.slot.y) return a.slot.y - b.slot.y
+  return a.slot.x - b.slot.x
 }
 
 export function renderMahjongBoard(board: MahjongBoardState, view: BoardView): string {
   const metrics = measureBoard(board)
-  const lift = Math.max(0, board.depth - 1) * TILE_Z
+  const lift = Math.max(0, board.depth - 1) * LAYER_SHIFT
 
   const visible = board.tiles.filter((tile) => !tile.removed || view.matched.has(tile.index))
   const ordered = visible.slice().sort(paintOrder)
 
   const pieces = ordered
     .map((tile, order) => {
-      const left = (tile.slot.x * FACE_W) / 2 + tile.slot.z * TILE_Z
-      const top = lift + (tile.slot.y * FACE_H) / 2 - tile.slot.z * TILE_Z
+      const left = lift + (tile.slot.x * FACE_W) / 2 - tile.slot.z * LAYER_SHIFT - SPRITE_LEFT
+      const top = lift + (tile.slot.y * FACE_H) / 2 - tile.slot.z * LAYER_SHIFT
 
       const classes = ['mahjong-tile']
+
+      if (tile.slot.z > 0) classes.push('is-raised')
 
       if (view.selected === tile.index) classes.push('is-selected')
       if (view.hinted.has(tile.index)) classes.push('is-hinted')
