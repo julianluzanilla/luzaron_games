@@ -89,3 +89,53 @@ export const ZIP_THUMB = `
   <text x="40" y="83.6">3</text>
   </g>
 </svg>`
+
+/** Memoria: 4 cartas boca abajo y el par de 中 destapado. */
+export const MEMORIA_THUMB = `
+<svg viewBox="0 0 100 100" role="img" aria-hidden="true" class="game-thumb-art">
+  <rect width="100" height="100" fill="#e24aa0"/>
+  <rect x="11" y="18" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <rect x="13" y="20" width="18" height="25" fill="#ec3013"/>
+  <rect x="14.5" y="21.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>
+  <rect x="16" y="26.5" width="12" height="12" fill="#f3f2f2"/>
+  <g transform="translate(17 27.5)">
+  <rect width="4.6" height="4.6" fill="#9a55e0"/>
+  <rect y="5.4" width="4.6" height="4.6" fill="#2f78e4"/>
+  <rect x="5.4" y="5.4" width="4.6" height="4.6" fill="#1f9e52"/>
+  <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
+  </g>
+  <rect x="39" y="18" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <text x="50" y="38.5" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="16" fill="#c22239">中</text>
+  <rect x="67" y="18" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <rect x="69" y="20" width="18" height="25" fill="#ec3013"/>
+  <rect x="70.5" y="21.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>
+  <rect x="72" y="26.5" width="12" height="12" fill="#f3f2f2"/>
+  <g transform="translate(73 27.5)">
+  <rect width="4.6" height="4.6" fill="#9a55e0"/>
+  <rect y="5.4" width="4.6" height="4.6" fill="#2f78e4"/>
+  <rect x="5.4" y="5.4" width="4.6" height="4.6" fill="#1f9e52"/>
+  <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
+  </g>
+  <rect x="11" y="53" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <text x="22" y="73.5" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="16" fill="#c22239">中</text>
+  <rect x="39" y="53" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <rect x="41" y="55" width="18" height="25" fill="#ec3013"/>
+  <rect x="42.5" y="56.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>
+  <rect x="44" y="61.5" width="12" height="12" fill="#f3f2f2"/>
+  <g transform="translate(45 62.5)">
+  <rect width="4.6" height="4.6" fill="#9a55e0"/>
+  <rect y="5.4" width="4.6" height="4.6" fill="#2f78e4"/>
+  <rect x="5.4" y="5.4" width="4.6" height="4.6" fill="#1f9e52"/>
+  <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
+  </g>
+  <rect x="67" y="53" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
+  <rect x="69" y="55" width="18" height="25" fill="#ec3013"/>
+  <rect x="70.5" y="56.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>
+  <rect x="72" y="61.5" width="12" height="12" fill="#f3f2f2"/>
+  <g transform="translate(73 62.5)">
+  <rect width="4.6" height="4.6" fill="#9a55e0"/>
+  <rect y="5.4" width="4.6" height="4.6" fill="#2f78e4"/>
+  <rect x="5.4" y="5.4" width="4.6" height="4.6" fill="#1f9e52"/>
+  <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
+  </g>
+</svg>`

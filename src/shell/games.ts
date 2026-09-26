@@ -9,13 +9,14 @@
 
 import {
   MAHJONG_THUMB,
+  MEMORIA_THUMB,
   QUEENS_THUMB,
   SUDOKU_THUMB,
   WORDLE_THUMB,
   ZIP_THUMB,
 } from './games-thumbnails'
 
-export type GameId = 'queens' | 'sudoku' | 'wordle' | 'mahjong' | 'zip'
+export type GameId = 'queens' | 'sudoku' | 'wordle' | 'mahjong' | 'zip' | 'memoria'
 
 export interface GameEntry {
   id: GameId
@@ -24,7 +25,7 @@ export interface GameEntry {
   /** Una línea de qué se juega, para la tarjeta de la home. */
   tagline: string
   available: boolean
-  /** Color propio del juego (uno de los cinco cuadros del logo). */
+  /** Color propio del juego (los cinco cuadros del logo; Memoria usa magenta). */
   color: string
   /** Miniatura cuadrada, viewBox 0 0 100 100. */
   thumbnail: string
@@ -70,6 +71,14 @@ export const GAMES: GameEntry[] = [
     available: true,
     color: '#ec3013',
     thumbnail: ZIP_THUMB,
+  },
+  {
+    id: 'memoria',
+    label: 'Memoria',
+    tagline: 'Voltea dos y encuentra los pares',
+    available: true,
+    color: '#e24aa0',
+    thumbnail: MEMORIA_THUMB,
   },
 ]
 

@@ -13,6 +13,7 @@ import { mountSudokuApp, unmountSudokuApp } from './sudoku-app'
 import { mountWordleApp, unmountWordleApp } from './wordle-app'
 import { mountMahjongApp, unmountMahjongApp } from './mahjong-app'
 import { mountZipApp, unmountZipApp } from './zip-app'
+import { mountMemoriaApp, unmountMemoriaApp } from './memoria-app'
 
 /**
  * Router de la app.
@@ -39,6 +40,7 @@ const SCREENS: Record<Route, Screen> = {
   wordle: { mount: mountWordleApp, unmount: unmountWordleApp },
   mahjong: { mount: mountMahjongApp, unmount: unmountMahjongApp },
   zip: { mount: mountZipApp, unmount: unmountZipApp },
+  memoria: { mount: mountMemoriaApp, unmount: unmountMemoriaApp },
 }
 
 /** Nombre de la ruta en la URL. Se traduce solo lo que el usuario puede leer. */
@@ -51,6 +53,7 @@ const HASH_OF: Record<Route, string> = {
   wordle: '#/wordle',
   mahjong: '#/mahjong',
   zip: '#/zip',
+  memoria: '#/memoria',
 }
 
 let currentRoute: Route | null = null

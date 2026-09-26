@@ -1,7 +1,7 @@
 /**
  * Pantalla de inicio.
  *
- * Es la raíz de la app (`#/`): cinco miniaturas cuadradas para elegir juego,
+ * Es la raíz de la app (`#/`): seis miniaturas cuadradas para elegir juego,
  * el chip de identidad y el acceso a Ajustes. Nada más — se entra a jugar en
  * un toque.
  */
@@ -17,6 +17,7 @@ const HIGHLIGHT_PACK: Record<string, string> = {
   sudoku: 'sudoku-classic-normal',
   mahjong: 'mahjong-turtle',
   zip: 'zip-6x6',
+  memoria: 'memoria-4x5',
 }
 
 let root: HTMLDivElement | null = null

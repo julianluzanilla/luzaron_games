@@ -365,8 +365,9 @@ button.header-icon:hover {
 }
 
 /*
- * Teléfono: 2 columnas con divisores de 2px. El quinto juego (Zip) ocupa las
- * dos columnas, con la miniatura de 120 a la izquierda.
+ * Teléfono: 2 columnas con divisores de 2px (seis juegos = 3 renglones). Si el
+ * catálogo queda en número impar, el quinto ocupa las dos columnas con la
+ * miniatura de 120 a la izquierda.
  */
 .game-grid {
   display: grid;
@@ -489,6 +490,19 @@ button.header-icon:hover {
 }
 
 @media (min-width: 620px) and (max-width: 1023px) {
+  /* Tableta: 3 × 2. */
+  .game-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .game-card {
+    border-right: var(--rule) solid var(--color-divider);
+  }
+
+  .game-card:nth-child(3n) {
+    border-right: none;
+  }
+
   .home-title {
     padding: 40px 32px 24px;
     font-size: 52px;
@@ -499,7 +513,7 @@ button.header-icon:hover {
   }
 }
 
-/* Escritorio: 5 columnas dentro de un margen de 48px. */
+/* Escritorio: 6 columnas dentro de un margen de 48px. */
 @media (min-width: 1024px) {
   .app-header-home {
     height: 80px;
@@ -544,7 +558,7 @@ button.header-icon:hover {
   }
 
   .game-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     margin: 0 48px;
     border-bottom: var(--rule) solid var(--color-divider);
   }
@@ -2920,6 +2934,173 @@ body.mahjong-expanded {
   }
 
   .zip-trail line {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Memoria                                                                 */
+/* ---------------------------------------------------------------------- */
+
+/*
+ * Una columna: timer + "Nueva partida", selector de tamaño y el tablero
+ * centrado en el espacio que sobra. El tablero no hace scroll: el tamaño de
+ * carta (--card-w/--card-h) lo calcula memoria-app.ts con el alto real de
+ * .memoria-stage.
+ */
+.memoria-shell {
+  height: 100dvh;
+}
+
+.memoria-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+}
+
+.memoria-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.memoria-status {
+  flex: 1;
+  min-width: 0;
+}
+
+.memoria-bar .control-button {
+  flex: 0 0 auto;
+  width: auto;
+  height: 44px;
+  padding: 0 14px;
+}
+
+.memoria-solved {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-success);
+}
+
+.memoria-bar .memoria-results {
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+  color: #f29d12;
+}
+
+.memoria-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 240px;
+}
+
+.memoria-board {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--card-w, 0px));
+  grid-auto-rows: var(--card-h, 0px);
+  gap: var(--gap);
+  width: max-content;
+  height: max-content;
+}
+
+.memoria-card {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  perspective: 700px;
+  cursor: pointer;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.memoria-card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease-out;
+}
+
+.memoria-card.is-up .memoria-card-inner {
+  transform: rotateY(180deg);
+}
+
+.memoria-card img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  /* La carta es crema en los dos temas, como una baraja real. */
+  border: 1.5px solid #201e1d;
+  background: #fbf8f1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.memoria-card-front {
+  transform: rotateY(180deg);
+}
+
+.memoria-card:not(.is-up):hover .memoria-card-back {
+  filter: brightness(1.08);
+}
+
+.memoria-card:focus-visible {
+  outline-color: var(--color-azure);
+}
+
+.memoria-card.is-open {
+  outline-color: var(--color-text);
+}
+
+.memoria-card.is-wrong {
+  outline-color: var(--color-error);
+}
+
+.memoria-card.is-matched,
+.memoria-card.is-revealed {
+  cursor: default;
+}
+
+.memoria-card.is-matched .memoria-card-front {
+  border: 2px solid #e24aa0;
+}
+
+.memoria-layout > .state-message {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .memoria-layout {
+    gap: 16px;
+    padding-top: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memoria-card-inner {
     transition: none;
   }
 }
