@@ -90,7 +90,7 @@ export const ZIP_THUMB = `
   </g>
 </svg>`
 
-/** Memoria: 4 cartas boca abajo y el par de 中 destapado. */
+/** Memoria: 4 cartas boca abajo y un par de stickers de jugador destapado (silueta genérica). */
 export const MEMORIA_THUMB = `
 <svg viewBox="0 0 100 100" role="img" aria-hidden="true" class="game-thumb-art">
   <rect width="100" height="100" fill="#e24aa0"/>
@@ -105,7 +105,11 @@ export const MEMORIA_THUMB = `
   <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
   </g>
   <rect x="39" y="18" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
-  <text x="50" y="38.5" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="16" fill="#c22239">中</text>
+  <rect x="41" y="20" width="18" height="19" fill="#201e1d"/>
+  <circle cx="50" cy="27.5" r="3.8" fill="#f3f2f2"/>
+  <path d="M43 39Q50 29.5 57 39Z" fill="#f3f2f2"/>
+  <rect x="41" y="39" width="18" height="1.2" fill="#f29d12"/>
+  <rect x="41" y="40.5" width="18" height="4.5" fill="#ec3013"/>
   <rect x="67" y="18" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
   <rect x="69" y="20" width="18" height="25" fill="#ec3013"/>
   <rect x="70.5" y="21.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>
@@ -117,7 +121,11 @@ export const MEMORIA_THUMB = `
   <rect x="5.4" width="4.6" height="4.6" fill="#ec3013"/>
   </g>
   <rect x="11" y="53" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
-  <text x="22" y="73.5" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="16" fill="#c22239">中</text>
+  <rect x="13" y="55" width="18" height="19" fill="#201e1d"/>
+  <circle cx="22" cy="62.5" r="3.8" fill="#f3f2f2"/>
+  <path d="M15 74Q22 64.5 29 74Z" fill="#f3f2f2"/>
+  <rect x="13" y="74" width="18" height="1.2" fill="#f29d12"/>
+  <rect x="13" y="75.5" width="18" height="4.5" fill="#ec3013"/>
   <rect x="39" y="53" width="22" height="29" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.5"/>
   <rect x="41" y="55" width="18" height="25" fill="#ec3013"/>
   <rect x="42.5" y="56.5" width="15" height="22" fill="none" stroke="#f3f2f2" stroke-width=".6"/>

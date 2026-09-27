@@ -5,9 +5,7 @@
  * resolver un par para poder animar el volteo antes.
  */
 
-import { MEMORIA_CANTOS } from './memoria-cards'
-
-export type MemoriaCanto = (typeof MEMORIA_CANTOS)[number]
+import { MEMORIA_PLAYERS } from './memoria-players'
 
 export type MemoriaSizeId = '4x5' | '5x6' | '6x6'
 
@@ -38,7 +36,8 @@ export function memoriaPackId(size: MemoriaSizeId): string {
 }
 
 export interface MemoriaCard {
-  canto: MemoriaCanto
+  /** id del jugador (memoria-players.ts). */
+  player: string
   matched: boolean
 }
 
@@ -54,28 +53,34 @@ export interface MemoriaGame {
 }
 
 /**
- * 4×5 usa los primeros 10 cantos, 5×6 los primeros 15 y 6×6 los 18. Cada
- * canto va dos veces y la baraja se revuelve con Fisher-Yates.
+ * Elige al azar `pares` jugadores de los 32, pone cada uno dos veces y revuelve
+ * la baraja con Fisher-Yates. Así no siempre salen los mismos.
  */
 export function createMemoriaGame(sizeId: MemoriaSizeId, random = Math.random): MemoriaGame {
   const size = getMemoriaSize(sizeId)
   const pairs = (size.cols * size.rows) / 2
-  const cantos = MEMORIA_CANTOS.slice(0, pairs)
-  const deck: MemoriaCanto[] = [...cantos, ...cantos]
-
-  for (let i = deck.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1))
-    ;[deck[i], deck[j]] = [deck[j], deck[i]]
-  }
+  const players = shuffle(
+    MEMORIA_PLAYERS.map((player) => player.id),
+    random
+  ).slice(0, pairs)
+  const deck = shuffle([...players, ...players], random)
 
   return {
     size,
-    cards: deck.map((canto) => ({ canto, matched: false })),
+    cards: deck.map((player) => ({ player, matched: false })),
     open: [],
     pairsFound: 0,
     pairsTotal: pairs,
     moves: 0,
   }
+}
+
+function shuffle<T>(items: T[], random: () => number): T[] {
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(random() * (i + 1))
+    ;[items[i], items[j]] = [items[j], items[i]]
+  }
+  return items
 }
 
 export function canFlip(game: MemoriaGame, index: number): boolean {
@@ -99,7 +104,7 @@ export function flipCard(game: MemoriaGame, index: number): FlipResult {
 export function openIsMatch(game: MemoriaGame): boolean {
   if (game.open.length !== 2) return false
   const [a, b] = game.open
-  return game.cards[a].canto === game.cards[b].canto
+  return game.cards[a].player === game.cards[b].player
 }
 
 /**

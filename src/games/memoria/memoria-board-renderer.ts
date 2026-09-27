@@ -1,101 +1,40 @@
 /**
  * Dibujo del tablero de Memoria.
  *
- * Cada carta es un <button> con dos <img> apiladas (reverso y cara) dentro de
- * un contenedor que gira con `rotateY`. Las imágenes son data URIs de SVG,
- * cacheadas por canto y color: el navegador rasteriza cada una una sola vez
- * en lugar de repetir cientos de nodos SVG (handoff, "Rendimiento").
- *
- * Los cantos salen del mismo sprite que usa Mahjong
- * (public/art/mahjong/mahjong-tiles.svg), sin el cuerpo de la ficha.
+ * Cada carta es un <button> con dos caras apiladas dentro de un contenedor que
+ * gira con `rotateY`:
+ * - Reverso: una sola <img> con el SVG del reverso como data URI, compartida por
+ *   todas las cartas (el navegador la rasteriza una vez).
+ * - Cara: sticker de jugador en HTML — marco crema, foto recortada y franja con
+ *   el nombre en la tipografía de la app. La franja cambia de color por CSS
+ *   (rojo normal, magenta al encontrar el par).
  */
 
-import {
-  CARD_MATCH,
-  CARD_RED,
-  MEMORIA_BACK_SVG,
-  MEMORIA_CANTOS,
-  memoriaFaceSvg,
-  svgToDataUri,
-} from './memoria-cards'
-import type { MemoriaCanto, MemoriaGame } from './memoria-engine'
-
-const SPRITE_URL = '/art/mahjong/mahjong-tiles.svg'
-
-/** Nombre leíble de cada canto, para lectores de pantalla. */
-const CANTO_NAMES: Record<MemoriaCanto, string> = {
-  p1: 'uno de círculos',
-  p3: 'tres de círculos',
-  p5: 'cinco de círculos',
-  p9: 'nueve de círculos',
-  s1: 'uno de bambú',
-  s3: 'tres de bambú',
-  s5: 'cinco de bambú',
-  s9: 'nueve de bambú',
-  m1: 'uno de caracteres',
-  m5: 'cinco de caracteres',
-  m9: 'nueve de caracteres',
-  we: 'viento del este',
-  wn: 'viento del norte',
-  dr: 'dragón rojo',
-  dg: 'dragón verde',
-  dw: 'dragón blanco',
-  f1: 'flor',
-  e1: 'estación',
-}
-
-let glyphs: Map<string, string> | null = null
-let glyphsPromise: Promise<void> | null = null
-const faceCache = new Map<string, string>()
+import { MEMORIA_BACK_SVG, svgToDataUri } from './memoria-cards'
+import type { MemoriaGame } from './memoria-engine'
+import { getMemoriaPlayer, playerPhotoUrl } from './memoria-players'
 
 export const MEMORIA_BACK_URI = svgToDataUri(MEMORIA_BACK_SVG)
 
+const loaded = new Map<string, Promise<void>>()
+
 /**
- * Descarga el sprite una vez y guarda el interior de cada <symbol> que usa
- * Memoria, quitando su `<use href="#mj-body"/>` (el cuerpo y relieve de la ficha).
+ * Descarga y decodifica las fotos de una partida antes de mostrar el tablero,
+ * para que ninguna cara aparezca en blanco a media animación. Una foto que
+ * falla no detiene el juego: la carta queda con el nombre.
  */
-export function loadMemoriaGlyphs(): Promise<void> {
-  if (glyphs) return Promise.resolve()
-  if (glyphsPromise) return glyphsPromise
-
-  glyphsPromise = fetch(SPRITE_URL)
-    .then((response) => {
-      if (!response.ok) throw new Error(`No se pudieron cargar los cantos (${response.status})`)
-      return response.text()
-    })
-    .then((markup) => {
-      const found = new Map<string, string>()
-      const pattern = /<symbol id="mj-([a-z0-9]+)"[^>]*>([\s\S]*?)<\/symbol>/g
-
-      for (const match of markup.matchAll(pattern)) {
-        const [, id, body] = match
-        if (!(MEMORIA_CANTOS as readonly string[]).includes(id)) continue
-        found.set(id, body.replace(/<use\s+(?:xlink:)?href="#mj-body"\s*\/>/g, ''))
-      }
-
-      const missing = MEMORIA_CANTOS.filter((id) => !found.has(id))
-      if (missing.length) throw new Error(`Faltan cantos en el sprite: ${missing.join(', ')}`)
-
-      glyphs = found
-    })
-    .catch((error: unknown) => {
-      glyphsPromise = null
-      throw error
-    })
-
-  return glyphsPromise
-}
-
-/** Cara de un canto como data URI; `matched` pinta el marco en magenta. */
-export function faceUri(canto: MemoriaCanto, matched: boolean): string {
-  const color = matched ? CARD_MATCH : CARD_RED
-  const key = `${canto}|${color}`
-  const cached = faceCache.get(key)
-  if (cached) return cached
-
-  const uri = svgToDataUri(memoriaFaceSvg(glyphs?.get(canto) ?? '', color))
-  faceCache.set(key, uri)
-  return uri
+export function preloadPlayerPhotos(ids: string[]): Promise<void> {
+  const pending = [...new Set(ids)].map((id) => {
+    let promise = loaded.get(id)
+    if (!promise) {
+      const image = new Image()
+      image.src = playerPhotoUrl(id)
+      promise = image.decode().catch(() => undefined)
+      loaded.set(id, promise)
+    }
+    return promise
+  })
+  return Promise.all(pending).then(() => undefined)
 }
 
 /** La carta más grande que cabe en W×H con proporción 3:4 y separación `gap`. */
@@ -117,7 +56,7 @@ export interface CardView {
   /** Parte de un par fallido: borde rojo hasta que vuelve boca abajo. */
   wrong: boolean
   matched: boolean
-  /** Final de partida: todas las caras con el marco rojo. */
+  /** Final de partida: todas las caras con la franja roja. */
   revealed: boolean
 }
 
@@ -156,12 +95,12 @@ function cardLabel(game: MemoriaGame, index: number, view: CardView): string {
   const position = `Carta ${index + 1}`
   if (!view.up) return `${position}, boca abajo`
 
-  const name = CANTO_NAMES[game.cards[index].canto]
+  const name = getMemoriaPlayer(game.cards[index].player).fullName
   return view.matched ? `${position}, ${name}, par encontrado` : `${position}, ${name}`
 }
 
 export function renderMemoriaCard(game: MemoriaGame, index: number, view: CardView): string {
-  const canto = game.cards[index].canto
+  const player = getMemoriaPlayer(game.cards[index].player)
   const locked = view.matched || view.revealed
 
   return `
@@ -169,7 +108,12 @@ export function renderMemoriaCard(game: MemoriaGame, index: number, view: CardVi
             aria-label="${cardLabel(game, index, view)}" ${locked ? 'aria-disabled="true"' : ''}>
       <span class="memoria-card-inner">
         <img class="memoria-card-back" src="${MEMORIA_BACK_URI}" alt="" draggable="false" />
-        <img class="memoria-card-front" src="${faceUri(canto, view.matched)}" alt="" draggable="false" />
+        <span class="memoria-card-front" aria-hidden="true">
+          <span class="memoria-sticker-photo">
+            <img src="${playerPhotoUrl(player.id)}" alt="" draggable="false" decoding="async" />
+          </span>
+          <span class="memoria-sticker-name">${player.name}</span>
+        </span>
       </span>
     </button>
   `
@@ -190,8 +134,4 @@ export function updateMemoriaCard(
 
   if (view.matched || view.revealed) element.setAttribute('aria-disabled', 'true')
   else element.removeAttribute('aria-disabled')
-
-  const front = element.querySelector<HTMLImageElement>('.memoria-card-front')
-  const src = faceUri(game.cards[index].canto, view.matched)
-  if (front && front.getAttribute('src') !== src) front.setAttribute('src', src)
 }

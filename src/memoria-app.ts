@@ -1,7 +1,8 @@
 /**
  * Pantalla de Memoria: voltea dos cartas y encuentra los pares.
  *
- * Diseño: D:\Luzaron Games\design_handoff_memoria (README + Memoria.html).
+ * Diseño: D:\Luzaron Games\design_handoff_memoria (README + Memoria.html); las
+ * caras son stickers de jugadores (games/memoria/memoria-players.ts).
  * Decisiones: claude/memoria-decisiones.md en el proyecto.
  *
  * Detalles de implementación:
@@ -30,7 +31,7 @@ import {
 import {
   cardSize,
   cardView,
-  loadMemoriaGlyphs,
+  preloadPlayerPhotos,
   renderMemoriaCard,
   updateMemoriaCard,
 } from './games/memoria/memoria-board-renderer'
@@ -114,21 +115,7 @@ export function mountMemoriaApp(): void {
     window.addEventListener('resize', layoutBoard)
   }
 
-  state.isLoading = true
-  render()
-
-  loadMemoriaGlyphs()
-    .then(() => {
-      if (!root) return
-      state.isLoading = false
-      newGame()
-    })
-    .catch((error: unknown) => {
-      console.error(error)
-      state.isLoading = false
-      state.errorMessage = 'No se pudieron cargar las cartas. Intenta de nuevo.'
-      render()
-    })
+  newGame()
 }
 
 export function unmountMemoriaApp(): void {
@@ -205,13 +192,27 @@ function newGame(): void {
   state.showModal = false
   state.newBest = false
   state.pausedByBlur = false
+  state.isLoading = true
   resetTimer()
-  render()
+
+  // Las fotos se decodifican antes de enseñar el tablero, para que ninguna cara
+  // salga en blanco al voltear. Si ya están en caché no se ve el aviso de carga.
+  const gen = generation
+  const slow = window.setTimeout(() => {
+    if (gen === generation && state.isLoading) render()
+  }, 150)
+
+  void preloadPlayerPhotos(state.game.cards.map((card) => card.player)).then(() => {
+    window.clearTimeout(slow)
+    if (gen !== generation || !root) return
+    state.isLoading = false
+    render()
+  })
 }
 
 function handleCardTap(index: number): void {
   const game = state.game
-  if (!game || state.locked || state.solved || state.pausedByBlur) return
+  if (!game || state.isLoading || state.locked || state.solved || state.pausedByBlur) return
 
   const result = flipCard(game, index)
   if (result === 'ignored') return
