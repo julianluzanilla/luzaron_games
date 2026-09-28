@@ -2665,32 +2665,44 @@ body.mahjong-expanded {
 /* ---------------------------------------------------------------------- */
 
 /*
- * Se mantiene todo lo de design_handoff_zip salvo el remate: trazo, muros y
- * punta van con esquinas cuadradas. Los números son cuadros de 0.64c en tinta.
+ * Handoff "Zip con balón" (design_handoff_zip_balon), opción 1b Cancha, que es
+ * la única que se usa (decisión de Jules): franjas de pasto, números en
+ * círculo, trazo y muros redondeados y un balón en la punta. La interfaz
+ * alrededor sigue el rediseño Modernist.
  */
 :root {
-  --zip-paper: var(--board-paper);
-  --zip-grid: var(--board-rule);
-  --zip-wall: var(--color-text);
-  --zip-num-fill: var(--color-text);
-  --zip-num-text: var(--board-paper);
+  --zip-stripe-a: #1d4a2c;
+  --zip-stripe-b: #194027;
+  --zip-grid: rgba(255, 255, 255, 0.22);
+  --zip-frame: rgba(255, 255, 255, 0.7);
+  --zip-wall: #f3f2f2;
+  --zip-num-fill: #0e0d0d;
+  --zip-num-text: #ffffff;
+  /* Anillo de números y balón = color de la cancha. */
+  --zip-ring: #1d4a2c;
   --zip-path-start: #2f8fe0;
-  --zip-path-end: #7c5cfc;
+  --zip-path-end: #9a7dff;
   --zip-solved-start: #ff7a1a;
   --zip-solved-end: #e24aa0;
-  --zip-tip-ring: var(--color-text);
-  --zip-hint-fill: rgba(47, 191, 113, 0.24);
-  --zip-hint-stroke: #2fbf71;
+  --zip-hint-fill: rgba(47, 191, 113, 0.32);
+  --zip-hint-stroke: #6fe39a;
   --zip-error: #ec3013;
   --zip-error-text: #ff9783;
 }
 
 :root[data-theme='light'] {
+  --zip-stripe-a: #bfe3b0;
+  --zip-stripe-b: #aed89f;
+  --zip-grid: rgba(255, 255, 255, 0.75);
+  --zip-frame: #ffffff;
+  --zip-wall: #201e1d;
+  --zip-num-fill: #201e1d;
+  --zip-ring: #bfe3b0;
   --zip-path-start: #1f6fb8;
   --zip-path-end: #7c5cfc;
   --zip-solved-start: #d9600a;
   --zip-solved-end: #c93a8a;
-  --zip-hint-fill: rgba(47, 191, 113, 0.2);
+  --zip-hint-fill: rgba(31, 138, 82, 0.28);
   --zip-hint-stroke: #1f8a52;
   --zip-error-text: #ae1800;
 }
@@ -2758,8 +2770,8 @@ body.mahjong-expanded {
   position: relative;
   width: var(--zip-board-size);
   aspect-ratio: 1 / 1;
-  border: var(--rule) solid var(--board-frame);
-  background: var(--zip-paper);
+  border: 2px solid var(--zip-frame);
+  background: var(--zip-stripe-a);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -2783,8 +2795,19 @@ body.mahjong-expanded {
   height: 100%;
 }
 
-.zip-paper {
-  fill: var(--zip-paper);
+.zip-stripe-a {
+  fill: var(--zip-stripe-a);
+}
+
+.zip-stripe-b {
+  fill: var(--zip-stripe-b);
+}
+
+.zip-field-line {
+  fill: none;
+  stroke: var(--zip-grid);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
 }
 
 .zip-grid {
@@ -2802,14 +2825,14 @@ body.mahjong-expanded {
 
 .zip-trail line {
   stroke-width: 50;
-  stroke-linecap: square;
+  stroke-linecap: round;
   transition: stroke 0.4s ease;
 }
 
 .zip-wall {
   stroke: var(--zip-wall);
   stroke-width: 22;
-  stroke-linecap: square;
+  stroke-linecap: round;
 }
 
 .zip-wall.is-error {
@@ -2821,37 +2844,45 @@ body.mahjong-expanded {
   stroke: var(--zip-error);
   stroke-opacity: 0.3;
   stroke-width: 46;
-  stroke-linecap: square;
+  stroke-linecap: round;
 }
 
-.zip-tip-halo {
-  opacity: 0.24;
-  animation: zip-halo 1.2s ease-in-out infinite alternate;
+.zip-ball-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-.zip-tip-dot {
-  stroke: var(--zip-tip-ring);
-  stroke-width: 7;
+/* El balón se desliza de celda a celda; la rotación no se anima. */
+.zip-ball {
+  transition: transform 90ms ease-out;
 }
 
-.zip-tip.is-error .zip-tip-halo {
-  fill: var(--zip-error) !important;
+.zip-ball.no-slide {
+  transition: none;
 }
 
-.zip-tip.is-error .zip-tip-dot {
-  fill: var(--zip-error) !important;
-  stroke: var(--zip-error);
+.zip-ball.is-hidden {
+  display: none;
 }
 
-.zip-tip.is-error {
-  animation:
-    zip-shake 0.24s ease-in-out,
-    zip-blink 0.18s ease-in-out 2;
+.zip-ball-ring {
+  fill: var(--zip-ring);
 }
 
-.zip-number rect {
+.zip-ball.is-error .zip-ball-ring {
+  fill: #ec3013;
+}
+
+.zip-ball.is-error .zip-ball-body {
+  animation: zip-shake 0.24s ease-in-out;
+}
+
+.zip-number circle {
   fill: var(--zip-num-fill);
-  stroke: var(--zip-paper);
+  stroke: var(--zip-ring);
   stroke-width: 6;
 }
 
@@ -2863,7 +2894,7 @@ body.mahjong-expanded {
   dominant-baseline: central;
 }
 
-.zip-number.is-error rect {
+.zip-number.is-error circle {
   fill: var(--zip-error);
   animation: zip-blink 0.18s ease-in-out 2;
 }
@@ -2898,15 +2929,6 @@ body.mahjong-expanded {
 
 .zip-toast[hidden] {
   display: none;
-}
-
-@keyframes zip-halo {
-  from {
-    opacity: 0.24;
-  }
-  to {
-    opacity: 0.12;
-  }
 }
 
 @keyframes zip-blink {
@@ -2985,7 +3007,7 @@ body.mahjong-expanded {
   color: var(--color-text);
 }
 
-.zip-howto-num rect {
+.zip-howto-num circle {
   fill: var(--zip-num-fill);
   stroke: var(--color-bg);
   stroke-width: 2;
@@ -3061,11 +3083,12 @@ body.mahjong-expanded {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .zip-tip-halo,
-  .zip-tip.is-error,
+  .zip-ball,
+  .zip-ball.is-error .zip-ball-body,
   .zip-wall.is-error,
-  .zip-number.is-error rect {
+  .zip-number.is-error circle {
     animation: none;
+    transition: none;
   }
 
   .zip-trail line {

@@ -24,7 +24,14 @@ import {
   type StepBlock,
   type ZipGame,
 } from './games/zip/zip-engine'
-import { HOWTO_FILL_SVG, HOWTO_ORDER_SVG, renderZipBoardSvg } from './games/zip/zip-board-renderer'
+import {
+  HOWTO_FILL_SVG,
+  HOWTO_ORDER_SVG,
+  renderZipBallLayer,
+  renderZipBoardSvg,
+  zipBallState,
+  type ZipBoardView,
+} from './games/zip/zip-board-renderer'
 import { generateFreshZip, markZipSolved, pickSequentialZip } from './games/zip/zip-pool'
 import {
   SIZE_LABELS,
@@ -684,6 +691,7 @@ function refreshBoard(): void {
 
   const svg = board.querySelector('[data-zip-svg]')
   if (svg) svg.innerHTML = boardSvg()
+  moveBall(board)
 
   const toast = board.querySelector('[data-zip-toast]')
   if (toast) toast.outerHTML = renderToast()
@@ -708,18 +716,54 @@ function hintLabel(): string {
   return state.hintsUsed > 0 ? `Pista · ${state.hintsUsed}` : 'Pista'
 }
 
-function boardSvg(): string {
-  const game = state.game
-  if (!game) return ''
-
-  return renderZipBoardSvg(game.puzzle, {
+function boardView(): ZipBoardView {
+  return {
     path: state.path,
     hintCell: state.hintCell,
     solved: state.solved,
     errorWall: state.error?.kind === 'wall' ? state.error.wall : null,
     errorNumber: state.error?.kind === 'order' ? state.error.cell : null,
     tipError: state.error !== null,
-  })
+  }
+}
+
+function boardSvg(): string {
+  const game = state.game
+  if (!game) return ''
+  return renderZipBoardSvg(game.puzzle, boardView())
+}
+
+function ballLayer(): string {
+  const game = state.game
+  if (!game) return ''
+  return renderZipBallLayer(game.puzzle, boardView())
+}
+
+/**
+ * El balón no se repinta: se mueve. Al cambiar su `transform` la transición
+ * CSS de 90 ms lo desliza a la celda nueva. Cuando reaparece (trazo nuevo o
+ * después de vaciarlo) se coloca sin transición, para que no llegue volando
+ * desde la esquina.
+ */
+function moveBall(board: HTMLElement): void {
+  const game = state.game
+  const ball = board.querySelector<SVGGElement>('[data-zip-ball]')
+  if (!game || !ball) return
+
+  const next = zipBallState(game.puzzle, boardView())
+  const wasHidden = ball.classList.contains('is-hidden')
+
+  if (wasHidden && next.visible) {
+    ball.classList.add('no-slide')
+    ball.style.transform = next.transform
+    void ball.getBoundingClientRect()
+    ball.classList.remove('no-slide')
+  } else {
+    ball.style.transform = next.transform
+  }
+
+  ball.classList.toggle('is-hidden', !next.visible)
+  ball.classList.toggle('is-error', next.error)
 }
 
 function renderToast(): string {
@@ -789,6 +833,7 @@ function renderMain(): string {
         <div class="zip-board ${state.solved ? 'is-solved' : ''} ${state.error ? 'has-error' : ''}"
              data-zip-board>
           <div class="zip-board-svg" data-zip-svg>${boardSvg()}</div>
+          ${ballLayer()}
           ${renderToast()}
         </div>
       </div>
