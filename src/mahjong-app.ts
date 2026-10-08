@@ -50,6 +50,10 @@ import {
 const SETTINGS_KEY = 'luzaron-mahjong-settings-v1'
 const MATCH_MS = 240
 const INVALID_MS = 320
+/** Mismo corte que el @media de style.css: debajo de esto es teléfono. */
+const PHONE_QUERY = '(max-width: 520px)'
+/** Lo que dura el parpadeo del botón de salir (3 pulsos de 0.8 s y margen). */
+const NUDGE_MS = 2600
 
 interface AppState {
   layoutId: MahjongLayoutId
@@ -61,6 +65,8 @@ interface AppState {
   invalid: Set<number>
   highlightFree: boolean
   expanded: boolean
+  /** Parpadeo del botón de contraer, al entrar expandido en teléfono. */
+  nudgeExit: boolean
   lastHint: [number, number] | null
   hintsUsed: number
   shufflesUsed: number
@@ -87,6 +93,7 @@ const state: AppState = {
   invalid: new Set(),
   highlightFree: false,
   expanded: false,
+  nudgeExit: false,
   lastHint: null,
   hintsUsed: 0,
   shufflesUsed: 0,
@@ -108,6 +115,9 @@ let timerStartedAt = 0
 let timerHandle: number | null = null
 let matchHandle: number | null = null
 let invalidHandle: number | null = null
+let nudgeHandle: number | null = null
+/** true si el jugador ya eligió tablero alguna vez. */
+let layoutWasStored = false
 
 // ---------- Ciclo de vida ----------
 
@@ -118,6 +128,24 @@ export function mountMahjongApp(): void {
 
   root = found
   readSettings()
+
+  // En teléfono la Tortuga no cabe: cada cara queda en ~23 pt, la mitad de los
+  // 44 pt que pide Apple para tocar con el dedo. Así que se abre Torre (6 de
+  // ancho, ~51 pt) y el tablero entra expandido. Para que nadie se quede
+  // atrapado, el botón de salir parpadea unas veces al entrar.
+  if (isPhone()) {
+    if (!layoutWasStored) state.layoutId = 'torre'
+
+    state.expanded = true
+    state.nudgeExit = true
+    document.body.classList.add('mahjong-expanded')
+
+    nudgeHandle = window.setTimeout(() => {
+      nudgeHandle = null
+      state.nudgeExit = false
+      render()
+    }, NUDGE_MS)
+  }
 
   state.isWindowFocused = document.hasFocus()
 
@@ -148,10 +176,28 @@ export function unmountMahjongApp(): void {
   clearPendingTimeouts()
 
   state.expanded = false
+  stopNudge()
   document.body.classList.remove('mahjong-expanded')
 
   if (root) root.innerHTML = ''
   root = null
+}
+
+function isPhone(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia(PHONE_QUERY).matches
+}
+
+/**
+ * Apaga el parpadeo del botón de salir. Va aparte de clearPendingTimeouts()
+ * porque esa se llama en cada reparto y cortaría el aviso al entrar.
+ */
+function stopNudge(): void {
+  if (nudgeHandle !== null) {
+    window.clearTimeout(nudgeHandle)
+    nudgeHandle = null
+  }
+
+  state.nudgeExit = false
 }
 
 function clearPendingTimeouts(): void {
@@ -175,8 +221,10 @@ function readSettings(): void {
 
     const parsed = JSON.parse(raw) as Partial<Pick<AppState, 'layoutId' | 'highlightFree'>>
 
-    if (parsed.layoutId && MAHJONG_LAYOUT_IDS.includes(parsed.layoutId))
+    if (parsed.layoutId && MAHJONG_LAYOUT_IDS.includes(parsed.layoutId)) {
       state.layoutId = parsed.layoutId
+      layoutWasStored = true
+    }
     if (typeof parsed.highlightFree === 'boolean') state.highlightFree = parsed.highlightFree
   } catch {
     // Sin almacenamiento: se juega con las preferencias por defecto.
@@ -624,6 +672,7 @@ function handleKeyDown(event: KeyboardEvent): void {
 function setExpanded(next: boolean): void {
   state.expanded = next
   state.selected = null
+  stopNudge()
 
   document.body.classList.toggle('mahjong-expanded', next)
 
@@ -784,7 +833,7 @@ function renderBoardBar(left: number, pairs: number, canUndo: boolean): string {
       ${tools}
       <button
         type="button"
-        class="mahjong-expand"
+        class="mahjong-expand ${state.expanded && state.nudgeExit ? 'is-nudge' : ''}"
         data-action="mahjong-expand"
         aria-pressed="${state.expanded}"
         aria-label="${label}"

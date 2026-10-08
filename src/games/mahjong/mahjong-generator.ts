@@ -58,12 +58,22 @@ function shuffle<T>(items: T[], random: RandomSource): T[] {
  * porque de cada dibujo hay una sola copia.
  */
 function buildPairPool(random: RandomSource): Array<[MahjongFace, MahjongFace]> {
-  const pairs: Array<[MahjongFace, MahjongFace]> = []
+  // Las parejas van agrupadas en juegos de cuatro fichas: las 34 caras con sus
+  // cuatro copias, más las cuatro flores y las cuatro estaciones (que emparejan
+  // entre ellas). Se barajan los juegos completos, no las parejas sueltas, para
+  // que un tablero chico como Torre reparta 18 dibujos con sus cuatro copias en
+  // vez de 36 dibujos a medias: así se conserva la decisión de cuál de las
+  // cuatro iguales conviene quitar.
+  const units: Array<Array<[MahjongFace, MahjongFace]>> = []
   const loose: Record<string, MahjongFace[]> = {}
 
   for (const item of MAHJONG_FACES) {
     if (item.copies >= 2) {
+      const pairs: Array<[MahjongFace, MahjongFace]> = []
+
       for (let i = 0; i < item.copies / 2; i += 1) pairs.push([item, item])
+
+      units.push(pairs)
       continue
     }
 
@@ -74,11 +84,14 @@ function buildPairPool(random: RandomSource): Array<[MahjongFace, MahjongFace]> 
 
   for (const key of Object.keys(loose)) {
     const bucket = shuffle(loose[key], random)
+    const pairs: Array<[MahjongFace, MahjongFace]> = []
 
     for (let i = 0; i + 1 < bucket.length; i += 2) pairs.push([bucket[i], bucket[i + 1]])
+
+    if (pairs.length > 0) units.push(pairs)
   }
 
-  return shuffle(pairs, random)
+  return shuffle(units, random).flat()
 }
 
 function emptyBoard(layoutId: MahjongLayoutId): MahjongBoardState {

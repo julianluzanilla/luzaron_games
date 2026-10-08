@@ -49,6 +49,23 @@ function buildTortuga(): MahjongSlot[] {
   return slots
 }
 
+/**
+ * Torre: el tablero del teléfono. Seis fichas de ancho como máximo, para que
+ * cada cara pase de los 44 pt que pide Apple para tocar con el dedo; en una
+ * Tortuga quedan en 23 pt. Los dos pisos de arriba van a media ficha, que es
+ * lo que le da la silueta de torre.
+ */
+function buildTorre(): MahjongSlot[] {
+  const upper = (xs: number[], ys: number[], z: number): MahjongSlot[] =>
+    ys.flatMap((y) => xs.map((x) => ({ x, y, z })))
+
+  return [
+    ...block(0, 5, 0, 7, 0),
+    ...upper([2, 4, 6, 8], [3, 5, 7, 9, 11], 1),
+    ...upper([4, 6], [5, 7], 2),
+  ]
+}
+
 function buildPiramide(): MahjongSlot[] {
   return [
     ...block(0, 7, 0, 7, 0),
@@ -86,6 +103,7 @@ function measure(id: MahjongLayoutId, slots: MahjongSlot[]): MahjongLayout {
 
 const LAYOUTS: Record<MahjongLayoutId, MahjongLayout> = {
   jardin: measure('jardin', buildJardin()),
+  torre: measure('torre', buildTorre()),
   piramide: measure('piramide', buildPiramide()),
   tortuga: measure('tortuga', buildTortuga()),
 }

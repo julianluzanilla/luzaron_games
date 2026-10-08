@@ -2096,6 +2096,11 @@ button.header-icon:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mahjong-expand.is-nudge {
+    animation: none;
+    box-shadow: inset 0 0 0 var(--rule) var(--color-accent);
+  }
+
   .mahjong-tile,
   .mahjong-tile.is-matched,
   .mahjong-tile::after {
@@ -2145,6 +2150,26 @@ button.header-icon:hover {
 
 .mahjong-expand:hover {
   background: var(--color-surface);
+}
+
+/* Al entrar expandido en teléfono, el botón de salir parpadea tres veces para
+   que se vea por dónde se regresa. Se corta en cuanto el jugador lo toca. */
+.mahjong-expand.is-nudge {
+  animation: mahjong-nudge 0.8s ease-in-out 3;
+}
+
+@keyframes mahjong-nudge {
+  0%,
+  100% {
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: none;
+  }
+  50% {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 32%, transparent);
+  }
 }
 
 .mahjong-board-info,

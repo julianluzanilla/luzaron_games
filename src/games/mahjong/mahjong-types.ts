@@ -63,7 +63,7 @@ export interface MahjongSlot {
   z: number
 }
 
-export type MahjongLayoutId = 'jardin' | 'piramide' | 'tortuga'
+export type MahjongLayoutId = 'jardin' | 'torre' | 'piramide' | 'tortuga'
 
 export interface MahjongLayout {
   id: MahjongLayoutId
@@ -77,17 +77,19 @@ export interface MahjongLayout {
 
 export const LAYOUT_LABELS: Record<MahjongLayoutId, string> = {
   jardin: 'Jardín',
+  torre: 'Torre',
   piramide: 'Pirámide',
   tortuga: 'Tortuga',
 }
 
 export const LAYOUT_HINTS: Record<MahjongLayoutId, string> = {
   jardin: '72 fichas, dos niveles. Para empezar.',
+  torre: '72 fichas, tres niveles. Vertical, pensado para el teléfono.',
   piramide: '120 fichas, cuatro niveles.',
   tortuga: '144 fichas, el tablero clásico.',
 }
 
-export const MAHJONG_LAYOUT_IDS: MahjongLayoutId[] = ['jardin', 'piramide', 'tortuga']
+export const MAHJONG_LAYOUT_IDS: MahjongLayoutId[] = ['jardin', 'torre', 'piramide', 'tortuga']
 
 /** Una ficha ya colocada en el tablero. */
 export interface MahjongTile {
