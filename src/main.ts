@@ -161,3 +161,15 @@ initUserMenu()
 initGameSettings()
 navigate()
 void initSession()
+hideSplash()
+
+/** Quita el splash de index.html; mínimo 300 ms en pantalla para que no parpadee. */
+function hideSplash(): void {
+  const splash = document.getElementById('splash')
+  if (!splash) return
+
+  window.setTimeout(() => {
+    splash.classList.add('is-hidden')
+    window.setTimeout(() => splash.remove(), 250)
+  }, Math.max(0, 300 - performance.now()))
+}

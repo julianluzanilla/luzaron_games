@@ -72,6 +72,8 @@ const SKIP = [
   /^_headers$/,
   /^_redirects$/,
   /^screenshots\//,
+  // iOS pide sus imágenes de inicio por su cuenta; son 92 y ~8 MB.
+  /^splash\//,
   /\.map$/,
 ]
 
