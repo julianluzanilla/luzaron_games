@@ -1,4 +1,5 @@
 import type { StoredQueensPack, StoredQueensPuzzle } from './queens-level'
+import { transformQueensPuzzle } from './queens-symmetry'
 
 export interface PoolSizeEntry {
   size: number
@@ -6,7 +7,6 @@ export interface PoolSizeEntry {
 }
 
 const SEEN_KEY_PREFIX = 'luzaron-queens-seen-v1:'
-const CURSOR_KEY_PREFIX = 'luzaron-queens-cursor-v1:'
 
 let indexPromise: Promise<PoolSizeEntry[]> | null = null
 const packPromises = new Map<number, Promise<StoredQueensPack>>()
@@ -86,41 +86,6 @@ export async function pickNextPuzzle(size: number): Promise<PickedPuzzle> {
 
   const puzzleNumber = pack.puzzles.findIndex((puzzle) => puzzle.id === chosen.id) + 1
 
-  return { puzzle: chosen, puzzleNumber }
-}
-
-function readCursor(size: number): number {
-  const raw = window.localStorage.getItem(CURSOR_KEY_PREFIX + size)
-  const value = raw ? Number(raw) : 0
-
-  return Number.isFinite(value) && value >= 0 ? value : 0
-}
-
-function writeCursor(size: number, index: number): void {
-  try {
-    window.localStorage.setItem(CURSOR_KEY_PREFIX + size, String(index))
-  } catch {
-    // Ignore storage failures (e.g. private browsing).
-  }
-}
-
-/**
- * Steps through the pool in the exact order the puzzles were generated in,
- * wrapping back to the first one after the last. Independent of the "seen"
- * tracking used by the random picker — the two navigation modes don't share
- * state, so switching between them is always predictable.
- */
-export async function pickSequentialPuzzle(size: number): Promise<PickedPuzzle> {
-  const pack = await loadPack(size)
-
-  if (pack.puzzles.length === 0) {
-    throw new Error(`No hay puzzles disponibles para ${size}x${size} todavía.`)
-  }
-
-  const cursor = readCursor(size) % pack.puzzles.length
-  const chosen = pack.puzzles[cursor]
-
-  writeCursor(size, (cursor + 1) % pack.puzzles.length)
-
-  return { puzzle: chosen, puzzleNumber: cursor + 1 }
+  // Random rotation/mirror so a replayed puzzle doesn't look the same.
+  return { puzzle: transformQueensPuzzle(chosen, Math.floor(Math.random() * 8)), puzzleNumber }
 }

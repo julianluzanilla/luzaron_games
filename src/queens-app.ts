@@ -8,7 +8,6 @@ import { createBoardStateFromPuzzle } from './games/queens/queens-level'
 import { getQueensHint, type QueensHint } from './games/queens/queens-hints'
 import {
   pickNextPuzzle,
-  pickSequentialPuzzle,
   loadAvailableSizes,
   type PoolSizeEntry,
 } from './games/queens/queens-pool'
@@ -143,16 +142,13 @@ async function initialize(): Promise<void> {
   }
 }
 
-type PuzzlePickMode = 'random' | 'sequential'
-
-async function startNewPuzzle(size: number, mode: PuzzlePickMode = 'random'): Promise<void> {
+async function startNewPuzzle(size: number): Promise<void> {
   state.isLoading = true
   state.errorMessage = null
   render()
 
   try {
-    const { puzzle, puzzleNumber } =
-      mode === 'sequential' ? await pickSequentialPuzzle(size) : await pickNextPuzzle(size)
+    const { puzzle, puzzleNumber } = await pickNextPuzzle(size)
     const pack = state.availableSizes.find((entry) => entry.size === size)
 
     state.size = size
@@ -435,12 +431,7 @@ function handleClick(event: MouseEvent): void {
   }
 
   if (target.closest('[data-action="next-sequential"]')) {
-    void startNewPuzzle(state.size, 'sequential')
-    return
-  }
-
-  if (target.closest('[data-action="next-random"]')) {
-    void startNewPuzzle(state.size, 'random')
+    void startNewPuzzle(state.size)
     return
   }
 
@@ -581,7 +572,6 @@ function renderMain(): string {
 
       ${buttonRow([
         button({ action: 'next-sequential', label: 'Siguiente', icon: 'play', variant: 'primary' }),
-        button({ action: 'next-random', label: 'Aleatorio', icon: 'shuffle' }),
       ])}
 
       ${
@@ -632,7 +622,6 @@ function renderCompletionModal(justWonWithBest: boolean): string {
     note: justWonWithBest ? `Nuevo mejor tiempo en ${state.size}×${state.size}` : undefined,
     primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
     secondary: [
-      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
       { action: 'close-modal', label: 'Cerrar' },
     ],
   })

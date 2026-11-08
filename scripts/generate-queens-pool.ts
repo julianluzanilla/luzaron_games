@@ -11,7 +11,7 @@
  *   npx tsx scripts/generate-queens-pool.ts --sizes 12 --target 40 --add
  *
  * --target is the desired total puzzle count per size. Existing puzzles in
- * the JSON file are kept (deduplicated by solution) and topped up to reach
+ * the JSON file are kept (deduplicated by region map, up to rotation/mirror) and topped up to reach
  * the target, so it's safe to re-run this later to grow the pool.
  */
 
@@ -19,6 +19,7 @@ import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { generateQueensPuzzle } from '../src/games/queens/queens-generator'
+import { canonicalRegionKey } from '../src/games/queens/queens-symmetry'
 
 interface StoredPuzzle {
   id: string
@@ -52,10 +53,6 @@ function parseArgs(): { sizes: number[]; target: number } {
   }
 
   return { sizes, target }
-}
-
-function solutionKey(solution: number[]): string {
-  return solution.join(',')
 }
 
 function loadExisting(size: number): StoredPack {
@@ -103,7 +100,7 @@ function run(): void {
 
   for (const size of sizes) {
     const pack = loadExisting(size)
-    const seenSolutions = new Set(pack.puzzles.map((puzzle) => solutionKey(puzzle.solution)))
+    const seenKeys = new Set(pack.puzzles.map((puzzle) => canonicalRegionKey(puzzle)))
 
     console.log(`\n[size ${size}x${size}] starting with ${pack.puzzles.length} puzzle(s), target ${target}`)
 
@@ -120,14 +117,14 @@ function run(): void {
         continue
       }
 
-      const key = solutionKey(generated.solution)
+      const key = canonicalRegionKey({ id: '', size, ...generated })
 
-      if (seenSolutions.has(key)) {
+      if (seenKeys.has(key)) {
         attemptsSinceLastSuccess += 1
         continue
       }
 
-      seenSolutions.add(key)
+      seenKeys.add(key)
       attemptsSinceLastSuccess = 0
 
       const puzzle: StoredPuzzle = {
@@ -141,7 +138,7 @@ function run(): void {
       pack.generatedAt = new Date().toISOString()
 
       const filePath = path.join(levelsDir, `queens-${size}x${size}.json`)
-      writeFileSync(filePath, JSON.stringify(pack, null, 2))
+      writeFileSync(filePath, JSON.stringify(pack))
 
       console.log(
         `  + ${puzzle.id} (${pack.puzzles.length}/${target}) in ${elapsedMs}ms`
