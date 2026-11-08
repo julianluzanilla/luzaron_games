@@ -12,7 +12,7 @@
  *   npm run pool:zip
  *   npx tsx scripts/generate-zip-pool.ts --sizes 7 --target 150 --seed 7
  *
- * Los puzzles que ya existen se conservan (deduplicados por números + muros)
+ * Los puzzles que ya existen se conservan (deduplicados por números + muros, contando rotaciones)
  * y solo se rellena lo que falte. Ojo: al reordenar por puntaje cambia el
  * número de puzzle de los que ya había.
  */
@@ -21,6 +21,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { generateZipPuzzle, mulberry32 } from '../src/games/zip/zip-generator'
 import { solveZip } from '../src/games/zip/zip-solver'
+import { transformZipPuzzle } from '../src/games/zip/zip-symmetry'
 import {
   SIZE_RULES,
   ZIP_SIZES,
@@ -58,8 +59,15 @@ function parseArgs(): Args {
   }
 }
 
-function keyOf(puzzle: StoredZipPuzzle): string {
-  return `${puzzle.nums.join(',')}|${puzzle.walls.join(',')}`
+// Same key for a puzzle and its 8 rotations/mirrors (the app shows them rotated at random).
+function keyOf(size: ZipSize, puzzle: StoredZipPuzzle): string {
+  const base = toZipPuzzle(size, puzzle)
+  return [...Array(8).keys()]
+    .map((k) => {
+      const t = transformZipPuzzle(base, k)
+      return `${t.numbers.join(',')}|${[...t.walls].sort((a, b) => a - b).join(',')}`
+    })
+    .sort()[0]
 }
 
 function packFile(size: ZipSize): string {
@@ -114,7 +122,7 @@ function main(): void {
 
   for (const size of args.sizes) {
     const existing = readPack(size)
-    const seen = new Set(existing.map(keyOf))
+    const seen = new Set(existing.map((puzzle) => keyOf(size, puzzle)))
     const missing = Math.max(0, args.target - existing.length)
     const random = mulberry32(args.seed * 31 + size)
     const candidates: StoredZipPuzzle[] = []
@@ -122,7 +130,7 @@ function main(): void {
 
     while (candidates.length < missing * args.oversample) {
       const stored = toStoredZipPuzzle(generateZipPuzzle({ size, random }))
-      const key = keyOf(stored)
+      const key = keyOf(size, stored)
       if (seen.has(key)) continue
       seen.add(key)
       candidates.push(stored)

@@ -130,7 +130,7 @@ function buildPack(variant: SudokuVariant, difficulty: SudokuDifficulty, target:
   }
 
   mkdirSync(levelsDir, { recursive: true })
-  writeFileSync(packPath(variant, difficulty), JSON.stringify(pack, null, 2))
+  writeFileSync(packPath(variant, difficulty), JSON.stringify(pack))
 
   const givensCounts = numbered.map((puzzle) => [...puzzle.givens].filter((char) => char !== '0').length)
   const min = Math.min(...givensCounts)

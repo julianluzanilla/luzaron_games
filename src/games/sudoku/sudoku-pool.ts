@@ -2,10 +2,9 @@
  * Acceso a los packs de Sudoku precargados (public/levels/sudoku/) y
  * generación al vuelo para el modo aleatorio.
  *
- * "Siguiente" recorre el pack en orden y guarda el cursor por
- * variante+dificultad; "Aleatorio" arma un puzzle nuevo en el navegador, así
- * que nunca se acaban. Si un pack no se puede descargar (offline sin caché),
- * el juego cae a la generación local y sigue jugable.
+ * "Siguiente" toma uno al azar que no se haya jugado (por variante+dificultad)
+ * y lo transforma (dígitos, filas, columnas) para que no se vea igual. Si un
+ * pack no se puede descargar (offline sin caché), se genera uno local.
  */
 
 import { generateSudokuPuzzle } from './sudoku-generator'
@@ -18,8 +17,10 @@ import type {
   SudokuVariant,
 } from './sudoku-types'
 import { toSudokuPuzzle } from './sudoku-types'
+import { transformSudokuPuzzle } from './sudoku-symmetry'
+import { pickUnseen } from '../../shell/pick-unseen'
 
-const CURSOR_KEY_PREFIX = 'luzaron-sudoku-cursor-v1:'
+const SEEN_KEY_PREFIX = 'luzaron-sudoku-seen-v1:'
 
 let indexPromise: Promise<SudokuPackEntry[]> | null = null
 const packPromises = new Map<string, Promise<StoredSudokuPack>>()
@@ -59,21 +60,6 @@ function loadPack(variant: SudokuVariant, difficulty: SudokuDifficulty): Promise
   return promise
 }
 
-function readCursor(key: string): number {
-  const raw = window.localStorage.getItem(CURSOR_KEY_PREFIX + key)
-  const value = raw ? Number(raw) : 0
-
-  return Number.isFinite(value) && value >= 0 ? value : 0
-}
-
-function writeCursor(key: string, index: number): void {
-  try {
-    window.localStorage.setItem(CURSOR_KEY_PREFIX + key, String(index))
-  } catch {
-    // Sin almacenamiento: solo se pierde el avance dentro del pack.
-  }
-}
-
 export interface PickedSudoku {
   puzzle: SudokuPuzzle
   /** Posición dentro del pack, o 0 si se generó al vuelo. */
@@ -94,27 +80,21 @@ export function generateFreshSudoku(
   }
 }
 
-/** Siguiente puzzle precargado, en orden y recordando dónde se quedó. */
-export async function pickSequentialSudoku(
+/** Puzzle precargado al azar, sin repetir hasta acabar el pack. */
+export async function pickRandomSudoku(
   variant: SudokuVariant,
-  difficulty: SudokuDifficulty,
-  advance = true
+  difficulty: SudokuDifficulty
 ): Promise<PickedSudoku> {
-  const key = packKey(variant, difficulty)
-
   try {
     const pack = await loadPack(variant, difficulty)
 
     if (pack.puzzles.length === 0) throw new Error('Pack vacío')
 
-    const cursor = readCursor(key) % pack.puzzles.length
-    const stored = pack.puzzles[cursor]
-
-    if (advance) writeCursor(key, (cursor + 1) % pack.puzzles.length)
+    const index = pickUnseen(SEEN_KEY_PREFIX + packKey(variant, difficulty), pack.puzzles, (p) => p.id)
 
     return {
-      puzzle: toSudokuPuzzle(stored),
-      puzzleNumber: cursor + 1,
+      puzzle: transformSudokuPuzzle(toSudokuPuzzle(pack.puzzles[index])),
+      puzzleNumber: index + 1,
       puzzleCount: pack.puzzles.length,
     }
   } catch {

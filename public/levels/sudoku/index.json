@@ -3,32 +3,32 @@
     {
       "variant": "mini",
       "difficulty": "easy",
-      "count": 150
+      "count": 500
     },
     {
       "variant": "mini",
       "difficulty": "normal",
-      "count": 150
+      "count": 500
     },
     {
       "variant": "mini",
       "difficulty": "hard",
-      "count": 150
+      "count": 500
     },
     {
       "variant": "classic",
       "difficulty": "easy",
-      "count": 150
+      "count": 500
     },
     {
       "variant": "classic",
       "difficulty": "normal",
-      "count": 150
+      "count": 500
     },
     {
       "variant": "classic",
       "difficulty": "hard",
-      "count": 150
+      "count": 500
     }
   ]
 }

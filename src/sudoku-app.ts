@@ -23,7 +23,7 @@ import {
 } from './games/sudoku/sudoku-engine'
 import { renderSudokuBoard, renderSudokuPad } from './games/sudoku/sudoku-board-renderer'
 import { findEasiestEmptyCell } from './games/sudoku/sudoku-solver'
-import { generateFreshSudoku, pickSequentialSudoku } from './games/sudoku/sudoku-pool'
+import { pickRandomSudoku } from './games/sudoku/sudoku-pool'
 import {
   DIFFICULTY_LABELS,
   SUDOKU_DIFFICULTIES,
@@ -119,7 +119,7 @@ export function mountSudokuApp(): void {
   document.addEventListener('visibilitychange', handleFocusChange)
 
   render()
-  void loadPuzzle('sequential', false)
+  void loadPuzzle()
 }
 
 export function unmountSudokuApp(): void {
@@ -194,9 +194,7 @@ function maybeSaveBestTime(ms: number): boolean {
 
 // ---------- Carga de puzzles ----------
 
-type LoadMode = 'sequential' | 'fresh'
-
-async function loadPuzzle(mode: LoadMode, advanceCursor = true): Promise<void> {
+async function loadPuzzle(): Promise<void> {
   state.isLoading = true
   state.errorMessage = null
   render()
@@ -206,10 +204,7 @@ async function loadPuzzle(mode: LoadMode, advanceCursor = true): Promise<void> {
   await new Promise((resolve) => window.setTimeout(resolve, 0))
 
   try {
-    const picked =
-      mode === 'fresh'
-        ? generateFreshSudoku(state.variant, state.difficulty)
-        : await pickSequentialSudoku(state.variant, state.difficulty, advanceCursor)
+    const picked = await pickRandomSudoku(state.variant, state.difficulty)
 
     state.board = createSudokuBoardState(picked.puzzle, picked.puzzleNumber)
     state.puzzleNumber = picked.puzzleNumber
@@ -430,7 +425,7 @@ function handleClick(event: MouseEvent): void {
     if (variant !== state.variant) {
       state.variant = variant
       writeSettings()
-      void loadPuzzle('sequential', false)
+      void loadPuzzle()
     }
     return
   }
@@ -442,7 +437,7 @@ function handleClick(event: MouseEvent): void {
     if (difficulty !== state.difficulty) {
       state.difficulty = difficulty
       writeSettings()
-      void loadPuzzle('sequential', false)
+      void loadPuzzle()
     }
     return
   }
@@ -488,12 +483,7 @@ function handleClick(event: MouseEvent): void {
   }
 
   if (target.closest('[data-action="next-sequential"]')) {
-    void loadPuzzle('sequential')
-    return
-  }
-
-  if (target.closest('[data-action="next-random"]')) {
-    void loadPuzzle('fresh')
+    void loadPuzzle()
     return
   }
 
@@ -605,7 +595,6 @@ function renderMain(): string {
 
       ${buttonRow([
         button({ action: 'next-sequential', label: 'Siguiente', icon: 'play', variant: 'primary' }),
-        button({ action: 'next-random', label: 'Aleatorio', icon: 'shuffle' }),
       ])}
 
       ${buttonRow([
@@ -654,7 +643,6 @@ function renderCompletionModal(justWonWithBest: boolean): string {
     note: justWonWithBest ? 'Nuevo mejor tiempo' : undefined,
     primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
     secondary: [
-      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
       { action: 'close-modal', label: 'Cerrar' },
     ],
   })

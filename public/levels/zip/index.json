@@ -2,15 +2,15 @@
   "packs": [
     {
       "size": 5,
-      "count": 150
+      "count": 500
     },
     {
       "size": 6,
-      "count": 150
+      "count": 500
     },
     {
       "size": 7,
-      "count": 150
+      "count": 500
     }
   ]
 }

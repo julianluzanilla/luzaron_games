@@ -1,5 +1,6 @@
 import type { StoredQueensPack, StoredQueensPuzzle } from './queens-level'
 import { transformQueensPuzzle } from './queens-symmetry'
+import { pickUnseen } from '../../shell/pick-unseen'
 
 export interface PoolSizeEntry {
   size: number
@@ -40,24 +41,6 @@ function loadPack(size: number): Promise<StoredQueensPack> {
   return promise
 }
 
-function readSeenIds(size: number): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(SEEN_KEY_PREFIX + size)
-    if (!raw) return new Set()
-    return new Set(JSON.parse(raw) as string[])
-  } catch {
-    return new Set()
-  }
-}
-
-function writeSeenIds(size: number, seen: Set<string>): void {
-  try {
-    window.localStorage.setItem(SEEN_KEY_PREFIX + size, JSON.stringify([...seen]))
-  } catch {
-    // Ignore storage failures (e.g. private browsing) — repeats are a minor inconvenience.
-  }
-}
-
 export interface PickedPuzzle {
   puzzle: StoredQueensPuzzle
   puzzleNumber: number
@@ -70,21 +53,10 @@ export async function pickNextPuzzle(size: number): Promise<PickedPuzzle> {
     throw new Error(`No hay puzzles disponibles para ${size}x${size} todavía.`)
   }
 
-  let seen = readSeenIds(size)
-  let unseen = pack.puzzles.filter((puzzle) => !seen.has(puzzle.id))
+  const index = pickUnseen(SEEN_KEY_PREFIX + size, pack.puzzles, (puzzle) => puzzle.id)
+  const chosen = pack.puzzles[index]
 
-  if (unseen.length === 0) {
-    // Played through the whole pool for this size — start a fresh lap.
-    seen = new Set()
-    unseen = pack.puzzles
-  }
-
-  const chosen = unseen[Math.floor(Math.random() * unseen.length)]
-
-  seen.add(chosen.id)
-  writeSeenIds(size, seen)
-
-  const puzzleNumber = pack.puzzles.findIndex((puzzle) => puzzle.id === chosen.id) + 1
+  const puzzleNumber = index + 1
 
   // Random rotation/mirror so a replayed puzzle doesn't look the same.
   return { puzzle: transformQueensPuzzle(chosen, Math.floor(Math.random() * 8)), puzzleNumber }

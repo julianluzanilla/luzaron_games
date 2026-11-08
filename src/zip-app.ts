@@ -32,7 +32,7 @@ import {
   zipBallState,
   type ZipBoardView,
 } from './games/zip/zip-board-renderer'
-import { generateFreshZip, markZipSolved, pickSequentialZip } from './games/zip/zip-pool'
+import { pickRandomZip } from './games/zip/zip-pool'
 import {
   SIZE_LABELS,
   ZIP_SIZES,
@@ -140,7 +140,7 @@ export function mountZipApp(): void {
   document.addEventListener('visibilitychange', handleFocusChange)
 
   render()
-  void loadPuzzle('sequential', false)
+  void loadPuzzle()
 }
 
 export function unmountZipApp(): void {
@@ -206,9 +206,7 @@ function packId(): string {
 
 // ---------- Carga ----------
 
-type LoadMode = 'sequential' | 'next' | 'fresh'
-
-async function loadPuzzle(mode: LoadMode, advance = true): Promise<void> {
+async function loadPuzzle(): Promise<void> {
   const token = ++loadToken
   state.isLoading = true
   state.errorMessage = null
@@ -218,10 +216,7 @@ async function loadPuzzle(mode: LoadMode, advance = true): Promise<void> {
   await new Promise((resolve) => window.setTimeout(resolve, 0))
 
   try {
-    const picked =
-      mode === 'fresh'
-        ? generateFreshZip(state.size)
-        : await pickSequentialZip(state.size, mode === 'next' && advance)
+    const picked = await pickRandomZip(state.size)
 
     if (token !== loadToken) return
 
@@ -420,7 +415,6 @@ function completePuzzle(): void {
       hintsUsed: state.hintsUsed,
     }).isNewBest
 
-  markZipSolved(state.size, state.puzzleNumber, state.puzzleCount)
   render()
 
   // Primero se ve el trazo pasar al degradado de celebración, luego el modal.
@@ -629,7 +623,7 @@ function handleClick(event: MouseEvent): void {
     if (size !== state.size) {
       state.size = size
       writeSettings()
-      void loadPuzzle('sequential', false)
+      void loadPuzzle()
     }
     return
   }
@@ -657,13 +651,7 @@ function handleClick(event: MouseEvent): void {
   }
 
   if (target.closest('[data-action="next-sequential"]')) {
-    // Al resolver, el cursor ya pasó al siguiente; si se salta sin resolver, se avanza aquí.
-    void loadPuzzle('next', !state.solved && state.puzzleNumber > 0)
-    return
-  }
-
-  if (target.closest('[data-action="next-random"]')) {
-    void loadPuzzle('fresh')
+    void loadPuzzle()
     return
   }
 
@@ -918,7 +906,6 @@ function renderCompletionModal(): string {
     note: state.newBest ? `Nuevo mejor tiempo en ${SIZE_LABELS[state.size]}` : undefined,
     primary: { action: 'next-sequential', label: 'Siguiente', icon: 'play' },
     secondary: [
-      { action: 'next-random', label: 'Aleatorio', icon: 'shuffle' },
       { action: 'close-modal', label: 'Cerrar' },
     ],
   })
