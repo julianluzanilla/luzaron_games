@@ -116,6 +116,38 @@ function emptyBoard(layoutId: MahjongLayoutId): MahjongBoardState {
 }
 
 /**
+ * Dos huecos libres lo más separados posible (de unos cuantos al azar), para
+ * que las fichas de una pareja no queden una junto a la otra ni las dos
+ * visibles desde el inicio.
+ */
+function pickApart(
+  open: MahjongTile[],
+  random: RandomSource,
+  startFree: Set<number>
+): [MahjongTile, MahjongTile] {
+  const first = open[Math.floor(random() * open.length)]
+  let best = first === open[0] ? open[1] : open[0]
+  let bestDistance = -1
+
+  for (let i = 0; i < 6; i += 1) {
+    const other = open[Math.floor(random() * open.length)]
+    if (other === first) continue
+    const distance =
+      Math.abs(other.slot.x - first.slot.x) +
+      Math.abs(other.slot.y - first.slot.y) +
+      4 * Math.abs(other.slot.z - first.slot.z) -
+      // Que no queden las dos a la vista desde el inicio.
+      (startFree.has(first.index) && startFree.has(other.index) ? 100 : 0)
+    if (distance > bestDistance) {
+      best = other
+      bestDistance = distance
+    }
+  }
+
+  return [first, best]
+}
+
+/**
  * Reparte en el orden inverso al de una solución. Devuelve null si el layout
  * se traba durante el intento, para que quien llama reintente.
  */
@@ -131,14 +163,38 @@ function attemptDeal(layoutId: MahjongLayoutId, random: RandomSource): MahjongBo
 
   const pending = board.tiles.map((tile) => tile.index)
   const assigned = new Set<number>()
+  // El pool trae las parejas de un mismo dibujo seguidas; si se reparten así,
+  // las cuatro copias terminan juntas y a la vista. Se mezcla el orden.
+  const pairs = shuffle(pool.slice(0, needed), random)
+  // Las fichas libres al empezar dependen solo del layout. Si dos de ellas
+  // comparten dibujo la pareja queda servida, así que a esos huecos se les da
+  // el dibujo que menos se repite ahí.
+  const startFree = new Set(freeTiles(board).map((tile) => tile.index))
+  const shownAtStart = new Map<string, number>()
 
   for (let step = 0; step < needed; step += 1) {
     const open = freeTiles(board).filter((tile) => !assigned.has(tile.index))
 
     if (open.length < 2) return null
 
-    const picked = shuffle(open, random).slice(0, 2)
-    const [left, right] = pool[step]
+    const picked = pickApart(open, random, startFree)
+    const visible = picked.filter((tile) => startFree.has(tile.index)).length
+    let choice = 0
+
+    if (visible > 0) {
+      let fewest = Infinity
+      for (let i = 0; i < pairs.length; i += 1) {
+        const shown = shownAtStart.get(pairs[i][0].matchKey) ?? 0
+        if (shown < fewest) {
+          fewest = shown
+          choice = i
+        }
+      }
+      const key = pairs[choice][0].matchKey
+      shownAtStart.set(key, (shownAtStart.get(key) ?? 0) + visible)
+    }
+
+    const [left, right] = pairs.splice(choice, 1)[0]
 
     board.tiles[picked[0].index].face = left
     board.tiles[picked[1].index].face = right
