@@ -78,6 +78,8 @@ interface AppState {
   pausedByBlur: boolean
   isCompleted: boolean
   isStuck: boolean
+  /** Ningún acomodo de las fichas que quedan tiene solución: barajar ya no sirve. */
+  cannotShuffle: boolean
   isLoading: boolean
   errorMessage: string | null
   pendingReset: boolean
@@ -105,6 +107,7 @@ const state: AppState = {
   pausedByBlur: false,
   isCompleted: false,
   isStuck: false,
+  cannotShuffle: false,
   isLoading: true,
   errorMessage: null,
   pendingReset: false,
@@ -357,6 +360,7 @@ async function startNewGame(): Promise<void> {
   state.undosUsed = 0
   state.isCompleted = false
   state.isStuck = false
+  state.cannotShuffle = false
   state.isLoading = false
 
   resetTimer()
@@ -514,6 +518,7 @@ function undoMove(): void {
   state.hinted = new Set()
   state.matched = new Set()
   state.isStuck = false
+  state.cannotShuffle = false
 
   if (state.timerStarted && !state.timerRunning && !state.pausedByBlur) startTimer()
 
@@ -525,14 +530,26 @@ function shuffleBoard(): void {
 
   if (!board || state.isCompleted) return
 
+  if (state.cannotShuffle) return
+
   const ok = reshuffleRemaining(board)
 
-  state.lastHint = null
-  state.shufflesUsed += 1
   state.selected = null
   state.hinted = new Set()
   state.matched = new Set()
-  state.isStuck = !ok && findAvailablePair(board) === null
+
+  if (!ok) {
+    // El tablero quedó igual; avisar que ya no hay forma de ganar sin deshacer.
+    state.cannotShuffle = true
+    state.isStuck = true
+    pauseTimer()
+    render()
+    return
+  }
+
+  state.lastHint = null
+  state.shufflesUsed += 1
+  state.isStuck = findAvailablePair(board) === null
 
   if (!state.isStuck && state.timerStarted && !state.timerRunning && !state.pausedByBlur)
     startTimer()
@@ -790,7 +807,7 @@ function renderMain(): string {
           icon: 'undo-2',
           disabled: board.history.length === 0,
         }),
-        button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle' }),
+        button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', disabled: state.cannotShuffle }),
         button({ action: 'hint', label: 'Pista', icon: 'lightbulb' }),
       ])}
 
@@ -816,7 +833,7 @@ function renderBoardBar(left: number, pairs: number, canUndo: boolean): string {
       <div class="mahjong-board-tools">
         ${button({ action: 'hint', label: 'Pista', icon: 'lightbulb', className: 'mahjong-tool' })}
         ${button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2', disabled: !canUndo, className: 'mahjong-tool' })}
-        ${button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', className: 'mahjong-tool' })}
+        ${button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', disabled: state.cannotShuffle, className: 'mahjong-tool' })}
         ${button({
           action: 'mahjong-free',
           label: 'Libres',
@@ -863,6 +880,24 @@ function renderResetConfirm(): string {
 }
 
 function renderStuckModal(): string {
+  if (state.cannotShuffle) {
+    return `
+    <div class="modal-overlay" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-heading">
+          <p class="eyebrow">Sin salida</p>
+          <h2>Ya no se puede terminar</h2>
+        </div>
+        <p class="modal-body">Las fichas que quedan están apiladas de forma que ningún acomodo tiene solución, así que barajar no ayuda. Deshaz algunas jugadas para buscar otro camino o empieza de nuevo.</p>
+        <div class="modal-actions">
+          ${button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2', variant: 'primary', trailingArrow: true, className: 'control-button-hero' })}
+          ${button({ action: 'confirm-reset', label: 'Nueva partida', icon: 'rotate-ccw' })}
+        </div>
+      </div>
+    </div>
+  `
+  }
+
   return `
     <div class="modal-overlay" role="dialog" aria-modal="true">
       <div class="modal-card">

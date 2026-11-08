@@ -252,7 +252,9 @@ export function dealMahjongBoard(layoutId: MahjongLayoutId, seed?: number): Deal
 
 /**
  * Vuelve a repartir solo las fichas que siguen en el tablero, conservando el
- * historial. Se usa cuando el jugador se traba y pide barajar.
+ * historial, de modo que el resto tenga solución. Se usa cuando el jugador se
+ * traba y pide barajar. Devuelve false (y deja el tablero igual) si ningún
+ * acomodo tiene solución, p. ej. cuando quedan dos fichas una sobre otra.
  */
 export function reshuffleRemaining(board: MahjongBoardState, seed?: number): boolean {
   const random = mulberry32(seed ?? Math.floor(Math.random() * 0xffffffff))
@@ -267,6 +269,7 @@ export function reshuffleRemaining(board: MahjongBoardState, seed?: number): boo
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     const available = new Map(counts)
     const snapshot = alive.map((tile) => tile.removed)
+    const faces = alive.map((tile) => tile.face)
     const assigned = new Set<number>()
     let ok = true
 
@@ -302,8 +305,10 @@ export function reshuffleRemaining(board: MahjongBoardState, seed?: number): boo
 
     if (ok) return true
 
+    // Un intento fallido ya cambió dibujos: se devuelven para no dejar fichas sin pareja.
     alive.forEach((tile, index) => {
       tile.removed = snapshot[index]
+      tile.face = faces[index]
     })
   }
 
