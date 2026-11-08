@@ -25,11 +25,14 @@ import { dealMahjongBoard, reshuffleRemaining } from './games/mahjong/mahjong-ge
 import { measureBoard, renderMahjongBoard } from './games/mahjong/mahjong-board-renderer'
 import { loadMahjongSprite } from './games/mahjong/mahjong-sprite'
 import {
+  DIFFICULTY_LABELS,
   LAYOUT_HINTS,
   LAYOUT_LABELS,
+  MAHJONG_DIFFICULTIES,
   MAHJONG_LAYOUT_IDS,
   remainingTiles,
   type MahjongBoardState,
+  type MahjongDifficulty,
   type MahjongLayoutId,
 } from './games/mahjong/mahjong-types'
 import { renderGameHeader } from './shell/app-header'
@@ -48,6 +51,9 @@ import {
 } from './shell/ui'
 
 const SETTINGS_KEY = 'luzaron-mahjong-settings-v1'
+const STATS_KEY = 'luzaron-mahjong-stats-v1'
+/** Los repartos se numeran del 1 al 999 999 999; el número es la semilla. */
+const MAX_SEED = 999_999_999
 const MATCH_MS = 240
 const INVALID_MS = 320
 /** Mismo corte que el @media de style.css: debajo de esto es teléfono. */
@@ -57,6 +63,11 @@ const NUDGE_MS = 2600
 
 interface AppState {
   layoutId: MahjongLayoutId
+  difficulty: MahjongDifficulty
+  /** Número de reparto: con el mismo tablero y dificultad repite la partida. */
+  seed: number
+  /** La partida ya sumó a "jugadas" (al quitar la primera pareja). */
+  countedPlay: boolean
   board: MahjongBoardState | null
   selected: number | null
   hovered: number | null
@@ -82,11 +93,15 @@ interface AppState {
   cannotShuffle: boolean
   isLoading: boolean
   errorMessage: string | null
-  pendingReset: boolean
+  /** Confirmación abierta: partida nueva o repetir la misma. */
+  pendingReset: 'new' | 'repeat' | null
 }
 
 const state: AppState = {
   layoutId: 'tortuga',
+  difficulty: 'normal',
+  seed: 0,
+  countedPlay: false,
   board: null,
   selected: null,
   hovered: null,
@@ -110,7 +125,7 @@ const state: AppState = {
   cannotShuffle: false,
   isLoading: true,
   errorMessage: null,
-  pendingReset: false,
+  pendingReset: null,
 }
 
 let root: HTMLDivElement | null = null
@@ -222,12 +237,16 @@ function readSettings(): void {
     const raw = window.localStorage.getItem(SETTINGS_KEY)
     if (!raw) return
 
-    const parsed = JSON.parse(raw) as Partial<Pick<AppState, 'layoutId' | 'highlightFree'>>
+    const parsed = JSON.parse(raw) as Partial<
+      Pick<AppState, 'layoutId' | 'difficulty' | 'highlightFree'>
+    >
 
     if (parsed.layoutId && MAHJONG_LAYOUT_IDS.includes(parsed.layoutId)) {
       state.layoutId = parsed.layoutId
       layoutWasStored = true
     }
+    if (parsed.difficulty && MAHJONG_DIFFICULTIES.includes(parsed.difficulty))
+      state.difficulty = parsed.difficulty
     if (typeof parsed.highlightFree === 'boolean') state.highlightFree = parsed.highlightFree
   } catch {
     // Sin almacenamiento: se juega con las preferencias por defecto.
@@ -238,7 +257,11 @@ function writeSettings(): void {
   try {
     window.localStorage.setItem(
       SETTINGS_KEY,
-      JSON.stringify({ layoutId: state.layoutId, highlightFree: state.highlightFree })
+      JSON.stringify({
+        layoutId: state.layoutId,
+        difficulty: state.difficulty,
+        highlightFree: state.highlightFree,
+      })
     )
   } catch {
     // Sin almacenamiento: no se recuerdan las preferencias.
@@ -251,7 +274,10 @@ function writeSettings(): void {
  * sin deshacer; por eso las tres ayudas suman a `hintsUsed` al reportarla.
  */
 function packId(): string {
-  return `mahjong-${state.layoutId}`
+  // Normal conserva el id de antes de que hubiera dificultades, para no perder récords.
+  return state.difficulty === 'normal'
+    ? `mahjong-${state.layoutId}`
+    : `mahjong-${state.layoutId}-${state.difficulty}`
 }
 
 function readBestTime(): number | null {
@@ -266,6 +292,45 @@ function maybeSaveBestTime(ms: number): boolean {
     rawTimeMs: ms,
     hintsUsed: state.hintsUsed + state.shufflesUsed + state.undosUsed,
   }).isNewBest
+}
+
+// ---------- Estadísticas ----------
+
+/** Por tablero y dificultad. `wonMs` suma los tiempos de las ganadas, para el promedio. */
+interface LayoutStats {
+  played: number
+  won: number
+  wonMs: number
+}
+
+function statsKey(): string {
+  return `${state.layoutId}:${state.difficulty}`
+}
+
+function readAllStats(): Record<string, LayoutStats> {
+  try {
+    return JSON.parse(window.localStorage.getItem(STATS_KEY) ?? '{}') as Record<string, LayoutStats>
+  } catch {
+    return {}
+  }
+}
+
+function readStats(): LayoutStats {
+  return readAllStats()[statsKey()] ?? { played: 0, won: 0, wonMs: 0 }
+}
+
+function bumpStats(change: (stats: LayoutStats) => void): void {
+  const all = readAllStats()
+  const stats = all[statsKey()] ?? { played: 0, won: 0, wonMs: 0 }
+
+  change(stats)
+  all[statsKey()] = stats
+
+  try {
+    window.localStorage.setItem(STATS_KEY, JSON.stringify(all))
+  } catch {
+    // Sin almacenamiento: las estadísticas no se guardan.
+  }
 }
 
 // ---------- Timer ----------
@@ -331,7 +396,8 @@ function formatTime(ms: number): string {
 
 // ---------- Partida ----------
 
-async function startNewGame(): Promise<void> {
+/** `seed` repite un reparto; sin él se sortea uno nuevo. */
+async function startNewGame(seed?: number): Promise<void> {
   state.isLoading = true
   state.errorMessage = null
   clearPendingTimeouts()
@@ -346,9 +412,12 @@ async function startNewGame(): Promise<void> {
     return
   }
 
-  const { board } = dealMahjongBoard(state.layoutId)
+  state.seed = seed ?? 1 + Math.floor(Math.random() * MAX_SEED)
+
+  const { board } = dealMahjongBoard(state.layoutId, state.seed, state.difficulty)
 
   state.board = board
+  state.countedPlay = false
   state.selected = null
   state.hovered = null
   state.hinted = new Set()
@@ -413,6 +482,13 @@ function playPair(first: number, second: number): void {
 
   if (!state.timerStarted) startTimer()
 
+  if (!state.countedPlay) {
+    state.countedPlay = true
+    bumpStats((stats) => {
+      stats.played += 1
+    })
+  }
+
   removePair(board, first, second)
 
   state.selected = null
@@ -461,6 +537,11 @@ function completeGame(): void {
   pauseTimer()
 
   const isNewBest = maybeSaveBestTime(state.elapsedMs)
+
+  bumpStats((stats) => {
+    stats.won += 1
+    stats.wonMs += state.elapsedMs
+  })
 
   render(isNewBest)
 }
@@ -532,7 +613,7 @@ function shuffleBoard(): void {
 
   if (state.cannotShuffle) return
 
-  const ok = reshuffleRemaining(board)
+  const ok = reshuffleRemaining(board, undefined, state.difficulty)
 
   state.selected = null
   state.hinted = new Set()
@@ -575,6 +656,18 @@ function handleClick(event: MouseEvent): void {
     return
   }
 
+  const difficultyButton = target.closest<HTMLButtonElement>('[data-action="mahjong-difficulty"]')
+  if (difficultyButton) {
+    const difficulty = difficultyButton.dataset.difficulty as MahjongDifficulty
+
+    if (difficulty !== state.difficulty) {
+      state.difficulty = difficulty
+      writeSettings()
+      void startNewGame()
+    }
+    return
+  }
+
   const tileButton = target.closest<HTMLButtonElement>('[data-action="mahjong-tile"]')
   if (tileButton) {
     selectTile(Number(tileButton.dataset.index))
@@ -609,20 +702,32 @@ function handleClick(event: MouseEvent): void {
   }
 
   if (target.closest('[data-action="request-reset"]')) {
-    state.pendingReset = true
+    state.pendingReset = 'new'
+    render()
+    return
+  }
+
+  if (target.closest('[data-action="request-repeat"]')) {
+    state.pendingReset = 'repeat'
     render()
     return
   }
 
   if (target.closest('[data-action="cancel-reset"]')) {
-    state.pendingReset = false
+    state.pendingReset = null
     render()
     return
   }
 
   if (target.closest('[data-action="confirm-reset"]')) {
-    state.pendingReset = false
+    state.pendingReset = null
     void startNewGame()
+    return
+  }
+
+  if (target.closest('[data-action="confirm-repeat"]')) {
+    state.pendingReset = null
+    void startNewGame(state.seed)
     return
   }
 
@@ -770,14 +875,27 @@ function renderMain(): string {
     }))
   )
 
+  const difficultyChips = segmented(
+    'Dificultad',
+    'mahjong-difficulty',
+    MAHJONG_DIFFICULTIES.map((difficulty) => ({
+      label: DIFFICULTY_LABELS[difficulty],
+      active: difficulty === state.difficulty,
+      attrs: `data-difficulty="${difficulty}"`,
+    }))
+  )
+
   return `
     <div class="game-area">
       ${gameStatus(timer(state.elapsedMs), [
         `<span>${left} fichas · ${pairs} ${pairs === 1 ? 'pareja' : 'parejas'}</span>`,
+        `<span>Reparto nº ${state.seed.toLocaleString('es-MX')}</span>`,
         renderBestTime(),
+        renderStats(),
       ])}
 
       ${layoutChips}
+      ${difficultyChips}
 
       <div class="board-frame mahjong-frame ${state.expanded ? 'is-expanded' : ''}">
         ${renderBoardBar(left, pairs, board.history.length > 0)}
@@ -807,11 +925,19 @@ function renderMain(): string {
           icon: 'undo-2',
           disabled: board.history.length === 0,
         }),
-        button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', disabled: state.cannotShuffle }),
+        button({
+          action: 'mahjong-shuffle',
+          label: 'Barajar',
+          icon: 'shuffle',
+          disabled: state.cannotShuffle,
+        }),
         button({ action: 'hint', label: 'Pista', icon: 'lightbulb' }),
       ])}
 
-      ${button({ action: 'request-reset', label: 'Nueva partida', icon: 'rotate-ccw' })}
+      ${buttonRow([
+        button({ action: 'request-reset', label: 'Nueva partida', icon: 'rotate-ccw' }),
+        button({ action: 'request-repeat', label: 'Repetir partida', icon: 'repeat' }),
+      ])}
     </div>
   `
 }
@@ -868,7 +994,30 @@ function renderBestTime(): string {
   return `<span class="best-time">Mejor: ${formatTime(best)}</span>`
 }
 
+/** Jugadas, ganadas y tiempo promedio de las ganadas, en este tablero y dificultad. */
+function renderStats(): string {
+  const stats = readStats()
+
+  if (stats.played === 0) return ''
+
+  const percent = Math.round((stats.won / stats.played) * 100)
+  const average = stats.won > 0 ? ` · prom. ${formatTime(stats.wonMs / stats.won)}` : ''
+
+  return `<span>Ganadas ${stats.won} de ${stats.played} (${percent}%)${average}</span>`
+}
+
 function renderResetConfirm(): string {
+  if (state.pendingReset === 'repeat') {
+    return confirmDialog({
+      title: '¿Repetir esta partida?',
+      body: `Vuelves a empezar el reparto nº ${state.seed.toLocaleString('es-MX')} con las mismas fichas, y el tiempo vuelve a cero.`,
+      actions: [
+        { action: 'confirm-repeat', label: 'Sí, repetir', icon: 'repeat', variant: 'primary' },
+        { action: 'cancel-reset', label: 'Cancelar' },
+      ],
+    })
+  }
+
   return confirmDialog({
     title: '¿Empezar una partida nueva?',
     body: 'Se reparten las fichas otra vez y el tiempo vuelve a cero.',
@@ -891,7 +1040,10 @@ function renderStuckModal(): string {
         <p class="modal-body">Las fichas que quedan están apiladas de forma que ningún acomodo tiene solución, así que barajar no ayuda. Deshaz algunas jugadas para buscar otro camino o empieza de nuevo.</p>
         <div class="modal-actions">
           ${button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2', variant: 'primary', trailingArrow: true, className: 'control-button-hero' })}
-          ${button({ action: 'confirm-reset', label: 'Nueva partida', icon: 'rotate-ccw' })}
+          ${buttonRow([
+            button({ action: 'confirm-repeat', label: 'Repetir partida', icon: 'repeat' }),
+            button({ action: 'confirm-reset', label: 'Nueva partida', icon: 'rotate-ccw' }),
+          ])}
         </div>
       </div>
     </div>
@@ -910,7 +1062,8 @@ function renderStuckModal(): string {
           ${button({ action: 'mahjong-shuffle', label: 'Barajar', icon: 'shuffle', variant: 'primary', trailingArrow: true, className: 'control-button-hero' })}
           ${buttonRow([
             button({ action: 'mahjong-undo', label: 'Deshacer', icon: 'undo-2' }),
-            button({ action: 'confirm-reset', label: 'Nueva partida', icon: 'rotate-ccw' }),
+            button({ action: 'confirm-repeat', label: 'Repetir', icon: 'repeat' }),
+            button({ action: 'confirm-reset', label: 'Nueva', icon: 'rotate-ccw' }),
           ])}
         </div>
       </div>
@@ -919,17 +1072,23 @@ function renderStuckModal(): string {
 }
 
 function renderCompletionModal(justWonWithBest: boolean): string {
+  const stats = readStats()
+
   return celebration({
     eyebrow: '¡Tablero limpio!',
-    title: LAYOUT_LABELS[state.layoutId],
+    title: `${LAYOUT_LABELS[state.layoutId]} · ${DIFFICULTY_LABELS[state.difficulty]}`,
     stats: [
       { label: 'Tiempo', value: formatTime(state.elapsedMs), trophy: justWonWithBest },
       { label: 'Pistas', value: String(state.hintsUsed) },
       { label: 'Barajadas', value: String(state.shufflesUsed) },
+      { label: 'Ganadas', value: `${stats.won}/${stats.played}` },
     ],
     note: justWonWithBest ? `Nuevo mejor tiempo en ${LAYOUT_LABELS[state.layoutId]}` : undefined,
     primary: { action: 'confirm-reset', label: 'Otra partida', icon: 'shuffle' },
-    secondary: [{ action: 'close-modal', label: 'Cerrar' }],
+    secondary: [
+      { action: 'confirm-repeat', label: 'Repetir partida', icon: 'repeat' },
+      { action: 'close-modal', label: 'Cerrar' },
+    ],
   })
 }
 

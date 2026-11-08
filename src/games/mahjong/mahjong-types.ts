@@ -112,3 +112,18 @@ export interface MahjongBoardState {
 export function remainingTiles(board: MahjongBoardState): number {
   return board.tiles.reduce((total, tile) => total + (tile.removed ? 0 : 1), 0)
 }
+
+/**
+ * Fácil reparte al azar (muchas parejas a la vista). Normal separa las parejas
+ * y esconde las que se verían al empezar. Difícil hace lo mismo y además, de
+ * varios repartos, se queda con el que más trampas tiene.
+ */
+export type MahjongDifficulty = 'facil' | 'normal' | 'dificil'
+
+export const MAHJONG_DIFFICULTIES: MahjongDifficulty[] = ['facil', 'normal', 'dificil']
+
+export const DIFFICULTY_LABELS: Record<MahjongDifficulty, string> = {
+  facil: 'Fácil',
+  normal: 'Normal',
+  dificil: 'Difícil',
+}

@@ -12,12 +12,13 @@
  * siendo jugable aunque ya no traiga la garantía.
  */
 
-import { freeTiles } from './mahjong-engine'
+import { freeTiles, listAvailablePairs } from './mahjong-engine'
 import { getMahjongLayout } from './mahjong-layouts'
 import {
   FACES_BY_ID,
   MAHJONG_FACES,
   type MahjongBoardState,
+  type MahjongDifficulty,
   type MahjongFace,
   type MahjongLayoutId,
   type MahjongTile,
@@ -148,36 +149,43 @@ function pickApart(
 }
 
 /**
- * Reparte en el orden inverso al de una solución. Devuelve null si el layout
- * se traba durante el intento, para que quien llama reintente.
+ * Coloca `pairsIn` sobre las fichas no quitadas del tablero, en el orden
+ * inverso al de una solución: en cada paso dos huecos libres reciben una
+ * pareja y se "quitan", lo que libera a los de abajo. Al terminar las deja
+ * otra vez en el tablero. Devuelve false si el layout se trabó (los dibujos
+ * quedan a medias: quien llama reintenta o los restaura).
  */
-function attemptDeal(layoutId: MahjongLayoutId, random: RandomSource): MahjongBoardState | null {
-  const board = emptyBoard(layoutId)
-  const pool = buildPairPool(random)
-  const needed = board.tiles.length / 2
-
-  if (pool.length < needed) return null
-
-  // Se marca todo como quitado y se va "devolviendo" en parejas libres.
-  for (const tile of board.tiles) tile.removed = false
-
-  const pending = board.tiles.map((tile) => tile.index)
-  const assigned = new Set<number>()
+function placePairs(
+  board: MahjongBoardState,
+  pairsIn: Array<[MahjongFace, MahjongFace]>,
+  random: RandomSource,
+  difficulty: MahjongDifficulty
+): boolean {
+  const targets = board.tiles.filter((tile) => !tile.removed)
   // El pool trae las parejas de un mismo dibujo seguidas; si se reparten así,
   // las cuatro copias terminan juntas y a la vista. Se mezcla el orden.
-  const pairs = shuffle(pool.slice(0, needed), random)
-  // Las fichas libres al empezar dependen solo del layout. Si dos de ellas
-  // comparten dibujo la pareja queda servida, así que a esos huecos se les da
-  // el dibujo que menos se repite ahí.
-  const startFree = new Set(freeTiles(board).map((tile) => tile.index))
+  const pairs = shuffle(pairsIn, random)
+  // Las fichas libres al empezar ya se conocen. Si dos de ellas comparten
+  // dibujo la pareja queda servida, así que a esos huecos se les da el dibujo
+  // que menos se repite ahí. En Fácil no se esconde nada.
+  const startFree = new Set(
+    difficulty === 'facil' ? [] : freeTiles(board).map((tile) => tile.index)
+  )
   const shownAtStart = new Map<string, number>()
+  let ok = true
 
-  for (let step = 0; step < needed; step += 1) {
-    const open = freeTiles(board).filter((tile) => !assigned.has(tile.index))
+  for (let step = 0; step < targets.length / 2; step += 1) {
+    const open = freeTiles(board)
 
-    if (open.length < 2) return null
+    if (open.length < 2) {
+      ok = false
+      break
+    }
 
-    const picked = pickApart(open, random, startFree)
+    const picked: MahjongTile[] =
+      difficulty === 'facil'
+        ? shuffle(open, random).slice(0, 2)
+        : pickApart(open, random, startFree)
     const visible = picked.filter((tile) => startFree.has(tile.index)).length
     let choice = 0
 
@@ -196,24 +204,30 @@ function attemptDeal(layoutId: MahjongLayoutId, random: RandomSource): MahjongBo
 
     const [left, right] = pairs.splice(choice, 1)[0]
 
-    board.tiles[picked[0].index].face = left
-    board.tiles[picked[1].index].face = right
-
+    picked[0].face = left
+    picked[1].face = right
     // Quitarlas del tablero deja libres a las de abajo, igual que al jugar.
-    board.tiles[picked[0].index].removed = true
-    board.tiles[picked[1].index].removed = true
-
-    assigned.add(picked[0].index)
-    assigned.add(picked[1].index)
+    picked[0].removed = true
+    picked[1].removed = true
   }
 
-  if (assigned.size !== pending.length) return null
+  for (const tile of targets) tile.removed = false
 
-  for (const tile of board.tiles) tile.removed = false
+  return ok
+}
 
-  board.history = []
+function attemptDeal(
+  layoutId: MahjongLayoutId,
+  random: RandomSource,
+  difficulty: MahjongDifficulty
+): MahjongBoardState | null {
+  const board = emptyBoard(layoutId)
+  const pool = buildPairPool(random)
+  const needed = board.tiles.length / 2
 
-  return board
+  if (pool.length < needed) return null
+
+  return placePairs(board, pool.slice(0, needed), random, difficulty) ? board : null
 }
 
 function fallbackDeal(layoutId: MahjongLayoutId, random: RandomSource): MahjongBoardState {
@@ -232,118 +246,137 @@ function fallbackDeal(layoutId: MahjongLayoutId, random: RandomSource): MahjongB
   return board
 }
 
+/** Repartos que Difícil compara, y partidas al azar con que mide cada uno. */
+const HARD_CANDIDATES = 5
+const HARD_PLAYOUTS = 6
+
+/**
+ * Qué tan seguido se traba alguien que quita parejas al azar: mide las
+ * trampas (elegir mal entre varias iguales), no las parejas a la vista.
+ */
+export function deadEndRate(
+  board: MahjongBoardState,
+  random: RandomSource,
+  playouts: number
+): number {
+  let stuck = 0
+
+  for (let run = 0; run < playouts; run += 1) {
+    for (;;) {
+      const pairs = listAvailablePairs(board)
+      if (pairs.length === 0) break
+      const [a, b] = pairs[Math.floor(random() * pairs.length)]
+      a.removed = true
+      b.removed = true
+    }
+
+    if (board.tiles.some((tile) => !tile.removed)) stuck += 1
+
+    for (const tile of board.tiles) tile.removed = false
+  }
+
+  return stuck / playouts
+}
+
 export interface DealResult {
   board: MahjongBoardState
   /** false solo si se agotaron los intentos y hubo que repartir al azar. */
   guaranteed: boolean
 }
 
-export function dealMahjongBoard(layoutId: MahjongLayoutId, seed?: number): DealResult {
-  const random = mulberry32(seed ?? Math.floor(Math.random() * 0xffffffff))
-
+function dealOnce(
+  layoutId: MahjongLayoutId,
+  random: RandomSource,
+  difficulty: MahjongDifficulty
+): MahjongBoardState | null {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
-    const board = attemptDeal(layoutId, random)
+    const board = attemptDeal(layoutId, random, difficulty)
 
-    if (board) return { board, guaranteed: true }
+    if (board) return board
   }
+
+  return null
+}
+
+/** Mismo layout, semilla y dificultad dan siempre el mismo reparto. */
+export function dealMahjongBoard(
+  layoutId: MahjongLayoutId,
+  seed?: number,
+  difficulty: MahjongDifficulty = 'normal'
+): DealResult {
+  const random = mulberry32(seed ?? Math.floor(Math.random() * 0xffffffff))
+  const candidates = difficulty === 'dificil' ? HARD_CANDIDATES : 1
+  let best: MahjongBoardState | null = null
+  let bestRate = -1
+
+  for (let i = 0; i < candidates; i += 1) {
+    const board = dealOnce(layoutId, random, difficulty)
+
+    if (!board) continue
+    if (candidates === 1) return { board, guaranteed: true }
+
+    const rate = deadEndRate(board, random, HARD_PLAYOUTS)
+
+    if (rate > bestRate) {
+      best = board
+      bestRate = rate
+    }
+  }
+
+  if (best) return { board: best, guaranteed: true }
 
   return { board: fallbackDeal(layoutId, random), guaranteed: false }
 }
 
+/** Las fichas que siguen en el tablero, agrupadas en parejas que emparejan. */
+function pairsOfAlive(board: MahjongBoardState): Array<[MahjongFace, MahjongFace]> | null {
+  const byKey = new Map<string, MahjongFace[]>()
+
+  for (const tile of board.tiles) {
+    if (tile.removed) continue
+    const bucket = byKey.get(tile.face.matchKey) ?? []
+    bucket.push(tile.face)
+    byKey.set(tile.face.matchKey, bucket)
+  }
+
+  const pairs: Array<[MahjongFace, MahjongFace]> = []
+
+  for (const bucket of byKey.values()) {
+    if (bucket.length % 2 !== 0) return null
+    for (let i = 0; i < bucket.length; i += 2) pairs.push([bucket[i], bucket[i + 1]])
+  }
+
+  return pairs
+}
+
 /**
  * Vuelve a repartir solo las fichas que siguen en el tablero, conservando el
- * historial, de modo que el resto tenga solución. Se usa cuando el jugador se
- * traba y pide barajar. Devuelve false (y deja el tablero igual) si ningún
- * acomodo tiene solución, p. ej. cuando quedan dos fichas una sobre otra.
+ * historial, con la misma colocación que usa la dificultad al repartir, de
+ * modo que el resto tenga solución. Se usa cuando el jugador se traba y pide
+ * barajar. Devuelve false (y deja el tablero igual) si ningún acomodo tiene
+ * solución, p. ej. cuando quedan dos fichas una sobre otra.
  */
-export function reshuffleRemaining(board: MahjongBoardState, seed?: number): boolean {
+export function reshuffleRemaining(
+  board: MahjongBoardState,
+  seed?: number,
+  difficulty: MahjongDifficulty = 'normal'
+): boolean {
   const random = mulberry32(seed ?? Math.floor(Math.random() * 0xffffffff))
   const alive = board.tiles.filter((tile) => !tile.removed)
+  const pairs = pairsOfAlive(board)
 
-  if (alive.length < 2) return false
+  if (alive.length < 2 || !pairs) return false
 
-  const counts = new Map<string, number>()
-
-  for (const tile of alive) counts.set(tile.face.id, (counts.get(tile.face.id) ?? 0) + 1)
+  const faces = alive.map((tile) => tile.face)
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
-    const available = new Map(counts)
-    const snapshot = alive.map((tile) => tile.removed)
-    const faces = alive.map((tile) => tile.face)
-    const assigned = new Set<number>()
-    let ok = true
-
-    for (const tile of alive) tile.removed = false
-
-    for (let step = 0; step < alive.length / 2; step += 1) {
-      const open = freeTiles(board).filter((tile) => !assigned.has(tile.index))
-
-      if (open.length < 2) {
-        ok = false
-        break
-      }
-
-      const pair = takeMatchingPair(available, random)
-
-      if (!pair) {
-        ok = false
-        break
-      }
-
-      const picked = shuffle(open, random).slice(0, 2)
-
-      board.tiles[picked[0].index].face = pair[0]
-      board.tiles[picked[1].index].face = pair[1]
-      board.tiles[picked[0].index].removed = true
-      board.tiles[picked[1].index].removed = true
-
-      assigned.add(picked[0].index)
-      assigned.add(picked[1].index)
-    }
-
-    for (const tile of alive) tile.removed = false
-
-    if (ok) return true
+    if (placePairs(board, pairs, random, difficulty)) return true
 
     // Un intento fallido ya cambió dibujos: se devuelven para no dejar fichas sin pareja.
     alive.forEach((tile, index) => {
-      tile.removed = snapshot[index]
       tile.face = faces[index]
     })
   }
 
   return false
-}
-
-/** Saca del inventario dos fichas que emparejen entre sí. */
-function takeMatchingPair(
-  available: Map<string, number>,
-  random: RandomSource
-): [MahjongFace, MahjongFace] | null {
-  const ids = shuffle(
-    [...available.entries()].filter(([, count]) => count > 0).map(([id]) => id),
-    random
-  )
-
-  for (const id of ids) {
-    const face = FACES_BY_ID.get(id) as MahjongFace
-
-    if ((available.get(id) ?? 0) >= 2) {
-      available.set(id, (available.get(id) ?? 0) - 2)
-      return [face, face]
-    }
-
-    const partnerId = ids.find(
-      (other) => other !== id && (FACES_BY_ID.get(other) as MahjongFace).matchKey === face.matchKey
-    )
-
-    if (partnerId) {
-      const partner = FACES_BY_ID.get(partnerId) as MahjongFace
-      available.set(id, (available.get(id) ?? 0) - 1)
-      available.set(partnerId, (available.get(partnerId) ?? 0) - 1)
-      return [face, partner]
-    }
-  }
-
-  return null
 }
